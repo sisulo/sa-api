@@ -1,12 +1,33 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PoolMetric } from './entities/pool_metric';
+import { SystemMetricEntity } from './entities/system-metric.entity';
+import { SystemMetricService } from './system-metric.service';
+import { SystemMetricController } from './controllers/system-metric.controller';
+import { CatMetricTypeEntity } from './entities/cat-metric-type.entity';
+import { SystemEntity } from './entities/system.entity';
+import { PoolMetricController } from './controllers/pool-metric.controller';
+import { PoolMetricEntity } from './entities/pool-metric.entity';
 import { PoolMetricService } from './pool-metric.service';
-import { PoolMetricController } from './pool-metric.controller';
+import { PoolEntity } from './entities/pool.entity';
+import { SystemService } from './system.service';
+import { PoolService } from './pool.service';
+import { ChaMetricController } from './controllers/cha-metric.controller';
+import { ChaMetricService } from './cha-metric.service';
+import { ChaService } from './cha.service';
+import { ChaMetricEntity } from './entities/cha-metric.entity';
+import { ChaEntity } from './entities/cha.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PoolMetric])],
-  providers: [PoolMetricService],
-  controllers: [PoolMetricController],
+  imports: [
+    TypeOrmModule.forFeature([SystemMetricEntity]),
+    TypeOrmModule.forFeature([CatMetricTypeEntity]),
+    TypeOrmModule.forFeature([SystemEntity]),
+    TypeOrmModule.forFeature([PoolMetricEntity]),
+    TypeOrmModule.forFeature([PoolEntity]),
+    TypeOrmModule.forFeature([ChaMetricEntity]),
+    TypeOrmModule.forFeature([ChaEntity]),
+  ],
+  providers: [SystemMetricService, PoolMetricService, PoolService, SystemService, ChaMetricService, ChaService],
+  controllers: [SystemMetricController, PoolMetricController, ChaMetricController],
 })
 export class CollectorModule {}

@@ -6,14 +6,14 @@ import { CollectorModule } from './collector/collector.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
-    type: 'mongodb',
+    type: 'postgres',
     host: 'localhost',
-    port: 27017,
-    username: 'storageAnalyticsApi',
-    password: '2r5dQtgIloo',
+    port: 5432,
+    username: 'postgres',
+    password: 'postgres',
     database: 'storageAnalytics',
     entities: [__dirname + '/**/entities/*{.ts,.js}'],
-    synchronize: true,
+    synchronize: false,
   }), CollectorModule],
   controllers: [AppController],
   providers: [AppService],
