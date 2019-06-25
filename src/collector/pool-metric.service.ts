@@ -16,8 +16,6 @@ export class PoolMetricService {
   constructor(
     @InjectRepository(PoolMetricEntity)
     private readonly poolMetricRepository: Repository<PoolMetricEntity>,
-    @InjectRepository(CatMetricTypeEntity)
-    private readonly catMetricTypeRepository: Repository<CatMetricTypeEntity>,
     private readonly poolService: PoolService,
     private readonly systemService: SystemService,
   ) {

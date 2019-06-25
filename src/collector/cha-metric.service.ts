@@ -16,8 +16,6 @@ export class ChaMetricService {
   constructor(
     @InjectRepository(ChaMetricEntity)
     private readonly chaMetricRepository: Repository<ChaMetricEntity>,
-    @InjectRepository(CatMetricTypeEntity) // Todo inject service instead of repository
-    private readonly catMetricTypeRepository: Repository<CatMetricTypeEntity>,
     private readonly systemService: SystemService,
     private readonly chaService: ChaService,
   ) {

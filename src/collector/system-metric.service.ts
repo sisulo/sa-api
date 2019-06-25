@@ -14,8 +14,6 @@ export class SystemMetricService {
   constructor(
     @InjectRepository(SystemMetricEntity)
     private readonly systemMetricRepository: Repository<SystemMetricEntity>,
-    @InjectRepository(CatMetricTypeEntity) // Todo inject service instead of repository
-    private readonly catMetricTypeRepository: Repository<CatMetricTypeEntity>,
     private readonly systemService: SystemService,
   ) {
   }
