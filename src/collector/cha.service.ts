@@ -15,7 +15,7 @@ export class ChaService {
 
   public async findById(idSystemParam: number, idChaParam: number): Promise<ChaEntity> {
     const dao = await this.repository
-      .findOne({ idSystem: idSystemParam, idInternal: idChaParam })
+      .findOne({ idSystem: idSystemParam, idCha: idChaParam })
       .then(metricType => metricType);
 
     return dao;
