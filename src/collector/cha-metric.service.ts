@@ -33,15 +33,15 @@ export class ChaMetricService {
     metricDao.idSystem = idSystem;
     metricDao.idCha = idCha;
     metricDao.date = chaMetric.date;
-    metricDao.idMetricType = Number(MetricType[chaMetric.metricType]);
+    metricDao.metricType = chaMetric.metricType;
 
     const value = await this.chaMetricRepository.save(metricDao);
     return value;
   }
 
-  private async createMetric(idSystemSearch: number, metricType: MetricType, dateSearch): Promise<ChaMetricEntity> {
+  private async createMetric(idSystemSearch: number, metricTypeSearch: MetricType, dateSearch): Promise<ChaMetricEntity> {
     const metricDao = await this.chaMetricRepository
-      .findOne({ idSystem: idSystemSearch, idMetricType: Number(MetricType[metricType]), date: dateSearch })
+      .findOne({ idSystem: idSystemSearch, metricType: metricTypeSearch, date: dateSearch })
       .then(dao => dao);
 
     if (metricDao === undefined) {

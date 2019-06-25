@@ -28,15 +28,15 @@ export class SystemMetricService {
     metricDao.idSystem = idSystem;
     metricDao.peak = systemMetric.peak;
     metricDao.date = systemMetric.date;
-    metricDao.idMetricType = Number(MetricType[systemMetric.metricType]);
+    metricDao.metricType = systemMetric.metricType;
 
     const value = await this.systemMetricRepository.save(metricDao);
     return value;
   }
 
-  private async createMetric(idSystemSearch: number, metricType: MetricType, dateSearch): Promise<SystemMetricEntity> {
+  private async createMetric(idSystemSearch: number, metricTypeSearch: MetricType, dateSearch): Promise<SystemMetricEntity> {
     const metricDao = await this.systemMetricRepository
-      .findOne({ idSystem: idSystemSearch, idMetricType: Number(MetricType[metricType]), date: dateSearch })
+      .findOne({ idSystem: idSystemSearch, metricType: metricTypeSearch, date: dateSearch })
       .then(dao => dao);
 
     if (metricDao === undefined) {

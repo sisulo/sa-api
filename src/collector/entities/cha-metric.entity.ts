@@ -1,4 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { MetricTypeTransformer } from '../transformers/metric-type.transformer';
+import { MetricType } from '../enums/metric-type.enum';
 
 @Entity('cha_metrics')
 export class ChaMetricEntity {
@@ -18,6 +20,6 @@ export class ChaMetricEntity {
   @Column('date', { name: 'date' })
   date: Date;
 
-  @Column({ name: 'id_cat_metric_type' })
-  idMetricType: number; // Todo change to map object
+  @Column({ name: 'id_cat_metric_type', transformer: MetricTypeTransformer })
+  metricType: MetricType;
 }

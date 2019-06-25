@@ -1,7 +1,6 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CatMetricTypeEntity } from './entities/cat-metric-type.entity';
 import { SystemEntity } from './entities/system.entity';
 import { PoolMetricRequestDto } from './dto/pool-metric-request.dto';
 import { PoolMetricEntity } from './entities/pool-metric.entity';
@@ -33,16 +32,16 @@ export class PoolMetricService {
     metricDao.idPool = idPool;
     metricDao.date = poolMetric.date;
     metricDao.idSystem = idSystem;
-    metricDao.idMetricType = Number(MetricType[poolMetric.metricType]);
+    metricDao.metricType = poolMetric.metricType;
 
     const value = await this.poolMetricRepository.save(metricDao);
 
     return value;
   }
 
-  private async createMetric(idSystemSearch: number, idPoolSearch: number, metricType: MetricType, dateSearch): Promise<PoolMetricEntity> {
+  private async createMetric(idSystemSearch: number, idPoolSearch: number, metricTypeSearch: MetricType, dateSearch): Promise<PoolMetricEntity> {
     const metricDao = await this.poolMetricRepository
-      .findOne({ idPool: idPoolSearch, idSystem: idSystemSearch, idMetricType: Number(MetricType[metricType]), date: dateSearch })
+      .findOne({ idPool: idPoolSearch, idSystem: idSystemSearch, metricType: metricTypeSearch, date: dateSearch })
       .then(dao => dao);
 
     if (metricDao === undefined) {
