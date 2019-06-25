@@ -6,6 +6,7 @@ import { SystemMetricRequestDto } from './dto/system-metric-request.dto';
 import { CatMetricTypeEntity } from './entities/cat-metric-type.entity';
 import { SystemEntity } from './entities/system.entity';
 import { SystemService } from './system.service';
+import { MetricType } from './enums/metric-type.enum';
 
 @Injectable()
 export class SystemMetricService {
@@ -23,34 +24,21 @@ export class SystemMetricService {
 
     await this.validateSystem(idSystem);
 
-    const metricTypeDao: CatMetricTypeEntity = await this.resolveMetricType(systemMetric.metricType);
-
-    const metricDao: SystemMetricEntity = await this.createMetric(idSystem, metricTypeDao, systemMetric.date);
+    const metricDao: SystemMetricEntity = await this.createMetric(idSystem, systemMetric.metricType, systemMetric.date);
 
     metricDao.value = systemMetric.value;
     metricDao.idSystem = idSystem;
     metricDao.peak = systemMetric.peak;
     metricDao.date = systemMetric.date;
-    metricDao.idMetricType = metricTypeDao.idCatMetricType;
+    metricDao.idMetricType = Number(MetricType[systemMetric.metricType]);
 
     const value = await this.systemMetricRepository.save(metricDao);
     return value;
   }
 
-  private async resolveMetricType(typeName: string): Promise<CatMetricTypeEntity> {
-    const typeDao = await this.catMetricTypeRepository
-      .findOne({ name: typeName })
-      .then(metricType => metricType);
-
-    if (typeDao === undefined) {
-      throw new BadRequestException('Metric Type \'' + typeName + '\' not exists');
-    }
-    return typeDao;
-  }
-
-  private async createMetric(idSystemSearch: number, idMetricType: CatMetricTypeEntity, dateSearch): Promise<SystemMetricEntity> {
+  private async createMetric(idSystemSearch: number, metricType: MetricType, dateSearch): Promise<SystemMetricEntity> {
     const metricDao = await this.systemMetricRepository
-      .findOne({ idSystem: idSystemSearch, idMetricType: idMetricType.idCatMetricType, date: dateSearch })
+      .findOne({ idSystem: idSystemSearch, idMetricType: Number(MetricType[metricType]), date: dateSearch })
       .then(dao => dao);
 
     if (metricDao === undefined) {

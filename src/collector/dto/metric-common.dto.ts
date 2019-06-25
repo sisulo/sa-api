@@ -1,6 +1,8 @@
+import { MetricType } from '../enums/metric-type.enum';
+
 export class MetricCommonDto {
 
-  readonly metricType: string;
+  readonly metricType: MetricType;
 
   readonly value: string;
 

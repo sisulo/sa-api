@@ -9,9 +9,6 @@ export class ChaEntity {
   @Column({ name: 'name' })
   name: string;
 
-  @Column({ name: 'id_cha_internal' })
-  idInternal: number;
-
   @Column({ name: 'id_system' })
   idSystem: number;
 

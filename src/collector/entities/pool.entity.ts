@@ -6,9 +6,6 @@ export class PoolEntity {
   @PrimaryGeneratedColumn({ name: 'id_pool', type: 'integer' })
   idPool: number;
 
-  @Column({ name: 'id_pool_internal' })
-  idInternal: number;
-
   @Column({ name: 'name' })
   name: string;
 

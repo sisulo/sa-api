@@ -14,7 +14,7 @@ export class PoolService {
 
   public async findById(idSystemParam: number, idPoolParam: number): Promise<PoolEntity> {
     const dao = await this.repository
-      .findOne({ idSystem: idSystemParam, idInternal: idPoolParam })
+      .findOne({ idSystem: idSystemParam, idPool: idPoolParam })
       .then(metricType => metricType);
 
     return dao;

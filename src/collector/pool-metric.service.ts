@@ -8,6 +8,7 @@ import { PoolMetricEntity } from './entities/pool-metric.entity';
 import { PoolEntity } from './entities/pool.entity';
 import { SystemService } from './system.service';
 import { PoolService } from './pool.service';
+import { MetricType } from './enums/metric-type.enum';
 
 @Injectable()
 export class PoolMetricService {
@@ -28,35 +29,22 @@ export class PoolMetricService {
 
     await this.validatePool(idSystem, idPool);
 
-    const metricTypeDao: CatMetricTypeEntity = await this.resolveMetricType(poolMetric.metricType);
-
-    const metricDao: PoolMetricEntity = await this.createMetric(idSystem, idPool, metricTypeDao, poolMetric.date);
+    const metricDao: PoolMetricEntity = await this.createMetric(idSystem, idPool, poolMetric.metricType, poolMetric.date);
 
     metricDao.value = poolMetric.value;
     metricDao.idPool = idPool;
     metricDao.date = poolMetric.date;
     metricDao.idSystem = idSystem;
-    metricDao.idMetricType = metricTypeDao.idCatMetricType;
+    metricDao.idMetricType = Number(MetricType[poolMetric.metricType]);
 
     const value = await this.poolMetricRepository.save(metricDao);
 
     return value;
   }
 
-  private async resolveMetricType(typeName: string): Promise<CatMetricTypeEntity> {
-    const typeDao = await this.catMetricTypeRepository
-      .findOne({ name: typeName })
-      .then(metricType => metricType);
-
-    if (typeDao === undefined) {
-      throw new BadRequestException('Metric Type \'' + typeName + '\' not exists');
-    }
-    return typeDao;
-  }
-
-  private async createMetric(idSystemSearch: number, idPoolSearch: number, idMetricType: CatMetricTypeEntity, dateSearch): Promise<PoolMetricEntity> {
+  private async createMetric(idSystemSearch: number, idPoolSearch: number, metricType: MetricType, dateSearch): Promise<PoolMetricEntity> {
     const metricDao = await this.poolMetricRepository
-      .findOne({ idPool: idPoolSearch, idSystem: idSystemSearch, idMetricType: idMetricType.idCatMetricType, date: dateSearch })
+      .findOne({ idPool: idPoolSearch, idSystem: idSystemSearch, idMetricType: Number(MetricType[metricType]), date: dateSearch })
       .then(dao => dao);
 
     if (metricDao === undefined) {

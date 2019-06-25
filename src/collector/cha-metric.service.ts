@@ -1,13 +1,14 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SystemMetricEntity } from './entities/system-metric.entity';
-import { SystemMetricRequestDto } from './dto/system-metric-request.dto';
 import { CatMetricTypeEntity } from './entities/cat-metric-type.entity';
 import { SystemEntity } from './entities/system.entity';
 import { SystemService } from './system.service';
 import { ChaMetricEntity } from './entities/cha-metric.entity';
 import { ChaMetricRequestDto } from './dto/cha-metric-request.dto';
+import { ChaEntity } from './entities/cha.entity';
+import { ChaService } from './cha.service';
+import { MetricType } from './enums/metric-type.enum';
 
 @Injectable()
 export class ChaMetricService {
@@ -18,41 +19,31 @@ export class ChaMetricService {
     @InjectRepository(CatMetricTypeEntity) // Todo inject service instead of repository
     private readonly catMetricTypeRepository: Repository<CatMetricTypeEntity>,
     private readonly systemService: SystemService,
+    private readonly chaService: ChaService,
   ) {
   }
 
-  async upsert(idSystem: number, idCha: number, systemMetric: ChaMetricRequestDto): Promise<ChaMetricEntity> {
+  async upsert(idSystem: number, idCha: number, chaMetric: ChaMetricRequestDto): Promise<ChaMetricEntity> {
 
     await this.validateSystem(idSystem);
 
-    const metricTypeDao: CatMetricTypeEntity = await this.resolveMetricType(systemMetric.metricType);
+    await this.validateChannelAdapter(idSystem, idCha);
 
-    const metricDao: ChaMetricEntity = await this.createMetric(idSystem, metricTypeDao, systemMetric.date);
+    const metricDao: ChaMetricEntity = await this.createMetric(idSystem, chaMetric.metricType, chaMetric.date);
 
-    metricDao.value = systemMetric.value;
+    metricDao.value = chaMetric.value;
     metricDao.idSystem = idSystem;
-    metricDao.idCha = idCha; // Todo find database id for cha (idInternal, idSystem) use id here
-    metricDao.date = systemMetric.date;
-    metricDao.idMetricType = metricTypeDao.idCatMetricType;
+    metricDao.idCha = idCha;
+    metricDao.date = chaMetric.date;
+    metricDao.idMetricType = Number(MetricType[chaMetric.metricType]);
 
     const value = await this.chaMetricRepository.save(metricDao);
     return value;
   }
 
-  private async resolveMetricType(typeName: string): Promise<CatMetricTypeEntity> {
-    const typeDao = await this.catMetricTypeRepository
-      .findOne({ name: typeName })
-      .then(metricType => metricType);
-
-    if (typeDao === undefined) {
-      throw new BadRequestException('Metric Type \'' + typeName + '\' not exists');
-    }
-    return typeDao;
-  }
-
-  private async createMetric(idSystemSearch: number, idMetricType: CatMetricTypeEntity, dateSearch): Promise<ChaMetricEntity> {
+  private async createMetric(idSystemSearch: number, metricType: MetricType, dateSearch): Promise<ChaMetricEntity> {
     const metricDao = await this.chaMetricRepository
-      .findOne({ idSystem: idSystemSearch, idMetricType: idMetricType.idCatMetricType, date: dateSearch })
+      .findOne({ idSystem: idSystemSearch, idMetricType: Number(MetricType[metricType]), date: dateSearch })
       .then(dao => dao);
 
     if (metricDao === undefined) {
@@ -69,6 +60,14 @@ export class ChaMetricService {
 
     if (systemDao === undefined) {
       throw new NotFoundException('System with id \'' + idSystemSearch + '\' not found');
+    }
+  }
+
+  private async validateChannelAdapter(idSystemSearch: number, idChaSearch: number) {
+    let systemDao: ChaEntity;
+    systemDao = await this.chaService.findById(idSystemSearch, idChaSearch);
+    if (systemDao === undefined) {
+      throw new NotFoundException('Channel adapter with id \'' + idChaSearch + '\' not found in system \'' + idSystemSearch + '\'.');
     }
   }
 }
