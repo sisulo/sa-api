@@ -23,3 +23,5 @@ VALUES
 (32, 'PHY_USED_BEF_SAVING', 'GB'),
 (33, 'DEDUP_RATIO', NULL),
 (34, 'TOTAL_SAVING_EFFECT', NULL);
+
+DELETE FROM cat_metric_type WHERE id_cat_metric_type = 19
