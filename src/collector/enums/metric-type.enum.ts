@@ -17,7 +17,6 @@ export enum MetricType {
   PREDICTION_L1 = 16,
   PREDICTION_L2 = 17,
   PREDICTION_L3 = 18,
-  INFO = 19,
   CHANGE_DAY = 20,
   CHANGE_WEEK = 21,
   CHANGE_MONTH = 22,
