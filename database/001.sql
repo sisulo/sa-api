@@ -2,6 +2,10 @@ UPDATE cat_metric_type
 SET name = CONCAT(name, '_PERC')
 WHERE cat_metric_type.id_cat_metric_type IN (2, 4, 5, 11, 12)
 
+UPDATE cat_metric_type
+SET name = CONCAT(name, '_PERC'), unit = '%'
+WHERE cat_metric_type.id_cat_metric_type IN (10)
+
 INSERT INTO cat_metric_type (id_cat_metric_type, name, unit)
 VALUES
 (20, 'CHANGE_DAY', 'GB'),
