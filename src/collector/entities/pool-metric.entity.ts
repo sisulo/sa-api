@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { MetricTypeTransformer } from '../transformers/metric-type.transformer';
 import { MetricType } from '../enums/metric-type.enum';
+import { CatMetricTypeEntity } from './cat-metric-type.entity';
 
 @Entity('pool_metrics')
 export class PoolMetricEntity {
@@ -21,4 +22,8 @@ export class PoolMetricEntity {
 
   @Column({name: 'id_system'})
   idSystem: number;
+
+  @ManyToOne(type => CatMetricTypeEntity)
+  @JoinColumn({name: 'id_cat_metric_type'})
+  metricTypeEntity: CatMetricTypeEntity;
 }

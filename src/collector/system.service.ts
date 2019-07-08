@@ -19,4 +19,16 @@ export class SystemService {
 
     return dao;
   }
+
+  async getSystemsByIdDataCenter(idDataCenterParam: number, dateParam: Date): Promise<SystemEntity[]> {
+    const metricsDao = await this.repository.createQueryBuilder('system')
+      .innerJoinAndSelect('system.metrics', 'metrics')
+      .innerJoinAndSelect('system.datacenter', 'datacenter')
+      .innerJoinAndSelect('metrics.metricTypeEntity', 'type')
+      .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
+      .andWhere('metrics.date = \'2019-01-06\'', {date: dateParam})
+      .getMany()
+    ;
+    return metricsDao;
+  }
 }

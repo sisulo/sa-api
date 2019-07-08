@@ -16,6 +16,8 @@ import { ChaMetricService } from './cha-metric.service';
 import { ChaService } from './cha.service';
 import { ChaMetricEntity } from './entities/cha-metric.entity';
 import { ChaEntity } from './entities/cha.entity';
+import { DataCenterEntity } from './entities/data-center.entity';
+import { DataCenterService } from './data-center.service';
 
 @Module({
   imports: [
@@ -26,8 +28,11 @@ import { ChaEntity } from './entities/cha.entity';
     TypeOrmModule.forFeature([PoolEntity]),
     TypeOrmModule.forFeature([ChaMetricEntity]),
     TypeOrmModule.forFeature([ChaEntity]),
+    TypeOrmModule.forFeature([DataCenterEntity]),
   ],
-  providers: [SystemMetricService, PoolMetricService, PoolService, SystemService, ChaMetricService, ChaService],
+  providers: [SystemMetricService, PoolMetricService, PoolService, SystemService, ChaMetricService, ChaService, DataCenterService],
   controllers: [SystemMetricController, PoolMetricController, ChaMetricController],
+  exports: [DataCenterService],
 })
-export class CollectorModule {}
+export class CollectorModule {
+}

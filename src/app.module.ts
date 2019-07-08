@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CollectorModule } from './collector/collector.module';
+import { StatisticsModule } from './statistics/statistics.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -14,7 +15,7 @@ import { CollectorModule } from './collector/collector.module';
     database: 'storageAnalytics',
     entities: [__dirname + '/**/entities/*{.ts,.js}'],
     synchronize: false,
-  }), CollectorModule],
+  }), CollectorModule, StatisticsModule],
   controllers: [AppController],
   providers: [AppService],
 })

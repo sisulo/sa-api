@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { DataCenterEntity } from './data-center.entity';
+import { SystemMetricEntity } from './system-metric.entity';
 
 @Entity('systems')
 export class SystemEntity {
@@ -12,4 +14,10 @@ export class SystemEntity {
   @Column({ name: 'id_datacenter' })
   idDataCenter: number;
 
+  @ManyToOne(type => DataCenterEntity)
+  @JoinColumn({name: 'id_datacenter'})
+  datacenter: DataCenterEntity;
+
+  @OneToMany(type => SystemMetricEntity, metric => metric.system)
+  metrics: SystemMetricEntity[];
 }

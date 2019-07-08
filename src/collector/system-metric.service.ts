@@ -1,9 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SystemMetricEntity } from './entities/system-metric.entity';
 import { SystemMetricRequestDto } from './dto/system-metric-request.dto';
-import { CatMetricTypeEntity } from './entities/cat-metric-type.entity';
 import { SystemEntity } from './entities/system.entity';
 import { SystemService } from './system.service';
 import { MetricType } from './enums/metric-type.enum';
