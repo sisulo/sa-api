@@ -4,10 +4,10 @@ import { DataCenterService } from '../../collector/data-center.service';
 
 @Injectable()
 export class PerformanceMetricService {
-  constructor(private systemService: DataCenterService) {}
+  constructor(private dataCenterService: DataCenterService) {}
 
   getMetricByIdDatacenter(idDatacenter: number, date: Date) {
-    const entities = this.systemService.getPerformanceMetrics(idDatacenter, date);
+    const entities = this.dataCenterService.getPerformanceMetrics(idDatacenter, date);
     return PerformanceMetricTransformer.transform(entities);
   }
 

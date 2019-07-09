@@ -17,7 +17,20 @@ export class DataCenterService {
       .innerJoinAndSelect('system.metrics', 'metrics')
       .innerJoinAndSelect('metrics.metricTypeEntity', 'type')
       .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      .andWhere('metrics.date = \'2019-01-06\'', {date: dateParam})
+      .andWhere('metrics.date = \'2019-06-18\'', {date: dateParam}) // Todo use param for date
+      .getOne()
+    ;
+    return metricsDao;
+  }
+
+  async getCapacityMetrics(idDataCenterParam: number, dateParam: Date): Promise<DataCenterEntity> {
+    const metricsDao = await this.dataCenterRepository.createQueryBuilder('datacenter')
+      .innerJoinAndSelect('datacenter.systems', 'system')
+      .innerJoinAndSelect('system.pools', 'pool')
+      .innerJoinAndSelect('pool.metrics', 'metrics')
+      .innerJoinAndSelect('metrics.metricTypeEntity', 'type')
+      .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
+      .andWhere('metrics.date = \'2019-06-18\'', {date: dateParam}) // Todo use param for date
       .getOne()
     ;
     return metricsDao;
