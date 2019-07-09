@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { DataCenterEntity } from './data-center.entity';
 import { SystemMetricEntity } from './system-metric.entity';
 import { PoolEntity } from './pool.entity';
+import { ChaEntity } from './cha.entity';
 
 @Entity('systems')
 export class SystemEntity {
@@ -24,4 +25,7 @@ export class SystemEntity {
 
   @OneToMany(type => PoolEntity, pool => pool.system)
   pools: PoolEntity[];
+
+  @OneToMany(type => ChaEntity, adapter => adapter.system)
+  adapters: ChaEntity[];
 }

@@ -11,13 +11,14 @@ export class DataCenterService {
     private readonly dataCenterRepository: Repository<DataCenterEntity>,
   ) {
   }
+
   async getPerformanceMetrics(idDataCenterParam: number, dateParam: Date): Promise<DataCenterEntity> {
     const metricsDao = await this.dataCenterRepository.createQueryBuilder('datacenter')
       .innerJoinAndSelect('datacenter.systems', 'system')
       .innerJoinAndSelect('system.metrics', 'metrics')
       .innerJoinAndSelect('metrics.metricTypeEntity', 'type')
       .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      .andWhere('metrics.date = \'2019-06-18\'', {date: dateParam}) // Todo use param for date
+      .andWhere('metrics.date = \'2019-06-18\'', { date: dateParam }) // Todo use param for date
       .getOne()
     ;
     return metricsDao;
@@ -30,7 +31,20 @@ export class DataCenterService {
       .innerJoinAndSelect('pool.metrics', 'metrics')
       .innerJoinAndSelect('metrics.metricTypeEntity', 'type')
       .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      .andWhere('metrics.date = \'2019-06-18\'', {date: dateParam}) // Todo use param for date
+      .andWhere('metrics.date = \'2019-06-18\'', { date: dateParam }) // Todo use param for date
+      .getOne()
+    ;
+    return metricsDao;
+  }
+
+  async getChannelAdapterMetrics(idDataCenterParam: number, dateParam: Date): Promise<DataCenterEntity> {
+    const metricsDao = await this.dataCenterRepository.createQueryBuilder('datacenter')
+      .innerJoinAndSelect('datacenter.systems', 'system')
+      .innerJoinAndSelect('system.adapters', 'adapter')
+      .innerJoinAndSelect('adapter.metrics', 'metrics')
+      .innerJoinAndSelect('metrics.metricTypeEntity', 'type')
+      .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
+      .andWhere('metrics.date = \'2019-06-18\'', { date: dateParam }) // Todo use param for date
       .getOne()
     ;
     return metricsDao;

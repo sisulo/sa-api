@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 't
 import { MetricTypeTransformer } from '../transformers/metric-type.transformer';
 import { MetricType } from '../enums/metric-type.enum';
 import { CatMetricTypeEntity } from './cat-metric-type.entity';
+import { ChaEntity } from './cha.entity';
 
 @Entity('cha_metrics')
 export class ChaMetricEntity {
@@ -25,6 +26,10 @@ export class ChaMetricEntity {
   metricType: MetricType;
 
   @ManyToOne(type => CatMetricTypeEntity)
-  @JoinColumn({name: 'id_cat_metric_type'})
+  @JoinColumn({ name: 'id_cat_metric_type' })
   metricTypeEntity: CatMetricTypeEntity;
+
+  @ManyToOne(type => ChaEntity)
+  @JoinColumn({ name: 'id_cha' })
+  adapter: ChaEntity;
 }

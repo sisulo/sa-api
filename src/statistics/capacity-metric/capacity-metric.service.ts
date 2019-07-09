@@ -10,6 +10,7 @@ export class CapacityMetricService {
 
   getMetricByIdDatacenter(idDataCenter: number, date: Date) {
     const entities = this.dataCenterService.getCapacityMetrics(idDataCenter, date);
+    console.log(entities);
     return CapacityMetricTransformer.transform(entities);
   }
 }
