@@ -4,8 +4,8 @@ INSERT INTO systems (id_system, name, id_datacenter) VALUES
 
 INSERT INTO pools (name, id_system)
 VALUES
-('Pool_6_AFA_T1', 24),
-('Pool_7_AFA_T1', 24)
+('Pool#6 AFA_T1', 24),
+('Pool#7 AFA_T1', 24)
 
 INSERT INTO pools (name, id_system)
 VALUES
