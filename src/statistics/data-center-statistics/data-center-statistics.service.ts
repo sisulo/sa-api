@@ -24,7 +24,7 @@ export class DataCenterStatisticsService {
     }
   }
 
-  async getMetricByIdDatacenter(metricGroup: MetricGroup, idDataCenter: number, date: Date) {
+  async getMetricByIdDataCenter(metricGroup: MetricGroup, idDataCenter: number, date: Date) {
     const dataCenterEntity = await this.getEntities(metricGroup, idDataCenter, date);
     if (dataCenterEntity !== undefined) {
       return DataCenterStatisticsService.transform(metricGroup, dataCenterEntity);

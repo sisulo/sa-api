@@ -1,27 +1,28 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { DataCenterStatisticsService } from '../data-center-statistics/data-center-statistics.service';
 import { MetricGroup } from '../../collector/data-center.service';
-
-@Controller('api/v1/statistics/')
-export class StatisticsController { // Todo rename controller
+import { StatisticParams } from './params/statistic.params';
+import { StatisticQueryParams } from './params/statistics.query-params';
+// Todo logging request/response
+// Todo Configuration Module
+@Controller('api/v1/datacenters/')
+export class StatisticsController {
   constructor(private dataCenterStatisticsService: DataCenterStatisticsService) {
   }
 
-  @Get('performance/:idDataCenter') // Todo better resource like API
-  performanceStatistics(@Param('idDataCenter') idDataCenter: number, @Query('date') date: Date) {
-    // Todo date, idDatacenter validation
-    return this.dataCenterStatisticsService.getMetricByIdDatacenter(MetricGroup.PERFORMANCE, idDataCenter, date);
+  @Get(':idDataCenter/performance') // Todo better resource like API
+  performanceStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.PERFORMANCE, params.idDataCenter, queryParams.date);
   }
 
-  @Get('capacity/:idDataCenter')
-  capacityStatistics(@Param('idDataCenter') idDataCenter: number, @Query('date') date: Date) {
-    // Todo date, idDatacenter validation
-    return this.dataCenterStatisticsService.getMetricByIdDatacenter(MetricGroup.CAPACITY, idDataCenter, date);
+  @Get(':idDataCenter/capacity')
+  capacityStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.CAPACITY, params.idDataCenter, queryParams.date);
   }
 
-  @Get('cha/:idDataCenter')
-  channelAdaptersStatistics(@Param('idDataCenter') idDataCenter: number, @Query('date') date: Date) {
-    // Todo date, idDatacenter validation
-    return this.dataCenterStatisticsService.getMetricByIdDatacenter(MetricGroup.ADAPTERS, idDataCenter, date);
+  @Get(':idDataCenter/adapters')
+  channelAdaptersStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.ADAPTERS, params.idDataCenter, queryParams.date);
   }
+
 }

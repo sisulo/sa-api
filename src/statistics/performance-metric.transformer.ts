@@ -15,7 +15,7 @@ export class PerformanceMetricTransformer {
         system => PerformanceMetricTransformer.createSystemDetail(system),
       );
     } else {
-      dataCenter.systems = []; // Todo it is ignored in Serializations
+      dataCenter.systems = [];
     }
     return response;
   }
