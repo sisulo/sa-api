@@ -14,7 +14,7 @@ export class ChaService {
 
   public async findById(idSystemParam: number, idChaParam: number): Promise<ChaEntity> {
     return await this.repository
-      .findOne({ idSystem: idSystemParam, idCha: idChaParam })
+      .findOne({ idCha: idChaParam })
       .then(metricType => metricType);
   }
 }

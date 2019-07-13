@@ -36,7 +36,6 @@ export class PoolMetricService extends CommonMetricService {
     metricDao.value = poolMetric.value;
     metricDao.pool = poolDao;
     metricDao.date = poolMetric.date;
-    metricDao.idSystem = idSystem;
     metricDao.metricTypeEntity = metricType;
 
     return await this.poolMetricRepository.save(metricDao);

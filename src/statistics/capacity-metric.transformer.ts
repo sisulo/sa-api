@@ -57,7 +57,7 @@ export class CapacityMetricTransformer {
     metricDetail.date = metric.date;
     metricDetail.type = metric.metricTypeEntity.name;
     metricDetail.unit = metric.metricTypeEntity.unit;
-    metricDetail.value = parseFloat(metric.value);
+    metricDetail.value = metric.value;
     return metricDetail;
   }
 

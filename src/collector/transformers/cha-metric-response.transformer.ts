@@ -7,9 +7,9 @@ export class ChaMetricResponseTransformer {
     response.idMetric = metric.id;
     response.date = metric.date;
     response.value = metric.value;
-    response.idCha = metric.idCha;
+    response.idCha = metric.adapter.idCha;
     response.chaName = metric.adapter.name;
-    response.idSystem = metric.idSystem;
+    response.idSystem = metric.adapter.system.idSystem;
     response.systemName = metric.adapter.system.name;
     response.metricType = metric.metricTypeEntity.name;
     return response;
