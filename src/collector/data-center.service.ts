@@ -35,7 +35,7 @@ export class DataCenterService {
       .leftJoinAndSelect('system.metrics', 'metrics')
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
       .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      .andWhere('metrics.date = \'2019-06-18\'', { date: dateParam }) // Todo use param for date
+      .andWhere('metrics.date = :date', { date: dateParam })
       .andWhere('type.id_cat_metric_group = :idGroup', { idGroup: MetricGroup.PERFORMANCE })
       .getOne();
   }
@@ -61,7 +61,7 @@ export class DataCenterService {
       .leftJoinAndSelect('adapter.metrics', 'metrics')
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
       .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      .andWhere('metrics.date = \'2019-06-18\'', { date: dateParam }) // Todo use param for date
+      .andWhere('metrics.date = :date', { date: dateParam })
       .andWhere('type.id_cat_metric_group = :idGroup', { idGroup: MetricGroup.ADAPTERS })
       .getOne();
   }
