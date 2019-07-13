@@ -8,53 +8,53 @@ CREATE TABLE datacenters
 CREATE TABLE systems
 (
     id_system     SERIAL PRIMARY KEY,
-    name          varchar(100),
-    id_datacenter SMALLINT REFERENCES datacenters (id_datacenter),
+    name          varchar(100)                                    NOT NULL,
+    id_datacenter SMALLINT REFERENCES datacenters (id_datacenter) NOT NULL,
     created_at    TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE cat_metric_type
 (
     id_cat_metric_type SMALLSERIAL PRIMARY KEY,
-    name               VARCHAR(30),
+    name               VARCHAR(30) NOT NULL,
     unit               VARCHAR(10)
 );
 
 CREATE TABLE system_metrics
 (
     id_system_metric   SERIAL PRIMARY KEY,
-    id_cat_metric_type SMALLINT REFERENCES cat_metric_type (id_cat_metric_type),
+    id_cat_metric_type SMALLINT REFERENCES cat_metric_type (id_cat_metric_type) NOT NULL,
     value              FLOAT,
     peak               FLOAT,
-    id_system          INTEGER REFERENCES systems (id_system),
-    date               DATE,
+    id_system          INTEGER REFERENCES systems (id_system)                   NOT NULL,
+    date               DATE                                                     NOT NULL,
     created_at         TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE pools
 (
     id_pool    SERIAL PRIMARY KEY,
-    name       text,
-    id_system  INTEGER REFERENCES systems (id_system),
+    name       text                                   NOT NULL,
+    id_system  INTEGER REFERENCES systems (id_system) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE pool_metrics
 (
     id_pool_metric     SERIAL PRIMARY KEY,
-    id_cat_metric_type SMALLINT REFERENCES cat_metric_type (id_cat_metric_type),
-    id_pool            INTEGER REFERENCES pools (id_pool),
-    id_system          INTEGER REFERENCES systems (id_system),
+    id_cat_metric_type SMALLINT REFERENCES cat_metric_type (id_cat_metric_type) NOT NULL,
+    id_pool            INTEGER REFERENCES pools (id_pool)                       NOT NULL,
+    id_system          INTEGER REFERENCES systems (id_system)                   NOT NULL,
     value              FLOAT,
-    date               DATE,
+    date               DATE                                                     NOT NULL,
     created_at         TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE chas
 (
     id_cha     SERIAL PRIMARY KEY,
-    name       TEXT,
-    id_system  INTEGER REFERENCES systems (id_system),
+    name       TEXT                                   NOT NULL,
+    id_system  INTEGER REFERENCES systems (id_system) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -62,11 +62,11 @@ CREATE TABLE chas
 CREATE TABLE cha_metrics
 (
     id_cha_metric      SERIAL PRIMARY KEY,
-    id_cat_metric_type SMALLINT REFERENCES cat_metric_type (id_cat_metric_type),
-    id_cha             INTEGER REFERENCES chas (id_cha),
-    id_system          INTEGER REFERENCES systems (id_system),
+    id_cat_metric_type SMALLINT REFERENCES cat_metric_type (id_cat_metric_type) NOT NULL,
+    id_cha             INTEGER REFERENCES chas (id_cha)                         NOT NULL,
+    id_system          INTEGER REFERENCES systems (id_system)                   NOT NULL,
     value              FLOAT,
-    date               DATE,
+    date               DATE                                                     NOT NULL,
     created_at         TIMESTAMP DEFAULT NOW()
 );
 
@@ -76,20 +76,20 @@ VALUES (1, 'PHYSICAL_CAPACITY', 'TB'),
        (3, 'AVAILABLE_CAPACITY', 'TB'),
        (4, 'LOGICAL_USED', '%'),
        (5, 'PHYSICAL_USED', '%'),
-       (6, 'COMPRESSION_RATIO', ''),
+       (6, 'COMPRESSION_RATIO', NULL),
        (7, 'WORKLOAD', 'IOPS'),
        (8, 'RESPONSE', 'ms'),
        (9, 'TRANSFER', 'Mbps'),
        (10, 'HDD', 'TB'),
        (11, 'CPU', '%'),
        (12, 'WRITE_PENDING', '%'),
-       (13, 'SLA_EVENTS', ''),
+       (13, 'SLA_EVENTS', NULL),
        (14, 'OUT_OF_SLA_TIME', 's'),
-       (15, 'DISBALANCE_EVENTS', ''),
+       (15, 'DISBALANCE_EVENTS', NULL),
        (16, 'PREDICTION_L1', 'days'),
        (17, 'PREDICTION_L2', 'days'),
        (18, 'PREDICTION_L3', 'days'),
-       (19, 'INFO', ''),
+       (19, 'INFO', NULL),
        (20, 'CHANGE_DAY', 'GB'),
        (21, 'CHANGE_WEEK', 'GB'),
        (22, 'CHANGE_MONTH', 'GB'),

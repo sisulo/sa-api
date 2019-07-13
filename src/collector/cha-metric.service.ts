@@ -7,17 +7,22 @@ import { ChaMetricEntity } from './entities/cha-metric.entity';
 import { ChaMetricRequestDto } from './dto/cha-metric-request.dto';
 import { ChaEntity } from './entities/cha.entity';
 import { ChaService } from './cha.service';
-import { MetricType } from './enums/metric-type.enum';
+import { CommonMetricService } from './common-metric.service';
+import { MetricTypeService } from './metric-type.service';
+import { CatMetricTypeEntity } from './entities/cat-metric-type.entity';
+import { MetricGroup } from './data-center.service';
 
 @Injectable()
-export class ChaMetricService {
+export class ChaMetricService extends CommonMetricService {
 
   constructor(
     @InjectRepository(ChaMetricEntity)
     private readonly chaMetricRepository: Repository<ChaMetricEntity>,
     private readonly systemService: SystemService,
     private readonly chaService: ChaService,
+    private readonly metricTypeService: MetricTypeService,
   ) {
+    super(metricTypeService);
   }
 
   async upsert(idSystem: number, idCha: number, chaMetric: ChaMetricRequestDto): Promise<ChaMetricEntity> {
@@ -26,21 +31,22 @@ export class ChaMetricService {
 
     await this.validateChannelAdapter(idSystem, idCha);
 
-    const metricDao: ChaMetricEntity = await this.createMetric(idSystem, chaMetric.metricType, chaMetric.date);
+    const metricType = await this.loadMetricType(chaMetric.metricType);
+    CommonMetricService.validateMetricType(metricType, chaMetric.metricType, MetricGroup.ADAPTERS);
+    const metricDao: ChaMetricEntity = await this.createMetric(idSystem, metricType, chaMetric.date);
 
     metricDao.value = chaMetric.value;
     metricDao.idSystem = idSystem;
     metricDao.idCha = idCha;
     metricDao.date = chaMetric.date;
-    metricDao.metricType = chaMetric.metricType;
+    metricDao.metricTypeEntity = metricType;
 
-    const value = await this.chaMetricRepository.save(metricDao);
-    return value;
+    return await this.chaMetricRepository.save(metricDao);
   }
 
-  private async createMetric(idSystemSearch: number, metricTypeSearch: MetricType, dateSearch): Promise<ChaMetricEntity> {
+  private async createMetric(idSystemSearch: number, metricTypeSearch: CatMetricTypeEntity, dateSearch): Promise<ChaMetricEntity> {
     const metricDao = await this.chaMetricRepository
-      .findOne({ idSystem: idSystemSearch, metricType: metricTypeSearch, date: dateSearch })
+      .findOne({ idSystem: idSystemSearch, metricTypeEntity: metricTypeSearch, date: dateSearch })
       .then(dao => dao);
 
     if (metricDao === undefined) {

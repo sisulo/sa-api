@@ -10,4 +10,7 @@ export class CatMetricTypeEntity {
 
   @Column({ name: 'unit' })
   unit: string;
+
+  @Column({ name: 'id_cat_metric_group' })
+  idCatMetricGroup: number;
 }

@@ -18,6 +18,7 @@ import { ChaMetricEntity } from './entities/cha-metric.entity';
 import { ChaEntity } from './entities/cha.entity';
 import { DataCenterEntity } from './entities/data-center.entity';
 import { DataCenterService } from './data-center.service';
+import { MetricTypeService } from './metric-type.service';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { DataCenterService } from './data-center.service';
     TypeOrmModule.forFeature([ChaEntity]),
     TypeOrmModule.forFeature([DataCenterEntity]),
   ],
-  providers: [SystemMetricService, PoolMetricService, PoolService, SystemService, ChaMetricService, ChaService, DataCenterService],
+  providers: [SystemMetricService, PoolMetricService, PoolService, SystemService, ChaMetricService, ChaService, DataCenterService, MetricTypeService],
   controllers: [SystemMetricController, PoolMetricController, ChaMetricController],
   exports: [DataCenterService],
 })

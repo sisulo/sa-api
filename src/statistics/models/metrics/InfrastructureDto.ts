@@ -1,5 +1,5 @@
-import {Metric} from './Metric';
-import {Alert} from './Alert';
+import { Metric } from './Metric';
+import { Alert } from './Alert';
 
 export class InfrastructureDto  {
   alerts: Alert[];

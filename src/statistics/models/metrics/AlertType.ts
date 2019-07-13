@@ -5,5 +5,5 @@ export enum AlertType {
   CPU = 'cpu',
   HDD = 'hdd',
   WRITE_PENDING = 'write_pending',
-  RESPONSE = 'response'
+  RESPONSE = 'response',
 }

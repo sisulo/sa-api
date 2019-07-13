@@ -5,37 +5,43 @@ import { SystemMetricEntity } from './entities/system-metric.entity';
 import { SystemMetricRequestDto } from './dto/system-metric-request.dto';
 import { SystemEntity } from './entities/system.entity';
 import { SystemService } from './system.service';
-import { MetricType } from './enums/metric-type.enum';
+import { CatMetricTypeEntity } from './entities/cat-metric-type.entity';
+import { CommonMetricService } from './common-metric.service';
+import { MetricTypeService } from './metric-type.service';
+import { MetricGroup } from './data-center.service';
 
 @Injectable()
-export class SystemMetricService {
+export class SystemMetricService extends CommonMetricService {
 
   constructor(
     @InjectRepository(SystemMetricEntity)
     private readonly systemMetricRepository: Repository<SystemMetricEntity>,
     private readonly systemService: SystemService,
+    private readonly metricTypeService: MetricTypeService,
   ) {
+    super(metricTypeService);
   }
 
   async upsert(idSystem: number, systemMetric: SystemMetricRequestDto): Promise<SystemMetricEntity> {
 
     await this.validateSystem(idSystem);
+    const metricType = await this.loadMetricType(systemMetric.metricType);
+    CommonMetricService.validateMetricType(metricType, systemMetric.metricType, MetricGroup.PERFORMANCE);
 
-    const metricDao: SystemMetricEntity = await this.createMetric(idSystem, systemMetric.metricType, systemMetric.date);
+    const metricDao: SystemMetricEntity = await this.createMetric(idSystem, metricType, systemMetric.date);
 
     metricDao.value = systemMetric.value;
     metricDao.idSystem = idSystem;
     metricDao.peak = systemMetric.peak;
     metricDao.date = systemMetric.date;
-    metricDao.metricType = systemMetric.metricType;
+    metricDao.metricTypeEntity = metricType;
 
-    const value = await this.systemMetricRepository.save(metricDao);
-    return value;
+    return await this.systemMetricRepository.save(metricDao);
   }
 
-  private async createMetric(idSystemSearch: number, metricTypeSearch: MetricType, dateSearch): Promise<SystemMetricEntity> {
+  private async createMetric(idSystemSearch: number, metricTypeSearch: CatMetricTypeEntity, dateSearch): Promise<SystemMetricEntity> {
     const metricDao = await this.systemMetricRepository
-      .findOne({ idSystem: idSystemSearch, metricType: metricTypeSearch, date: dateSearch })
+      .findOne({ idSystem: idSystemSearch, metricTypeEntity: metricTypeSearch, date: dateSearch })
       .then(dao => dao);
 
     if (metricDao === undefined) {
@@ -54,4 +60,5 @@ export class SystemMetricService {
       throw new NotFoundException('System with id \'' + idSystemSearch + '\' not found');
     }
   }
+
 }

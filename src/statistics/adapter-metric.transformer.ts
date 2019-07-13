@@ -1,9 +1,9 @@
-import { SystemDetail } from './dto/models/SystemDetail';
-import { SystemMetric } from './dto/models/metrics/SystemMetric';
+import { SystemDetail } from './models/SystemDetail';
+import { SystemMetric } from './models/metrics/SystemMetric';
 import { DataCenterEntity } from '../collector/entities/data-center.entity';
 import { SystemEntity } from '../collector/entities/system.entity';
-import { CapacityStatisticsDto } from './dto/models/dtos/CapacityStatisticsDto';
-import { SystemPool } from './dto/models/SystemPool';
+import { CapacityStatisticsDto } from './models/dtos/CapacityStatisticsDto';
+import { SystemPool } from './models/SystemPool';
 import { ChaEntity } from '../collector/entities/cha.entity';
 import { ChaMetricEntity } from '../collector/entities/cha-metric.entity';
 

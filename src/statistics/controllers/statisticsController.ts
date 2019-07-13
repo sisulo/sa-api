@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { DataCenterStatisticsService } from '../data-center-statistics/data-center-statistics.service';
+import { DataCenterStatisticsService } from '../services/data-center-statistics.service';
 import { MetricGroup } from '../../collector/data-center.service';
 import { StatisticParams } from './params/statistic.params';
 import { StatisticQueryParams } from './params/statistics.query-params';
@@ -10,7 +10,7 @@ export class StatisticsController {
   constructor(private dataCenterStatisticsService: DataCenterStatisticsService) {
   }
 
-  @Get(':idDataCenter/performance') // Todo better resource like API
+  @Get(':idDataCenter/performance')
   performanceStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
     return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.PERFORMANCE, params.idDataCenter, queryParams.date);
   }
