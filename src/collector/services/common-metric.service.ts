@@ -1,5 +1,5 @@
-import { MetricType } from './enums/metric-type.enum';
-import { CatMetricTypeEntity } from './entities/cat-metric-type.entity';
+import { MetricType } from '../enums/metric-type.enum';
+import { CatMetricTypeEntity } from '../entities/cat-metric-type.entity';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { MetricTypeService } from './metric-type.service';
 import { MetricGroup } from './data-center.service';

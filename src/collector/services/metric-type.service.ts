@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CatMetricTypeEntity } from './entities/cat-metric-type.entity';
+import { CatMetricTypeEntity } from '../entities/cat-metric-type.entity';
 
 @Injectable()
 export class MetricTypeService {

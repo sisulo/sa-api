@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { DataCenterStatisticsService } from '../services/data-center-statistics.service';
-import { MetricGroup } from '../../collector/data-center.service';
+import { MetricGroup } from '../../collector/services/data-center.service';
 import { StatisticParams } from './params/statistic.params';
 import { StatisticQueryParams } from './params/statistics.query-params';
 // Todo logging request/response

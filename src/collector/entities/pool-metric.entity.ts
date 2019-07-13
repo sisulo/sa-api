@@ -5,10 +5,10 @@ import { PoolEntity } from './pool.entity';
 @Entity('pool_metrics')
 export class PoolMetricEntity {
   @PrimaryGeneratedColumn({ name: 'id_pool_metric' })
-  id: string;
+  id: number;
 
   @Column({ name: 'value' })
-  value: string;
+  value: number;
 
   @Column({ name: 'date' })
   date: Date;
@@ -23,7 +23,7 @@ export class PoolMetricEntity {
   @JoinColumn({ name: 'id_cat_metric_type' })
   metricTypeEntity: CatMetricTypeEntity;
 
-  @ManyToOne(() => PoolEntity, pool => pool.metrics)
-  @JoinColumn({name: 'id_pool'})
+  @ManyToOne(() => PoolEntity, pool => pool.metrics, { eager: true })
+  @JoinColumn({ name: 'id_pool' })
   pool: PoolEntity;
 }

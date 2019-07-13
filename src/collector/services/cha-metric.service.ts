@@ -1,15 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SystemEntity } from './entities/system.entity';
+import { SystemEntity } from '../entities/system.entity';
 import { SystemService } from './system.service';
-import { ChaMetricEntity } from './entities/cha-metric.entity';
-import { ChaMetricRequestDto } from './dto/cha-metric-request.dto';
-import { ChaEntity } from './entities/cha.entity';
+import { ChaMetricEntity } from '../entities/cha-metric.entity';
+import { ChaMetricRequestDto } from '../dto/cha-metric-request.dto';
+import { ChaEntity } from '../entities/cha.entity';
 import { ChaService } from './cha.service';
 import { CommonMetricService } from './common-metric.service';
 import { MetricTypeService } from './metric-type.service';
-import { CatMetricTypeEntity } from './entities/cat-metric-type.entity';
+import { CatMetricTypeEntity } from '../entities/cat-metric-type.entity';
 import { MetricGroup } from './data-center.service';
 
 @Injectable()

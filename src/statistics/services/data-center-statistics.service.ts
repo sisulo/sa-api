@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PerformanceMetricTransformer } from '../performance-metric.transformer';
-import { DataCenterService, MetricGroup } from '../../collector/data-center.service';
+import { DataCenterService, MetricGroup } from '../../collector/services/data-center.service';
 import { DataCenterEntity } from '../../collector/entities/data-center.entity';
 import { AdapterMetricTransformer } from '../adapter-metric.transformer';
 import { CapacityMetricTransformer } from '../capacity-metric.transformer';

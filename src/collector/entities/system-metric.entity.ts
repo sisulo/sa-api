@@ -5,10 +5,10 @@ import { CatMetricTypeEntity } from './cat-metric-type.entity';
 @Entity('system_metrics')
 export class SystemMetricEntity {
   @PrimaryGeneratedColumn({ name: 'id_system_metric', type: 'integer' })
-  idSystemMetric: string;
+  id: number;
 
-  @Column({ name: 'value', length: 100 })
-  value: string;
+  @Column({ name: 'value' })
+  value: number;
 
   @Column({ name: 'peak' })
   peak: number;
@@ -16,14 +16,14 @@ export class SystemMetricEntity {
   @Column({ name: 'id_system' })
   idSystem: number;
 
-  @ManyToOne(() => SystemEntity, system => system.idSystem)
+  @ManyToOne(() => SystemEntity, system => system.idSystem, { eager: true })
   @JoinColumn({ name: 'id_system' })
   system: SystemEntity;
 
   @Column('date', { name: 'date' })
   date: Date;
 
-  @ManyToOne(() => CatMetricTypeEntity)
+  @ManyToOne(() => CatMetricTypeEntity, { eager: true })
   @JoinColumn({ name: 'id_cat_metric_type' })
   metricTypeEntity: CatMetricTypeEntity;
 }

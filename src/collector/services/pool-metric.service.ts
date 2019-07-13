@@ -1,15 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SystemEntity } from './entities/system.entity';
-import { PoolMetricRequestDto } from './dto/pool-metric-request.dto';
-import { PoolMetricEntity } from './entities/pool-metric.entity';
-import { PoolEntity } from './entities/pool.entity';
+import { SystemEntity } from '../entities/system.entity';
+import { PoolMetricRequestDto } from '../dto/pool-metric-request.dto';
+import { PoolMetricEntity } from '../entities/pool-metric.entity';
+import { PoolEntity } from '../entities/pool.entity';
 import { SystemService } from './system.service';
 import { PoolService } from './pool.service';
 import { CommonMetricService } from './common-metric.service';
 import { MetricTypeService } from './metric-type.service';
-import { CatMetricTypeEntity } from './entities/cat-metric-type.entity';
+import { CatMetricTypeEntity } from '../entities/cat-metric-type.entity';
 import { MetricGroup } from './data-center.service';
 
 @Injectable()

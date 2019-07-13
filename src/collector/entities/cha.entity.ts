@@ -14,7 +14,7 @@ export class ChaEntity {
   @Column({ name: 'id_system' })
   idSystem: number;
 
-  @ManyToOne(() => SystemEntity)
+  @ManyToOne(() => SystemEntity, { eager: true })
   @JoinColumn({ name: 'id_system' })
   system: SystemEntity;
 

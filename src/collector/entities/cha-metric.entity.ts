@@ -11,8 +11,8 @@ export class ChaMetricEntity {
   @Column({ name: 'id_cha' })
   idCha: number;
 
-  @Column({ name: 'value', length: 100 })
-  value: string;
+  @Column({ name: 'value' })
+  value: number;
 
   @Column({ name: 'id_system' })
   idSystem: number;
@@ -20,11 +20,11 @@ export class ChaMetricEntity {
   @Column('date', { name: 'date' })
   date: Date;
 
-  @ManyToOne(() => CatMetricTypeEntity)
+  @ManyToOne(() => CatMetricTypeEntity, { eager: true })
   @JoinColumn({ name: 'id_cat_metric_type' })
   metricTypeEntity: CatMetricTypeEntity;
 
-  @ManyToOne(() => ChaEntity)
+  @ManyToOne(() => ChaEntity, { eager: true })
   @JoinColumn({ name: 'id_cha' })
   adapter: ChaEntity;
 }

@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PoolEntity } from './entities/pool.entity';
 import { Repository } from 'typeorm';
-import { ChaEntity } from './entities/cha.entity';
+import { ChaEntity } from '../entities/cha.entity';
 
 @Injectable()
 export class ChaService {
@@ -14,10 +13,8 @@ export class ChaService {
   }
 
   public async findById(idSystemParam: number, idChaParam: number): Promise<ChaEntity> {
-    const dao = await this.repository
+    return await this.repository
       .findOne({ idSystem: idSystemParam, idCha: idChaParam })
       .then(metricType => metricType);
-
-    return dao;
   }
 }

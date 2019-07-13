@@ -1,20 +1,18 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { SystemMetricService } from '../system-metric.service';
-import { SystemMetricEntity } from '../entities/system-metric.entity';
+import { Body, Controller, Param, Post } from '@nestjs/common';
+import { SystemMetricService } from '../services/system-metric.service';
 import { SystemMetricRequestDto } from '../dto/system-metric-request.dto';
+import { SystemMetricResponseTransformer } from '../transformers/system-metric-response.transformer';
+import { SystemMetricResponseDto } from '../dto/system-metric-response.dto';
 
 @Controller('/api/v1/systems')
 export class SystemMetricController {
 
   constructor(readonly service: SystemMetricService) {
-
   }
 
-  // TODO respond with ResponseDto
   @Post(':id/metrics')
-  upsert(@Param('id') id: string, @Body() request: SystemMetricRequestDto): Promise<SystemMetricEntity> {
-    return this.service.upsert(parseInt(id, 10), request).then(value => {
-      return value;
-    });
+  async upsert(@Param('id') id: string, @Body() request: SystemMetricRequestDto): Promise<SystemMetricResponseDto> {
+    const metric = await this.service.upsert(parseInt(id, 10), request).then(dao => dao);
+    return SystemMetricResponseTransformer.transform(metric);
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { DataCenterEntity } from './entities/data-center.entity';
+import { DataCenterEntity } from '../entities/data-center.entity';
 
 export enum MetricGroup {
   PERFORMANCE = 1,
