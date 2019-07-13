@@ -13,9 +13,6 @@ export class SystemMetricEntity {
   @Column({ name: 'peak' })
   peak: number;
 
-  @Column({ name: 'id_system' })
-  idSystem: number;
-
   @ManyToOne(() => SystemEntity, system => system.idSystem, { eager: true })
   @JoinColumn({ name: 'id_system' })
   system: SystemEntity;

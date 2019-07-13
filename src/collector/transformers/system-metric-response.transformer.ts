@@ -7,7 +7,7 @@ export class SystemMetricResponseTransformer {
     response.idMetric = metric.id;
     response.date = metric.date;
     response.value = metric.value;
-    response.idSystem = metric.idSystem;
+    response.idSystem = metric.system.idSystem;
     response.systemName = metric.system.name;
     response.metricType = metric.metricTypeEntity.name;
     return response;

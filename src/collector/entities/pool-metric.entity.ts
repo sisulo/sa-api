@@ -13,12 +13,6 @@ export class PoolMetricEntity {
   @Column({ name: 'date' })
   date: Date;
 
-  @Column({ name: 'id_pool' })
-  idPool: number;
-
-  @Column({ name: 'id_system' })
-  idSystem: number; // TODO remove idSystem from DB
-
   @ManyToOne(() => CatMetricTypeEntity)
   @JoinColumn({ name: 'id_cat_metric_type' })
   metricTypeEntity: CatMetricTypeEntity;

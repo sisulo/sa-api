@@ -7,9 +7,9 @@ export class PoolMetricResponseTransformer {
     response.idMetric = metric.id;
     response.date = metric.date;
     response.value = metric.value;
-    response.idPool = metric.idPool;
+    response.idPool = metric.pool.idPool;
     response.poolName = metric.pool.name;
-    response.idSystem = metric.idSystem;
+    response.idSystem = metric.pool.system.idSystem;
     response.systemName = metric.pool.system.name;
     response.metricType = metric.metricTypeEntity.name;
     return response;

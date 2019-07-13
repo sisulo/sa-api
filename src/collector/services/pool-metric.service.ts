@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SystemEntity } from '../entities/system.entity';
 import { PoolMetricRequestDto } from '../dto/pool-metric-request.dto';
 import { PoolMetricEntity } from '../entities/pool-metric.entity';
 import { PoolEntity } from '../entities/pool.entity';
@@ -27,17 +26,15 @@ export class PoolMetricService extends CommonMetricService {
 
   async upsert(idSystem: number, idPool: number, poolMetric: PoolMetricRequestDto): Promise<PoolMetricEntity> {
 
-    await this.validateSystem(idSystem);
-
-    await this.validatePool(idSystem, idPool);
+    const poolDao = await this.loadPool(idSystem, idPool);
 
     const metricType = await this.loadMetricType(poolMetric.metricType);
     CommonMetricService.validateMetricType(metricType, poolMetric.metricType, MetricGroup.CAPACITY);
 
-    const metricDao: PoolMetricEntity = await this.createMetric(idSystem, idPool, metricType, poolMetric.date);
+    const metricDao: PoolMetricEntity = await this.createMetric(poolDao, metricType, poolMetric.date);
 
     metricDao.value = poolMetric.value;
-    metricDao.idPool = idPool;
+    metricDao.pool = poolDao;
     metricDao.date = poolMetric.date;
     metricDao.idSystem = idSystem;
     metricDao.metricTypeEntity = metricType;
@@ -45,12 +42,11 @@ export class PoolMetricService extends CommonMetricService {
     return await this.poolMetricRepository.save(metricDao);
   }
 
-  private async createMetric(idSystemSearch: number,
-                             idPoolSearch: number,
+  private async createMetric(poolSearch: PoolEntity,
                              metricTypeSearch: CatMetricTypeEntity,
                              dateSearch): Promise<PoolMetricEntity> {
     const metricDao = await this.poolMetricRepository
-      .findOne({ idPool: idPoolSearch, idSystem: idSystemSearch, metricTypeEntity: metricTypeSearch, date: dateSearch })
+      .findOne({ pool: poolSearch, metricTypeEntity: metricTypeSearch, date: dateSearch })
       .then(dao => dao);
 
     if (metricDao === undefined) {
@@ -60,20 +56,12 @@ export class PoolMetricService extends CommonMetricService {
     return metricDao;
   }
 
-  private async validateSystem(idSystem: number) {
-    const systemDao: SystemEntity = await this.systemService
-      .findById(idSystem)
-      .then(dao => dao);
-    if (systemDao === undefined) {
-      throw new NotFoundException('System with id \'' + idSystem + '\' not found');
-    }
-  }
-
-  private async validatePool(idSystemSearch: number, idPoolSearch: number) {
-    let systemDao: PoolEntity;
-    systemDao = await this.poolService.findById(idSystemSearch, idPoolSearch);
-    if (systemDao === undefined) {
+  private async loadPool(idSystemSearch: number, idPoolSearch: number): Promise<PoolEntity> {
+    let poolDao: PoolEntity;
+    poolDao = await this.poolService.findById(idSystemSearch, idPoolSearch);
+    if (poolDao === undefined) {
       throw new NotFoundException('Pool with id \'' + idPoolSearch + '\' not found');
     }
+    return poolDao;
   }
 }

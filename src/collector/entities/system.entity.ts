@@ -16,16 +16,16 @@ export class SystemEntity {
   @Column({ name: 'id_datacenter' })
   idDataCenter: number;
 
-  @ManyToOne(type => DataCenterEntity)
+  @ManyToOne(() => DataCenterEntity)
   @JoinColumn({name: 'id_datacenter'})
   datacenter: DataCenterEntity;
 
-  @OneToMany(type => SystemMetricEntity, metric => metric.system)
+  @OneToMany(() => SystemMetricEntity, metric => metric.system)
   metrics: SystemMetricEntity[];
 
-  @OneToMany(type => PoolEntity, pool => pool.system)
+  @OneToMany(() => PoolEntity, pool => pool.system)
   pools: PoolEntity[];
 
-  @OneToMany(type => ChaEntity, adapter => adapter.system)
+  @OneToMany(() => ChaEntity, adapter => adapter.system)
   adapters: ChaEntity[];
 }

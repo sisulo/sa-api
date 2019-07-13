@@ -24,14 +24,14 @@ export class SystemMetricService extends CommonMetricService {
 
   async upsert(idSystem: number, systemMetric: SystemMetricRequestDto): Promise<SystemMetricEntity> {
 
-    await this.validateSystem(idSystem);
+    const systemDao = await this.loadSystem(idSystem);
     const metricType = await this.loadMetricType(systemMetric.metricType);
     CommonMetricService.validateMetricType(metricType, systemMetric.metricType, MetricGroup.PERFORMANCE);
 
-    const metricDao: SystemMetricEntity = await this.createMetric(idSystem, metricType, systemMetric.date);
+    const metricDao: SystemMetricEntity = await this.createMetric(systemDao, metricType, systemMetric.date);
 
     metricDao.value = systemMetric.value;
-    metricDao.idSystem = idSystem;
+    metricDao.system = systemDao;
     metricDao.peak = systemMetric.peak;
     metricDao.date = systemMetric.date;
     metricDao.metricTypeEntity = metricType;
@@ -39,9 +39,9 @@ export class SystemMetricService extends CommonMetricService {
     return await this.systemMetricRepository.save(metricDao);
   }
 
-  private async createMetric(idSystemSearch: number, metricTypeSearch: CatMetricTypeEntity, dateSearch): Promise<SystemMetricEntity> {
+  private async createMetric(systemSearch: SystemEntity, metricTypeSearch: CatMetricTypeEntity, dateSearch): Promise<SystemMetricEntity> {
     const metricDao = await this.systemMetricRepository
-      .findOne({ idSystem: idSystemSearch, metricTypeEntity: metricTypeSearch, date: dateSearch })
+      .findOne({ system: systemSearch, metricTypeEntity: metricTypeSearch, date: dateSearch })
       .then(dao => dao);
 
     if (metricDao === undefined) {
@@ -51,7 +51,7 @@ export class SystemMetricService extends CommonMetricService {
     return metricDao;
   }
 
-  private async validateSystem(idSystemSearch: number) {
+  private async loadSystem(idSystemSearch: number): Promise<SystemEntity> {
     const systemDao: SystemEntity = await this.systemService
       .findById(idSystemSearch)
       .then(dao => dao);
@@ -59,6 +59,7 @@ export class SystemMetricService extends CommonMetricService {
     if (systemDao === undefined) {
       throw new NotFoundException('System with id \'' + idSystemSearch + '\' not found');
     }
+    return systemDao;
   }
 
 }

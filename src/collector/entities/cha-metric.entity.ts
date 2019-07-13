@@ -8,14 +8,8 @@ export class ChaMetricEntity {
   @PrimaryGeneratedColumn({ name: 'id_cha_metric' })
   id: number;
 
-  @Column({ name: 'id_cha' })
-  idCha: number;
-
   @Column({ name: 'value' })
   value: number;
-
-  @Column({ name: 'id_system' })
-  idSystem: number;
 
   @Column('date', { name: 'date' })
   date: Date;
