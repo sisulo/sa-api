@@ -1,25 +1,25 @@
 import { SystemDetail } from './dto/models/SystemDetail';
 import { SystemMetric } from './dto/models/metrics/SystemMetric';
-import { PerformanceStatisticsDto } from './dto/models/dtos/PerformanceStatisticsDto';
 import { DataCenterEntity } from '../collector/entities/data-center.entity';
-import { SystemMetricEntity } from '../collector/entities/system-metric.entity';
 import { SystemEntity } from '../collector/entities/system.entity';
 import { CapacityStatisticsDto } from './dto/models/dtos/CapacityStatisticsDto';
 import { SystemPool } from './dto/models/SystemPool';
-import { PoolEntity } from '../collector/entities/pool.entity';
-import { PoolMetricEntity } from '../collector/entities/pool-metric.entity';
 import { ChaEntity } from '../collector/entities/cha.entity';
 import { ChaMetricEntity } from '../collector/entities/cha-metric.entity';
 
 export class AdapterMetricTransformer {
-  public static async transform(dataCenterPromise: Promise<DataCenterEntity>): Promise<CapacityStatisticsDto> {
+  public static async transform(dataCenterPromise: DataCenterEntity): Promise<CapacityStatisticsDto> {
     const response = new CapacityStatisticsDto();
-    const dataCenter = await dataCenterPromise.then(entity => entity);
+    const dataCenter = await dataCenterPromise;
     response.id = dataCenter.idDatacenter;
     response.name = dataCenter.name;
-    response.systems = dataCenter.systems.map(
-      system => AdapterMetricTransformer.createSystemPool(system),
-    );
+    if (dataCenter.systems != null) {
+      response.systems = dataCenter.systems.map(
+        system => AdapterMetricTransformer.createSystemPool(system),
+      );
+    } else {
+      response.systems = [];
+    }
     return response;
   }
 
@@ -37,9 +37,13 @@ export class AdapterMetricTransformer {
     const poolDetails: SystemDetail = new SystemDetail();
     poolDetails.id = pool.idCha;
     poolDetails.name = pool.name;
-    poolDetails.metrics = pool.metrics.map(
-      metric => AdapterMetricTransformer.createSystemMetric(metric),
-    );
+    if (pool.metrics != null) {
+      poolDetails.metrics = pool.metrics.map(
+        metric => AdapterMetricTransformer.createSystemMetric(metric),
+      );
+    } else {
+      poolDetails.metrics = [];
+    }
     return poolDetails;
   }
 
@@ -51,6 +55,5 @@ export class AdapterMetricTransformer {
     metricDetail.value = parseFloat(metric.value);
     return metricDetail;
   }
-
 
 }

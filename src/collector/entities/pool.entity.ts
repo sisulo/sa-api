@@ -11,14 +11,14 @@ export class PoolEntity {
   @Column({ name: 'name' })
   name: string;
 
-  @Column({name: 'id_system'})
+  @Column({ name: 'id_system' })
   idSystem: number;
 
-  @ManyToOne(type => SystemEntity)
-  @JoinColumn({name: 'id_system'})
+  @ManyToOne(() => SystemEntity)
+  @JoinColumn({ name: 'id_system' })
   system: SystemEntity;
 
-  @OneToMany(type => PoolMetricEntity, metric => metric.pool)
+  @OneToMany(() => PoolMetricEntity, metric => metric.pool)
   metrics: PoolMetricEntity[];
 
 }

@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { MetricType } from '../enums/metric-type.enum';
 import { MetricTypeTransformer } from '../transformers/metric-type.transformer';
 import { SystemEntity } from './system.entity';
@@ -18,8 +18,8 @@ export class SystemMetricEntity {
   @Column({ name: 'id_system' })
   idSystem: number;
 
-  @ManyToOne(type => SystemEntity, system => system.idSystem)
-  @JoinColumn({name: 'id_system'})
+  @ManyToOne(() => SystemEntity, system => system.idSystem)
+  @JoinColumn({ name: 'id_system' })
   system: SystemEntity;
 
   @Column('date', { name: 'date' })
@@ -28,7 +28,7 @@ export class SystemMetricEntity {
   @Column({ name: 'id_cat_metric_type', transformer: MetricTypeTransformer })
   metricType: MetricType; // Todo remove and use entity
 
-  @ManyToOne(type => CatMetricTypeEntity)
-  @JoinColumn({name: 'id_cat_metric_type'})
+  @ManyToOne(() => CatMetricTypeEntity)
+  @JoinColumn({ name: 'id_cat_metric_type' })
   metricTypeEntity: CatMetricTypeEntity;
 }

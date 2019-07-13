@@ -4,6 +4,13 @@ import { Repository } from 'typeorm';
 import { DataCenterEntity } from './entities/data-center.entity';
 import { MetricType } from './enums/metric-type.enum';
 
+export enum MetricGroup {
+  CAPACITY,
+  PERFORMANCE,
+  ADAPTERS,
+  SLA,
+}
+
 @Injectable()
 export class DataCenterService {
 
@@ -13,9 +20,18 @@ export class DataCenterService {
   ) {
   }
 
-  async getPerformanceMetrics(idDataCenterParam: number, dateParam: Date): Promise<DataCenterEntity> {
+  async findById(idDataCenter: number): Promise<DataCenterEntity> {
+    return await this.dataCenterRepository.findOne(idDataCenter);
+  }
 
-    return await this.dataCenterRepository.createQueryBuilder('datacenter')
+  async getMetricsByGroup(metricGroup: MetricGroup, idDataCenterParam: number, dateParam: Date): Promise<DataCenterEntity> {
+    const dcDao = await this.loadMetrics(metricGroup, idDataCenterParam, dateParam);
+    return dcDao || await this.getEmptyDatacenter(idDataCenterParam);
+  }
+
+  getPerformanceMetrics(idDataCenterParam: number, dateParam: Date): Promise<DataCenterEntity> {
+
+    return this.dataCenterRepository.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.metrics', 'metrics')
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
@@ -36,9 +52,9 @@ export class DataCenterService {
       .getOne();
   }
 
-  async getCapacityMetrics(idDataCenterParam: number, dateParam: Date): Promise<DataCenterEntity> {
+  getCapacityMetrics(idDataCenterParam: number, dateParam: Date): Promise<DataCenterEntity> {
 
-    return await this.dataCenterRepository.createQueryBuilder('datacenter')
+    return this.dataCenterRepository.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.pools', 'pool')
       .leftJoinAndSelect('pool.metrics', 'metrics')
@@ -65,6 +81,9 @@ export class DataCenterService {
             MetricType.PHYSICAL_FREE,
             MetricType.LOGICAL_CAPACITY,
             MetricType.LOGICAL_USED,
+            MetricType.LOGICAL_FREE,
+            MetricType.SLA_EVENTS, // maybe make a new call
+            MetricType.OUT_OF_SLA_TIME, // maybe make a new call
             MetricType.LOGICAL_USED_PERC,
             MetricType.NET_TOTAL,
             MetricType.NET_FREE,
@@ -77,9 +96,9 @@ export class DataCenterService {
       .getOne();
   }
 
-  async getChannelAdapterMetrics(idDataCenterParam: number, dateParam: Date): Promise<DataCenterEntity> {
+  getChannelAdapterMetrics(idDataCenterParam: number, dateParam: Date): Promise<DataCenterEntity> {
 
-    return await this.dataCenterRepository.createQueryBuilder('datacenter')
+    return this.dataCenterRepository.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.adapters', 'adapter')
       .leftJoinAndSelect('adapter.metrics', 'metrics')
@@ -96,5 +115,22 @@ export class DataCenterService {
           ],
         })
       .getOne();
+  }
+
+  getEmptyDatacenter(idDataCenterParam: number): Promise<DataCenterEntity> {
+    return this.findById(idDataCenterParam).then(dao => dao);
+  }
+
+  private loadMetrics(metricGroup: MetricGroup, idDataCenterParam: number, dateParam: Date) {
+    switch (metricGroup) {
+      case MetricGroup.PERFORMANCE:
+        return this.getPerformanceMetrics(idDataCenterParam, dateParam);
+      case MetricGroup.CAPACITY:
+        return this.getCapacityMetrics(idDataCenterParam, dateParam);
+      case MetricGroup.ADAPTERS:
+        return this.getChannelAdapterMetrics(idDataCenterParam, dateParam);
+      case MetricGroup.SLA:
+        return this.getCapacityMetrics(idDataCenterParam, dateParam);
+    }
   }
 }

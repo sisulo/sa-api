@@ -14,10 +14,10 @@ export class ChaEntity {
   @Column({ name: 'id_system' })
   idSystem: number;
 
-  @ManyToOne(type => SystemEntity)
-  @JoinColumn({name: 'id_system'})
+  @ManyToOne(() => SystemEntity)
+  @JoinColumn({ name: 'id_system' })
   system: SystemEntity;
 
-  @OneToMany(type => ChaMetricEntity, metric => metric.adapter)
+  @OneToMany(() => ChaMetricEntity, metric => metric.adapter)
   metrics: ChaMetricEntity[];
 }

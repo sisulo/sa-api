@@ -6,14 +6,17 @@ import { SystemMetricEntity } from '../collector/entities/system-metric.entity';
 import { SystemEntity } from '../collector/entities/system.entity';
 
 export class PerformanceMetricTransformer {
-  public static async transform(dataCenterPromise: Promise<DataCenterEntity>): Promise<PerformanceStatisticsDto> {
+  public static async transform(dataCenter: DataCenterEntity): Promise<PerformanceStatisticsDto> {
     const response = new PerformanceStatisticsDto();
-    const dataCenter = await dataCenterPromise.then(entity => entity);
     response.id = dataCenter.idDatacenter;
     response.label = dataCenter.name;
-    response.systems = dataCenter.systems.map(
-      system => PerformanceMetricTransformer.createSystemDetail(system),
-    );
+    if (dataCenter.systems != null) {
+      response.systems = dataCenter.systems.map(
+        system => PerformanceMetricTransformer.createSystemDetail(system),
+      );
+    } else {
+      dataCenter.systems = []; // Todo it is ignored in Serializations
+    }
     return response;
   }
 
@@ -31,9 +34,13 @@ export class PerformanceMetricTransformer {
     const systemDetails: SystemDetail = new SystemDetail();
     systemDetails.id = system.idSystem;
     systemDetails.name = system.name;
-    systemDetails.metrics = system.metrics.map(
-      metric => PerformanceMetricTransformer.createSystemMetric(metric),
-    );
+    if (system.metrics != null) {
+      systemDetails.metrics = system.metrics.map(
+        metric => PerformanceMetricTransformer.createSystemMetric(metric),
+      );
+    } else {
+      system.metrics = [];
+    }
     return systemDetails;
   }
 }

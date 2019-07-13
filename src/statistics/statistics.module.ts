@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
-import { StatisticsController } from './controllers/performance/statisticsController';
-import { PerformanceMetricService } from './performance-metric/performance-metric.service';
+import { StatisticsController } from './controllers/statisticsController';
+import { DataCenterStatisticsService } from './data-center-statistics/data-center-statistics.service';
 import { CollectorModule } from '../collector/collector.module';
-import { CapacityMetricService } from './capacity-metric/capacity-metric.service';
-import { ChannelAdapterMetricService } from './channel-adapter-metric/channel-adapter-metric.service';
 
 @Module({
   controllers: [StatisticsController],
-  providers: [PerformanceMetricService, CapacityMetricService, ChannelAdapterMetricService],
+  providers: [DataCenterStatisticsService],
   imports: [CollectorModule],
 })
 export class StatisticsModule {}
