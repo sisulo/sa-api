@@ -1,10 +1,12 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post, UseInterceptors } from '@nestjs/common';
 import { ChaMetricRequestDto } from '../dto/cha-metric-request.dto';
 import { ChaMetricService } from '../services/cha-metric.service';
 import { ChaMetricResponseTransformer } from '../transformers/cha-metric-response.transformer';
 import { ChaMetricResponseDto } from '../dto/cha-metric-response.dto';
+import { LoggingInterceptor } from '../../logging.interceptor';
 
 @Controller('/api/v1/systems/:idSystem/chas')
+@UseInterceptors(LoggingInterceptor)
 export class ChaMetricController {
 
   constructor(readonly service: ChaMetricService) {
