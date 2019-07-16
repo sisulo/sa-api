@@ -4,19 +4,27 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CollectorModule } from './collector/collector.module';
 import { StatisticsModule } from './statistics/statistics.module';
+import { ConfigService } from './config/config.service';
+import { ConfigModule } from './config/config.module';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
-    type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'postgres',
-    password: 'postgres',
-    database: 'storageAnalytics',
-    entities: [__dirname + '/**/entities/*{.ts,.js}'],
-    synchronize: false,
+  imports: [TypeOrmModule.forRootAsync({
+    imports: [ConfigModule],
+    useFactory: async (configService: ConfigService) => ({
+      type: 'postgres',
+      host: configService.getDatabaseHost(),
+      port: configService.getDatabasePort(),
+      username: configService.getDatabaseUsername(),
+      password: configService.getDatabasePassword(),
+      database: configService.getDatabaseName(),
+      entities: [__dirname + '/**/entities/*{.ts,.js}'],
+      synchronize: false,
+    } as PostgresConnectionOptions),
+    inject: [ConfigService],
   }), CollectorModule, StatisticsModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+}
