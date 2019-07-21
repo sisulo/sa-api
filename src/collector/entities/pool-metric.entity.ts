@@ -1,24 +1,23 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { MetricTypeTransformer } from '../transformers/metric-type.transformer';
-import { MetricType } from '../enums/metric-type.enum';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { CatMetricTypeEntity } from './cat-metric-type.entity';
+import { PoolEntity } from './pool.entity';
 
 @Entity('pool_metrics')
 export class PoolMetricEntity {
-  @PrimaryGeneratedColumn({name: 'id_pool_metric'})
-  id: string;
+  @PrimaryGeneratedColumn({ name: 'id_pool_metric' })
+  id: number;
 
-  @Column({ name: 'id_cat_metric_type', transformer: MetricTypeTransformer })
-  metricType: MetricType;
+  @Column({ name: 'value' })
+  value: number;
 
-  @Column({name: 'value'})
-  value: string;
-
-  @Column({name: 'date'})
+  @Column({ name: 'date' })
   date: Date;
 
-  @Column({name: 'id_pool'})
-  idPool: number;
+  @ManyToOne(() => CatMetricTypeEntity)
+  @JoinColumn({ name: 'id_cat_metric_type' })
+  metricTypeEntity: CatMetricTypeEntity;
 
-  @Column({name: 'id_system'})
-  idSystem: number;
+  @ManyToOne(() => PoolEntity, pool => pool.metrics, { eager: true })
+  @JoinColumn({ name: 'id_pool' })
+  pool: PoolEntity;
 }

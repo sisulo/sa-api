@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { SystemEntity } from './system.entity';
+import { PoolMetricEntity } from './pool-metric.entity';
 
 @Entity('pools')
 export class PoolEntity {
@@ -9,7 +11,11 @@ export class PoolEntity {
   @Column({ name: 'name' })
   name: string;
 
-  @Column({name: 'id_system'})
-  idSystem: number;
+  @ManyToOne(() => SystemEntity, { eager: true })
+  @JoinColumn({ name: 'id_system' })
+  system: SystemEntity;
+
+  @OneToMany(() => PoolMetricEntity, metric => metric.pool)
+  metrics: PoolMetricEntity[];
 
 }

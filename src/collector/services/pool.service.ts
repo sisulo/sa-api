@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PoolEntity } from './entities/pool.entity';
+import { PoolEntity } from '../entities/pool.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -13,10 +13,8 @@ export class PoolService {
   }
 
   public async findById(idSystemParam: number, idPoolParam: number): Promise<PoolEntity> {
-    const dao = await this.repository
-      .findOne({ idSystem: idSystemParam, idPool: idPoolParam })
+    return await this.repository
+      .findOne({ idPool: idPoolParam })
       .then(metricType => metricType);
-
-    return dao;
   }
 }

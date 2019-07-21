@@ -1,0 +1,59 @@
+import { Logger } from '@nestjs/common';
+import { createLogger, format } from 'winston';
+import * as WinstonDailyRotateFile from 'winston-daily-rotate-file';
+
+const loggerComponent = createLogger({
+  level: 'info',
+  format: format.combine(
+    format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss',
+    }),
+    format.errors({ stack: true }),
+    format.splat(),
+    format.json(),
+  ),
+  defaultMeta: { service: 'sa-api' },
+  transports: [
+    //
+    // - Write to all logs with level `info` and below to `quick-start-combined.log`.
+    // - Write all logs error (and below) to `quick-start-error.log`.
+    //
+    new WinstonDailyRotateFile({
+      filename: 'logs/sa-api-error.log', level: 'error', maxSize: '20m',
+      maxFiles: '14d',
+    }),
+    new WinstonDailyRotateFile({
+      filename: 'logs/sa-api-combined.log', maxSize: '20m',
+      maxFiles: '14d',
+    }),
+  ],
+});
+
+export class WinstonLoggerService extends Logger {
+  private winstonComponent = loggerComponent;
+
+  log(message: string) {
+    this.winstonComponent.info(message);
+    super.log(message);
+  }
+
+  error(message: string, trace: string) {
+    this.winstonComponent.error(message);
+    super.error(message, trace);
+  }
+
+  warn(message: string) {
+    this.winstonComponent.warn(message);
+    super.warn(message);
+  }
+
+  debug(message: string) {
+    this.winstonComponent.debug(message);
+    super.debug(message);
+  }
+
+  verbose(message: string) {
+    this.winstonComponent.notice(message);
+    super.verbose(message);
+  }
+}
