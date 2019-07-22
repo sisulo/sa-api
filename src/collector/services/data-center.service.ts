@@ -70,6 +70,12 @@ export class DataCenterService {
     return this.findById(idDataCenterParam).then(dao => dao);
   }
 
+  getAllDataCenters(): Promise<DataCenterEntity[]> {
+    return this.dataCenterRepository.createQueryBuilder('datacenter')
+      .innerJoinAndSelect('datacenter.systems', 'system')
+      .getMany();
+  }
+
   private loadMetrics(metricGroup: MetricGroup, idDataCenterParam: number, dateParam: Date) {
     switch (metricGroup) {
       case MetricGroup.PERFORMANCE:
