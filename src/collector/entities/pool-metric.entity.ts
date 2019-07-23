@@ -10,7 +10,7 @@ export class PoolMetricEntity {
   @Column({ name: 'value' })
   value: number;
 
-  @Column({ name: 'date' })
+  @Column('date', { name: 'date' })
   date: Date;
 
   @ManyToOne(() => CatMetricTypeEntity)
