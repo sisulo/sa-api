@@ -29,7 +29,7 @@ export class PoolMetricService extends CommonMetricService {
     const poolDao = await this.loadPool(idSystem, idPool);
 
     const metricType = await this.loadMetricType(poolMetric.metricType);
-    CommonMetricService.validateMetricType(metricType, poolMetric.metricType, MetricGroup.CAPACITY);
+    CommonMetricService.validateMetricType(metricType, poolMetric.metricType, [MetricGroup.CAPACITY, MetricGroup.SLA]);
 
     const metricDao: PoolMetricEntity = await this.createMetric(poolDao, metricType, poolMetric.date);
 

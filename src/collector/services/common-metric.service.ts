@@ -13,14 +13,20 @@ export class CommonMetricService {
     this.metricType = metricTypeService;
   }
 
-  static validateMetricType(metricType: CatMetricTypeEntity, originMetricType: MetricType, expectedMetricGroup: MetricGroup): void {
+  static validateMetricType(metricType: CatMetricTypeEntity, originMetricType: MetricType, expectedMetricGroups: MetricGroup[]): void {
     if (metricType == null) {
       throw new BadRequestException(`Wrong metric \'${originMetricType}\'`);
     }
 
-    if (metricType.idCatMetricGroup !== expectedMetricGroup) {
-      throw new BadRequestException(`Metric \'${originMetricType}\' is not ${MetricGroup[expectedMetricGroup]} metric`);
+    if (expectedMetricGroups.find(group => group === metricType.idCatMetricGroup) === undefined) {
+      const groupsString = this.convertMetricGroupToStrings(expectedMetricGroups);
+      throw new BadRequestException(`Metric \'${originMetricType}\' is not ${groupsString} metric`);
     }
+  }
+
+  private static convertMetricGroupToStrings(groups: MetricGroup[]) {
+    return groups.map(group => MetricGroup[group])
+      .join(',');
   }
 
   protected loadMetricType(metricType: MetricType): Promise<CatMetricTypeEntity> {

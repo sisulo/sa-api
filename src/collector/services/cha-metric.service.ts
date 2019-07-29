@@ -29,7 +29,7 @@ export class ChaMetricService extends CommonMetricService {
     const chaDao = await this.loadChannelAdapter(idSystem, idCha);
 
     const metricType = await this.loadMetricType(chaMetric.metricType);
-    CommonMetricService.validateMetricType(metricType, chaMetric.metricType, MetricGroup.ADAPTERS);
+    CommonMetricService.validateMetricType(metricType, chaMetric.metricType, [MetricGroup.ADAPTERS]);
     const metricDao: ChaMetricEntity = await this.createMetric(chaDao, metricType, chaMetric.date);
 
     metricDao.value = chaMetric.value;

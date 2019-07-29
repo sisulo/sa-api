@@ -26,7 +26,7 @@ export class SystemMetricService extends CommonMetricService {
 
     const systemDao = await this.loadSystem(idSystem);
     const metricType = await this.loadMetricType(systemMetric.metricType);
-    CommonMetricService.validateMetricType(metricType, systemMetric.metricType, MetricGroup.PERFORMANCE);
+    CommonMetricService.validateMetricType(metricType, systemMetric.metricType, [MetricGroup.PERFORMANCE]);
 
     const metricDao: SystemMetricEntity = await this.createMetric(systemDao, metricType, systemMetric.date);
 
