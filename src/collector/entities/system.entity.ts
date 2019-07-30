@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { DataCenterEntity } from './data-center.entity';
-import { SystemMetricEntity } from './system-metric.entity';
+import { SystemMetricReadEntity } from './system-metric-read.entity';
 import { PoolEntity } from './pool.entity';
 import { ChaEntity } from './cha.entity';
 
@@ -20,8 +20,8 @@ export class SystemEntity {
   @JoinColumn({name: 'id_datacenter'})
   datacenter: DataCenterEntity;
 
-  @OneToMany(() => SystemMetricEntity, metric => metric.system)
-  metrics: SystemMetricEntity[];
+  @OneToMany(() => SystemMetricReadEntity, metric => metric.system)
+  metrics: SystemMetricReadEntity[];
 
   @OneToMany(() => PoolEntity, pool => pool.system)
   pools: PoolEntity[];

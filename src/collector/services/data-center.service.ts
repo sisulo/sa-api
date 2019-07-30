@@ -36,7 +36,7 @@ export class DataCenterService {
       .leftJoinAndSelect('system.metrics', 'metrics')
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
       .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      .andWhere('metrics.date = :date', { date: dateParam })
+      // .andWhere('metrics.date = :date', { date: dateParam })
       .andWhere('type.id_cat_metric_group = :idGroup', { idGroup: MetricGroup.PERFORMANCE })
       .getOne();
   }
@@ -49,7 +49,7 @@ export class DataCenterService {
       .leftJoinAndSelect('pool.metrics', 'metrics')
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
       .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      .andWhere('metrics.date = :date', { date: dateParam })
+      // .andWhere('metrics.date = :date', { date: dateParam })
       .andWhere('type.id_cat_metric_group = :idGroup', { idGroup: MetricGroup.CAPACITY })
       .getOne();
   }
@@ -62,7 +62,7 @@ export class DataCenterService {
       .leftJoinAndSelect('adapter.metrics', 'metrics')
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
       .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      .andWhere('metrics.date = :date', { date: dateParam })
+      // .andWhere('metrics.date = :date', { date: dateParam })
       .andWhere('type.id_cat_metric_group = :idGroup', { idGroup: MetricGroup.ADAPTERS })
       .getOne();
   }
@@ -77,6 +77,15 @@ export class DataCenterService {
       .getMany();
   }
 
+  async fetchLastDate(table, defaultDate): Promise<Date> {
+    const result = await this.dataCenterRepository.manager.query(`SELECT to_char(date, 'YYYY-MM-dd') AS date from ${table} order by date DESC LIMIT 1`);
+    if (result[0] != null) {
+      return result[0].date;
+    }
+    return defaultDate;
+
+  }
+
   private loadMetrics(metricGroup: MetricGroup, idDataCenterParam: number, dateParam: Date) {
     switch (metricGroup) {
       case MetricGroup.PERFORMANCE:
@@ -88,15 +97,6 @@ export class DataCenterService {
       case MetricGroup.SLA:
         return this.getCapacityMetrics(idDataCenterParam, dateParam);
     }
-  }
-
-  async fetchLastDate(table, defaultDate): Promise<Date> {
-    const result = await this.dataCenterRepository.manager.query(`SELECT to_char(date, 'YYYY-MM-dd') AS date from ${table} order by date DESC LIMIT 1`);
-    if (result[0] != null) {
-      return result[0].date;
-    }
-    return defaultDate;
-
   }
 
   private resolveDate(date: Date, metricGroup: MetricGroup): Promise<Date> {

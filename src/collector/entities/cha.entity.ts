@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { SystemEntity } from './system.entity';
-import { ChaMetricEntity } from './cha-metric.entity';
+import { ChaMetricReadEntity } from './cha-metric-read.entity';
 
 @Entity('chas')
 export class ChaEntity {
@@ -15,6 +15,6 @@ export class ChaEntity {
   @JoinColumn({ name: 'id_system' })
   system: SystemEntity;
 
-  @OneToMany(() => ChaMetricEntity, metric => metric.adapter)
-  metrics: ChaMetricEntity[];
+  @OneToMany(() => ChaMetricReadEntity, metric => metric.adapter)
+  metrics: ChaMetricReadEntity[];
 }
