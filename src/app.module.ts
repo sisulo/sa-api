@@ -20,6 +20,7 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
       database: configService.getDatabaseName(),
       entities: [__dirname + '/**/entities/*{.ts,.js}'],
       synchronize: configService.getSynchronize(),
+      dropSchema: configService.getDropSchema(),
       migrationsRun: true,
       migrationsTableName: 'migration_schema',
       migrations: ['dist/migration/*.js'],

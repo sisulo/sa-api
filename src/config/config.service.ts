@@ -31,10 +31,18 @@ export class ConfigService {
   }
 
   getSynchronize(): boolean {
+    // TODO how set up NODE_ENV
     if (process.env.NODE_ENV === 'production') {
       return false;
     }
     return this.envConfig.db_synchronize === 'true';
   }
 
+  getDropSchema(): boolean {
+    // TODO how set up NODE_ENV
+    if (process.env.NODE_ENV === 'production') {
+      return false;
+    }
+    return this.envConfig.db_dropSchema === 'true';
+  }
 }
