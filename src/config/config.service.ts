@@ -30,4 +30,11 @@ export class ConfigService {
     return this.envConfig.db_database;
   }
 
+  getSynchronize(): boolean {
+    if (process.env.NODE_ENV === 'production') {
+      return false;
+    }
+    return this.envConfig.db_synchronize === 'true';
+  }
+
 }
