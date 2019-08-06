@@ -64,7 +64,10 @@ export class FixViewPerformance1565022174750 implements MigrationInterface {
             LIMIT 1
             );
     `);
-    await queryRunner.query(`CREATE INDEX idx_pool_metrics_type_id_pool ON public.pool_metrics USING btree(id_pool_metric, id_cat_metric_type);`);
+    await queryRunner.query(`CREATE INDEX idx_pool_metrics_id_pool_metric_type
+    ON public.pool_metrics USING btree
+    (id_pool, id_cat_metric_type)
+    INCLUDE(id_pool_metric)`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {

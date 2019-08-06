@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DataCenterEntity } from '../entities/data-center.entity';
+import { MetricType } from '../enums/metric-type.enum';
 
 export enum MetricGroup {
   PERFORMANCE = 1,
@@ -23,47 +24,40 @@ export class DataCenterService {
     return await this.dataCenterRepository.findOne(idDataCenter);
   }
 
-  async getMetricsByGroup(metricGroup: MetricGroup, idDataCenterParam: number, dateParam: Date): Promise<DataCenterEntity> {
-    const date = await this.resolveDate(dateParam, metricGroup);
-    const dcDao = await this.loadMetrics(metricGroup, idDataCenterParam, date);
+  async getMetricsByGroup(metricGroup: MetricGroup, idDataCenterParam: number): Promise<DataCenterEntity> {
+    const dcDao = await this.loadMetrics(metricGroup, idDataCenterParam);
     return dcDao || await this.getEmptyDatacenter(idDataCenterParam);
   }
 
-  async getPerformanceMetrics(idDataCenterParam: number, dateParam: Date): Promise<DataCenterEntity> {
+  async getPerformanceMetrics(metricTypes: MetricType[], idDataCenterParam: number): Promise<DataCenterEntity> {
 
     return this.dataCenterRepository.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.systems', 'system')
-      .leftJoinAndSelect('system.metrics', 'metrics')
+      .leftJoinAndSelect('system.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
       .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      // .andWhere('metrics.date = :date', { date: dateParam })
-      .andWhere('type.id_cat_metric_group = :idGroup', { idGroup: MetricGroup.PERFORMANCE })
       .getOne();
   }
 
-  getCapacityMetrics(idDataCenterParam: number, dateParam: Date): Promise<DataCenterEntity> {
+  getPoolMetrics(metricTypes: MetricType[], idDataCenterParam: number): Promise<DataCenterEntity> {
 
     return this.dataCenterRepository.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.pools', 'pool')
-      .leftJoinAndSelect('pool.metrics', 'metrics')
+      .leftJoinAndSelect('pool.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
       .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      // .andWhere('metrics.date = :date', { date: dateParam })
-      .andWhere('type.id_cat_metric_group = :idGroup', { idGroup: MetricGroup.CAPACITY })
       .getOne();
   }
 
-  getChannelAdapterMetrics(idDataCenterParam: number, dateParam: Date): Promise<DataCenterEntity> {
+  getChannelAdapterMetrics(metricTypes: MetricType[], idDataCenterParam: number): Promise<DataCenterEntity> {
 
     return this.dataCenterRepository.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.adapters', 'adapter')
-      .leftJoinAndSelect('adapter.metrics', 'metrics')
+      .leftJoinAndSelect('adapter.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
       .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      // .andWhere('metrics.date = :date', { date: dateParam })
-      .andWhere('type.id_cat_metric_group = :idGroup', { idGroup: MetricGroup.ADAPTERS })
       .getOne();
   }
 
@@ -77,38 +71,59 @@ export class DataCenterService {
       .getMany();
   }
 
-  async fetchLastDate(table, defaultDate): Promise<Date> {
-    const result = await this.dataCenterRepository.manager.query(`SELECT to_char(date, 'YYYY-MM-dd') AS date from ${table} order by date DESC LIMIT 1`);
-    if (result[0] != null) {
-      return result[0].date;
-    }
-    return defaultDate;
-
-  }
-
-  private loadMetrics(metricGroup: MetricGroup, idDataCenterParam: number, dateParam: Date) {
+  private loadMetrics(metricGroup: MetricGroup, idDataCenterParam: number) {
+    const types: MetricType[] = this.resolveMetricTypes(metricGroup);
     switch (metricGroup) {
       case MetricGroup.PERFORMANCE:
-        return this.getPerformanceMetrics(idDataCenterParam, dateParam);
+        return this.getPerformanceMetrics(types, idDataCenterParam);
       case MetricGroup.CAPACITY:
-        return this.getCapacityMetrics(idDataCenterParam, dateParam);
+        return this.getPoolMetrics(types, idDataCenterParam);
       case MetricGroup.ADAPTERS:
-        return this.getChannelAdapterMetrics(idDataCenterParam, dateParam);
+        return this.getChannelAdapterMetrics(types, idDataCenterParam);
       case MetricGroup.SLA:
-        return this.getCapacityMetrics(idDataCenterParam, dateParam);
+        return this.getPoolMetrics(types, idDataCenterParam);
     }
   }
 
-  private resolveDate(date: Date, metricGroup: MetricGroup): Promise<Date> {
+  private resolveMetricTypes(metricGroup: MetricGroup): MetricType[] {
     switch (metricGroup) {
       case MetricGroup.PERFORMANCE:
-        return this.fetchLastDate('system_metrics', date);
+        return [
+          MetricType.WORKLOAD,
+          MetricType.TRANSFER,
+          MetricType.RESPONSE,
+          MetricType.CPU_PERC,
+          MetricType.HDD_PERC,
+          MetricType.WRITE_PENDING_PERC,
+        ];
       case MetricGroup.CAPACITY:
-        return this.fetchLastDate('pool_metrics', date);
+        return [
+          MetricType.PHYSICAL_CAPACITY,
+          MetricType.PHYSICAL_SUBS_PERC,
+          MetricType.AVAILABLE_CAPACITY,
+          MetricType.LOGICAL_USED_PERC,
+          MetricType.PHYSICAL_USED_PERC,
+          MetricType.COMPRESSION_RATIO,
+          MetricType.CHANGE_DAY,
+          MetricType.CHANGE_MONTH,
+          MetricType.CHANGE_WEEK,
+          MetricType.PREDICTION_L1,
+          MetricType.PREDICTION_L2,
+          MetricType.PREDICTION_L3,
+        ];
       case MetricGroup.ADAPTERS:
-        return this.fetchLastDate('cha_metrics', date);
+        return [
+          MetricType.DISBALANCE_EVENTS,
+          MetricType.DISBALANCE_ABSOLUT,
+          MetricType.DISBALANCE_PERC,
+        ];
       case MetricGroup.SLA:
-        return this.fetchLastDate('pool_metrics', date);
+        return [
+          MetricType.SLA_EVENTS,
+          MetricType.OUT_OF_SLA_TIME,
+        ];
+      default:
+        throw new BadRequestException(`Wrong metric group ${metricGroup} when resolving set of metric types`);
     }
   }
 }

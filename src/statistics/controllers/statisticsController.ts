@@ -31,4 +31,9 @@ export class StatisticsController {
   channelAdaptersStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
     return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.ADAPTERS, params.idDataCenter, queryParams.date);
   }
+
+  @Get(':idDataCenter/sla')
+  slaStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.SLA, params.idDataCenter, queryParams.date);
+  }
 }
