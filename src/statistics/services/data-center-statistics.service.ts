@@ -34,7 +34,7 @@ export class DataCenterStatisticsService {
   }
 
   async getEntities(metricGroup: MetricGroup, idDataCenter: number, date: Date): Promise<DataCenterEntity> {
-    return await this.dataCenterService.getMetricsByGroup(metricGroup, idDataCenter, date);
+    return await this.dataCenterService.getMetricsByGroup(metricGroup, idDataCenter);
   }
 
 }
