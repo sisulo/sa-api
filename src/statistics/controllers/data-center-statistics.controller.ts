@@ -6,7 +6,7 @@ import { StatisticQueryParams } from './params/statistics.query-params';
 import { InfrastructureTransformer } from '../infrastructure.transformer';
 
 @Controller('api/v1/datacenters/')
-export class StatisticsController {
+export class DataCenterStatisticsController {
   constructor(private dataCenterStatisticsService: DataCenterStatisticsService,
               private dataCenterService: DataCenterService) {
   }

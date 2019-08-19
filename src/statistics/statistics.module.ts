@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { StatisticsController } from './controllers/statisticsController';
+import { DataCenterStatisticsController } from './controllers/data-center-statistics.controller';
 import { DataCenterStatisticsService } from './services/data-center-statistics.service';
 import { CollectorModule } from '../collector/collector.module';
+import { InfrastructureStatisticsController } from './controllers/infrastructure-statistics.controller';
 
 @Module({
-  controllers: [StatisticsController],
+  controllers: [DataCenterStatisticsController, InfrastructureStatisticsController],
   providers: [DataCenterStatisticsService],
   imports: [CollectorModule],
 })

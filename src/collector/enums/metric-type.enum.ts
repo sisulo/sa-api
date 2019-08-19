@@ -36,4 +36,5 @@ export enum MetricType {
   SUBSCRIBED_CAPACITY = 37,
   LOGICAL_SUBS_PERC = 38,
   NET_SUBS_PERC = 39,
+  NET_USED_PERC = 40,
 }

@@ -24,7 +24,7 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
       migrationsRun: true,
       migrationsTableName: 'migration_schema',
       migrations: ['dist/migration/*.js'],
-      logging: false,
+      logging: true,
     } as PostgresConnectionOptions),
     inject: [ConfigService],
   }), CollectorModule, StatisticsModule],
