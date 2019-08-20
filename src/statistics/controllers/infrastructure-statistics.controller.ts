@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { CapacityStatisticsService } from '../../collector/services/capacity-statistics.service';
+import { GlobalCapacityTransformer } from '../global-capacity-transformer';
 
 @Controller('api/v1/infrastructure')
 export class InfrastructureStatisticsController {
@@ -8,6 +9,6 @@ export class InfrastructureStatisticsController {
 
   @Get('/capacity')
   public getInfrastructureCapacity() {
-    return this.capacityStatisticsService.getCapacityStatistics();
+    return GlobalCapacityTransformer.transform(this.capacityStatisticsService.getCapacityStatistics());
   }
 }

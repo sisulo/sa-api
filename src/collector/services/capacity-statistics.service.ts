@@ -12,8 +12,10 @@ export class CapacityStatisticsService {
   ) {
   }
 
-  async getCapacityStatistics(): Promise<CapacityStatisticsEntity> {
-    return await this.capacityStatisticsRepository.findOne();
+  getCapacityStatistics(): Promise<CapacityStatisticsEntity[]> {
+    return this.capacityStatisticsRepository.createQueryBuilder('metrics')
+      .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
+      .getMany();
   }
 
 }
