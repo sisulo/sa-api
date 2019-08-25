@@ -1,6 +1,6 @@
-import { Metric } from '../metrics/Metric';
+import { SystemPool } from '../SystemPool';
 
 // Todo rename all files by same pattern
 export class GlobalCapacityStatisticsDto {
-  metrics: Metric[];
+  systems: SystemPool[];
 }

@@ -1,18 +1,13 @@
-import { CapacityStatisticsEntity } from '../collector/entities/capacity-statistics.entity';
-import { Metric } from './models/metrics/Metric';
 import { GlobalCapacityStatisticsDto } from './models/dtos/global-capacity-statistics.dto';
+import { SystemEntity } from '../collector/entities/system.entity';
+import { CapacityMetricTransformer } from './capacity-metric.transformer';
 
 export class GlobalCapacityTransformer {
-  public static async transform(entities: Promise<CapacityStatisticsEntity[]>): Promise<GlobalCapacityStatisticsDto> {
+  public static async transform(entities: Promise<SystemEntity[]>): Promise<GlobalCapacityStatisticsDto> {
     const data = await entities;
     const dto = new GlobalCapacityStatisticsDto();
-    dto.metrics = data.map(entity => {
-      const metric = new Metric();
-      metric.value = entity.value;
-      metric.unit = entity.metricTypeEntity.unit;
-      metric.type = entity.metricTypeEntity.name;
-      return metric;
-    });
+    dto.systems = data.map(system => CapacityMetricTransformer.createSystemPool(system));
     return dto;
   }
+
 }
