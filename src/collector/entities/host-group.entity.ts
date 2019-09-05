@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { SystemEntity } from './system.entity';
+import { HostGroupMetricReadEntity } from './host-group-metric-read.entity';
 
 @Entity('host_groups')
 export class HostGroupEntity {
@@ -14,7 +15,7 @@ export class HostGroupEntity {
   @JoinColumn({ name: 'id_system' })
   system: SystemEntity;
 
-  // @OneToMany(() => PoolMetricReadEntity, metric => metric.pool)
-  // metrics: PoolMetricReadEntity[];
+  @OneToMany(() => HostGroupMetricReadEntity, metric => metric.hostGroup)
+  metrics: HostGroupMetricReadEntity[];
 
 }

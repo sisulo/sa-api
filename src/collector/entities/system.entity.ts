@@ -3,6 +3,7 @@ import { DataCenterEntity } from './data-center.entity';
 import { SystemMetricReadEntity } from './system-metric-read.entity';
 import { PoolEntity } from './pool.entity';
 import { ChaEntity } from './cha.entity';
+import { HostGroupEntity } from './host-group.entity';
 
 @Entity('systems')
 export class SystemEntity {
@@ -28,4 +29,7 @@ export class SystemEntity {
 
   @OneToMany(() => ChaEntity, adapter => adapter.system)
   adapters: ChaEntity[];
+
+  @OneToMany(() => HostGroupEntity, hostgroup => hostgroup.system)
+  hostGroups: HostGroupEntity[];
 }

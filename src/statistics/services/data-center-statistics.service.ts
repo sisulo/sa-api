@@ -4,6 +4,7 @@ import { DataCenterService, MetricGroup } from '../../collector/services/data-ce
 import { DataCenterEntity } from '../../collector/entities/data-center.entity';
 import { AdapterMetricTransformer } from '../adapter-metric.transformer';
 import { CapacityMetricTransformer } from '../capacity-metric.transformer';
+import { HostGroupMetricTransformer } from '../host-group-metric.transformer';
 
 @Injectable()
 export class DataCenterStatisticsService {
@@ -19,6 +20,8 @@ export class DataCenterStatisticsService {
         return AdapterMetricTransformer.transform(entity);
       case MetricGroup.PERFORMANCE:
         return PerformanceMetricTransformer.transform(entity);
+      case MetricGroup.HOSTGROUPS:
+        return HostGroupMetricTransformer.transform(entity);
       default:
         throw new BadRequestException(`Cannot transform DataCenterEntity for metricGroup(${metricGroup})`);
     }

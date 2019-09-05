@@ -9,6 +9,7 @@ export enum MetricGroup {
   CAPACITY = 2,
   ADAPTERS = 3,
   SLA = 4,
+  HOSTGROUPS = 5,
 }
 
 @Injectable()
@@ -61,6 +62,17 @@ export class DataCenterService {
       .getOne();
   }
 
+  getHostGroupMetrics(metricTypes: MetricType[], idDataCenterParam: number): Promise<DataCenterEntity> {
+
+    return this.dataCenterRepository.createQueryBuilder('datacenter')
+      .leftJoinAndSelect('datacenter.systems', 'system')
+      .leftJoinAndSelect('system.hostGroups', 'hostGroup')
+      .leftJoinAndSelect('hostGroup.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
+      .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
+      .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
+      .getOne();
+  }
+
   getEmptyDatacenter(idDataCenterParam: number): Promise<DataCenterEntity> {
     return this.findById(idDataCenterParam).then(dao => dao);
   }
@@ -82,6 +94,8 @@ export class DataCenterService {
         return this.getChannelAdapterMetrics(types, idDataCenterParam);
       case MetricGroup.SLA:
         return this.getPoolMetrics(types, idDataCenterParam);
+      case MetricGroup.HOSTGROUPS:
+        return this.getHostGroupMetrics(types, idDataCenterParam);
     }
   }
 
@@ -139,6 +153,15 @@ export class DataCenterService {
         return [
           MetricType.SLA_EVENTS,
           MetricType.OUT_OF_SLA_TIME,
+        ];
+      case MetricGroup.HOSTGROUPS:
+        return [
+          MetricType.NET_TOTAL,
+          MetricType.NET_USED,
+          MetricType.NET_USED_PERC,
+          MetricType.CHANGE_DAY,
+          MetricType.CHANGE_WEEK,
+          MetricType.CHANGE_MONTH,
         ];
       default:
         throw new BadRequestException(`Wrong metric group ${metricGroup} when resolving set of metric types`);
