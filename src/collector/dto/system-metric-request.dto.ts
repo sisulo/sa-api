@@ -1,6 +1,6 @@
-import { MetricCommonDto } from './metric-common.dto';
+import { MetricRequestDto } from './metric-request.dto';
 
-export class SystemMetricRequestDto extends MetricCommonDto {
+export class SystemMetricRequestDto extends MetricRequestDto {
 
   readonly peak: number;
 }

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 
-describe('API V1 System metric (e2e)', () => {
+describe('API V1 (e2e)', () => {
   let app;
 
   beforeAll(async () => {
@@ -14,48 +14,11 @@ describe('API V1 System metric (e2e)', () => {
     await app.init();
   });
 
-  it('/api/v1/systems/5/metrics (POST)', () => {
+  it('/ (GET)', () => {
     return request(app.getHttpServer())
-      .post('/api/v1/systems/5/metrics')
-      .send({
-        metricType: 'WORKLOAD',
-        value: '12345',
-        peak: '123215',
-        date: '2019-07-12',
-      })
-      .expect(201)
-      .expect(
-        {
-          idMetric: 1,
-          date: '2019-07-12',
-          value: '12345',
-          idSystem: 5,
-          systemName: 'XP7_G15_20028',
-          metricType: 'WORKLOAD',
-        },
-      );
-  });
-
-  it('/api/v1/systems/5/metrics (POST) Update existing', () => {
-    return request(app.getHttpServer())
-      .post('/api/v1/systems/5/metrics')
-      .send({
-        metricType: 'WORKLOAD',
-        value: '12346',
-        peak: '123215',
-        date: '2019-07-12',
-      })
-      .expect(201)
-      .expect(
-        {
-          idMetric: 1,
-          date: '2019-07-12',
-          value: '12346',
-          idSystem: 5,
-          systemName: 'XP7_G15_20028',
-          metricType: 'WORKLOAD',
-        },
-      );
+      .get('')
+      .expect(200)
+      .expect('SA-API online');
   });
   afterAll(async () => {
     await app.close();

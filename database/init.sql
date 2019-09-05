@@ -652,3 +652,7 @@ left join pool_metrics outer_sm on outer_sm.id_pool = pools.id_pool and outer_sm
 	order by date desc
 	LIMIT 1
 );
+
+SELECT setval('pools_id_pool_seq', (SELECT MAX(id_pool) from pools));
+SELECT setval('systems_id_system_seq', (SELECT MAX(id_system) from systems));
+SELECT setval('chas_id_cha_seq', (SELECT MAX(id_cha) from chas));

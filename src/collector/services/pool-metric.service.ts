@@ -1,7 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PoolMetricRequestDto } from '../dto/pool-metric-request.dto';
 import { PoolMetricEntity } from '../entities/pool-metric.entity';
 import { PoolEntity } from '../entities/pool.entity';
 import { SystemService } from './system.service';
@@ -9,58 +8,42 @@ import { PoolService } from './pool.service';
 import { CommonMetricService } from './common-metric.service';
 import { MetricTypeService } from './metric-type.service';
 import { CatMetricTypeEntity } from '../entities/cat-metric-type.entity';
-import { MetricGroup } from './data-center.service';
+import { MetricRequestDto } from '../dto/metric-request.dto';
 
 @Injectable()
-export class PoolMetricService extends CommonMetricService {
+export class PoolMetricService extends CommonMetricService<PoolMetricEntity, PoolEntity> {
 
   constructor(
     @InjectRepository(PoolMetricEntity)
-    private readonly poolMetricRepository: Repository<PoolMetricEntity>,
+    private readonly metricRepository: Repository<PoolMetricEntity>,
     private readonly poolService: PoolService,
     private readonly systemService: SystemService,
     private readonly metricTypeService: MetricTypeService,
   ) {
-    super(metricTypeService);
+    super(metricTypeService, systemService, poolService);
   }
 
-  async upsert(idSystem: number, idPool: number, poolMetric: PoolMetricRequestDto): Promise<PoolMetricEntity> {
+  async save(component: PoolEntity, metricType: CatMetricTypeEntity, request: MetricRequestDto): Promise<any> {
+    const entity = await this.createMetricEntity(component, metricType, request.date);
 
-    const poolDao = await this.loadPool(idSystem, idPool);
+    entity.value = request.value;
+    entity.date = request.date;
+    entity.metricTypeEntity = metricType;
+    if (entity.pool == null) {
+      entity.pool = component;
+    }
+    const returnedEntity = await this.metricRepository.save(entity);
 
-    const metricType = await this.loadMetricType(poolMetric.metricType);
-    CommonMetricService.validateMetricType(metricType, poolMetric.metricType, [MetricGroup.CAPACITY, MetricGroup.SLA]);
-
-    const metricDao: PoolMetricEntity = await this.createMetric(poolDao, metricType, poolMetric.date);
-
-    metricDao.value = poolMetric.value;
-    metricDao.pool = poolDao;
-    metricDao.date = poolMetric.date;
-    metricDao.metricTypeEntity = metricType;
-
-    return await this.poolMetricRepository.save(metricDao);
+    return returnedEntity;
   }
 
-  private async createMetric(poolSearch: PoolEntity,
-                             metricTypeSearch: CatMetricTypeEntity,
-                             dateSearch): Promise<PoolMetricEntity> {
-    const metricDao = await this.poolMetricRepository
-      .findOne({ pool: poolSearch, metricTypeEntity: metricTypeSearch, date: dateSearch })
+  protected async createMetricEntity(component: PoolEntity, metricType: CatMetricTypeEntity, dateSearch: Date): Promise<PoolMetricEntity> {
+    const metricDao = await this.metricRepository
+      .findOne({ pool: component, metricTypeEntity: metricType, date: dateSearch })
       .then(dao => dao);
-
-    if (metricDao === undefined) {
+    if (metricDao == null) {
       return new PoolMetricEntity();
     }
-
     return metricDao;
-  }
-
-  private async loadPool(idSystemSearch: number, idPoolSearch: number): Promise<PoolEntity> {
-    let poolDao: PoolEntity;
-    poolDao = await this.poolService.findById(idSystemSearch, idPoolSearch);
-    if (poolDao === undefined) {
-      throw new NotFoundException('Pool with id \'' + idPoolSearch + '\' not found');
-    }
-    return poolDao;
   }
 }

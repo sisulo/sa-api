@@ -1,9 +1,5 @@
-export class SystemMetricResponseDto {
-  idMetric: number;
-  idSystem: number;
-  systemName: string;
-  value: number;
+import { MetricResponseDto } from './metric-response.dto';
+
+export class SystemMetricResponseDto extends MetricResponseDto {
   peak: number;
-  date: Date;
-  metricType: string;
 }

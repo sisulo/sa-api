@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CollectorModule } from './collector/collector.module';
 import { StatisticsModule } from './statistics/statistics.module';
@@ -29,7 +28,7 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
     inject: [ConfigService],
   }), CollectorModule, StatisticsModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {
 }

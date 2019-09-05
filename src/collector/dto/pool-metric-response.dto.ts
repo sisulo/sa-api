@@ -1,6 +1,6 @@
-import { SystemMetricResponseDto } from './system-metric-response.dto';
+import { MetricResponseDto } from './metric-response.dto';
 
-export class PoolMetricResponseDto extends SystemMetricResponseDto {
+export class PoolMetricResponseDto extends MetricResponseDto {
   idPool: number;
   poolName: string;
 }
