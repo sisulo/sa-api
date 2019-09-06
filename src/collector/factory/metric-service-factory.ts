@@ -6,7 +6,7 @@ import { CollectorType } from './collector-type.enum';
 @Injectable({ scope: Scope.DEFAULT })
 export class MetricServiceFactoryImpl implements ApiCollectorFactory {
 
-  getCollector(type: CollectorType): CollectorFactory {
+  getCollector(type: CollectorType): CollectorFactory<any> {
     return undefined;
   }
 
