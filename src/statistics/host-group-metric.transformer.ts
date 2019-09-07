@@ -24,7 +24,7 @@ export class HostGroupMetricTransformer {
     return response;
   }
 
-  private static createSystemPool(system: SystemEntity): SystemPool {
+  public static createSystemPool(system: SystemEntity): SystemPool {
     const systemPool = new SystemPool();
     systemPool.id = system.idSystem;
     systemPool.name = system.name;

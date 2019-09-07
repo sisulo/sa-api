@@ -11,4 +11,9 @@ export class InfrastructureStatisticsController {
   public getInfrastructureCapacity() {
     return GlobalCapacityTransformer.transform(this.capacityStatisticsService.getCapacityStatistics());
   }
+
+  @Get('/host-group-capacity')
+  public getHostGroupCapacity() {
+    return GlobalCapacityTransformer.transformHostGroups(this.capacityStatisticsService.getHostGroupCapacityStatistics());
+  }
 }

@@ -37,7 +37,7 @@ export class DataCenterStatisticsController {
     return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.SLA, params.idDataCenter, queryParams.date);
   }
 
-  @Get(':idDataCenter/hostGroups')
+  @Get(':idDataCenter/host-groups')
   hostGroupStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
     return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.HOSTGROUPS, params.idDataCenter, queryParams.date);
   }

@@ -20,4 +20,12 @@ export class CapacityStatisticsService {
       .getMany();
   }
 
+  getHostGroupCapacityStatistics(): Promise<SystemEntity[]> {
+    return this.entityRepository.createQueryBuilder('systems')
+      .leftJoinAndSelect('systems.hostGroups', 'hostGroup')
+      .leftJoinAndSelect('hostGroup.metrics', 'metrics')
+      .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
+      .getMany();
+  }
+
 }
