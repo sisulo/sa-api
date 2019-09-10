@@ -17,7 +17,7 @@ CREATE TABLE host_group_metrics
 (
     id_host_group_metric     SERIAL PRIMARY KEY,
     id_cat_metric_type SMALLINT REFERENCES cat_metric_type (id_cat_metric_type) NOT NULL,
-    id_host_group       INTEGER REFERENCES pools (id_pool)                       NOT NULL,
+    id_host_group       INTEGER REFERENCES host_groups (id_host_group)                       NOT NULL,
     value              FLOAT,
     date               DATE                                                     NOT NULL,
     created_at         TIMESTAMP DEFAULT NOW()
