@@ -6,21 +6,28 @@ import { CapacityStatisticsDto } from './models/dtos/CapacityStatisticsDto';
 import { SystemPool } from './models/SystemPool';
 import { PoolEntity } from '../collector/entities/pool.entity';
 import { PoolMetricEntity } from '../collector/entities/pool-metric.entity';
+import { DatacenterCapacityListDto } from './models/dtos/datacenter-capacity-list.dto';
 
 export class CapacityMetricTransformer {
-  public static async transform(dataCenterPromise: DataCenterEntity): Promise<CapacityStatisticsDto> {
-    const response = new CapacityStatisticsDto();
-    const dataCenter = await dataCenterPromise;
-    response.id = dataCenter.idDatacenter;
-    response.name = dataCenter.name;
-    if (dataCenter.systems != null) {
+  public static async transform(dataCenterPromise: DataCenterEntity[]): Promise<DatacenterCapacityListDto> {
+    const response = new DatacenterCapacityListDto();
+    dataCenterPromise.forEach(
+      dataCenter => {
+        const dto = new CapacityStatisticsDto();
+        dto.id = dataCenter.idDatacenter;
+        dto.name = dataCenter.name;
+        if (dataCenter.systems != null) {
 
-      response.systems = dataCenter.systems.map(
-        system => CapacityMetricTransformer.createSystemPool(system),
-      );
-    } else {
-      response.systems = [];
-    }
+          dto.systems = dataCenter.systems.map(
+            system => CapacityMetricTransformer.createSystemPool(system),
+          );
+        } else {
+          dto.systems = [];
+        }
+        response.datacenters.push(dto);
+      },
+    );
+
     return response;
   }
 

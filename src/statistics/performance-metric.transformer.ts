@@ -4,19 +4,24 @@ import { PerformanceStatisticsDto } from './models/dtos/PerformanceStatisticsDto
 import { DataCenterEntity } from '../collector/entities/data-center.entity';
 import { SystemMetricEntity } from '../collector/entities/system-metric.entity';
 import { SystemEntity } from '../collector/entities/system.entity';
+import { DatacenterPerfListDto } from './models/dtos/datacenter-perf-list.dto';
 
 export class PerformanceMetricTransformer {
-  public static async transform(dataCenter: DataCenterEntity): Promise<PerformanceStatisticsDto> {
-    const response = new PerformanceStatisticsDto();
-    response.id = dataCenter.idDatacenter;
-    response.label = dataCenter.name;
-    if (dataCenter.systems != null) {
-      response.systems = dataCenter.systems.map(
-        system => PerformanceMetricTransformer.createSystemDetail(system),
-      );
-    } else {
-      dataCenter.systems = [];
-    }
+  public static async transform(dataCenterEntities: DataCenterEntity[]): Promise<DatacenterPerfListDto> {
+    const response = new DatacenterPerfListDto();
+    dataCenterEntities.forEach(datacenter => {
+      const dto = new PerformanceStatisticsDto();
+      dto.id = datacenter.idDatacenter;
+      dto.label = datacenter.name;
+      if (datacenter.systems != null) {
+        dto.systems = datacenter.systems.map(
+          system => PerformanceMetricTransformer.createSystemDetail(system),
+        );
+      } else {
+        datacenter.systems = [];
+      }
+      response.datacenters.push(dto);
+    });
     return response;
   }
 

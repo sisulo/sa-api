@@ -6,21 +6,28 @@ import { CapacityStatisticsDto } from './models/dtos/CapacityStatisticsDto';
 import { SystemPool } from './models/SystemPool';
 import { HostGroupEntity } from '../collector/entities/host-group.entity';
 import { HostGroupMetricEntity } from '../collector/entities/host-group-metric.entity';
+import { DatacenterCapacityListDto } from './models/dtos/datacenter-capacity-list.dto';
 
 export class HostGroupMetricTransformer {
   // TODO CapacityStatisticsDto should be named as Composite stats not as type of metrics
-  public static async transform(dataCenterPromise: DataCenterEntity): Promise<CapacityStatisticsDto> {
-    const response = new CapacityStatisticsDto();
-    const dataCenter = await dataCenterPromise;
-    response.id = dataCenter.idDatacenter;
-    response.name = dataCenter.name;
-    if (dataCenter.systems != null) {
-      response.systems = dataCenter.systems.map(
-        system => HostGroupMetricTransformer.createSystemPool(system),
-      );
-    } else {
-      response.systems = [];
-    }
+  public static async transform(dataCenterPromise: DataCenterEntity[]): Promise<DatacenterCapacityListDto> {
+    const response = new DatacenterCapacityListDto();
+    dataCenterPromise.forEach(
+      dataCenter => {
+
+        const dto = new CapacityStatisticsDto();
+        dto.id = dataCenter.idDatacenter;
+        dto.name = dataCenter.name;
+        if (dataCenter.systems != null) {
+          dto.systems = dataCenter.systems.map(
+            system => HostGroupMetricTransformer.createSystemPool(system),
+          );
+        } else {
+          dto.systems = [];
+        }
+        response.datacenters.push(dto);
+      },
+    );
     return response;
   }
 

@@ -21,60 +21,71 @@ export class DataCenterService {
   ) {
   }
 
-  async findById(idDataCenter: number): Promise<DataCenterEntity> {
-    return await this.dataCenterRepository.findOne(idDataCenter);
+  async findById(idDataCenter: number): Promise<DataCenterEntity[]> {
+    return await this.dataCenterRepository.find({ where: { idDatacenter: idDataCenter } });
   }
 
-  async getMetricsByGroup(metricGroup: MetricGroup, idDataCenterParam: number): Promise<DataCenterEntity> {
+  async getMetricsByGroup(metricGroup: MetricGroup, idDataCenterParam: number): Promise<DataCenterEntity[]> {
     const dcDao = await this.loadMetrics(metricGroup, idDataCenterParam);
     return dcDao || await this.getEmptyDatacenter(idDataCenterParam);
   }
 
-  async getPerformanceMetrics(metricTypes: MetricType[], idDataCenterParam: number): Promise<DataCenterEntity> {
+  async getPerformanceMetrics(metricTypes: MetricType[], idDataCenterParam: number): Promise<DataCenterEntity[]> {
 
-    return this.dataCenterRepository.createQueryBuilder('datacenter')
+    const query = this.dataCenterRepository.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
-      .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
-      .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      .getOne();
+      .leftJoinAndSelect('metrics.metricTypeEntity', 'type');
+    if (idDataCenterParam != null) {
+      query.where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam });
+    }
+
+    return query.getMany();
   }
 
-  getPoolMetrics(metricTypes: MetricType[], idDataCenterParam: number): Promise<DataCenterEntity> {
+  getPoolMetrics(metricTypes: MetricType[], idDataCenterParam: number): Promise<DataCenterEntity[]> {
 
-    return this.dataCenterRepository.createQueryBuilder('datacenter')
+    const query = this.dataCenterRepository.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.pools', 'pool')
       .leftJoinAndSelect('pool.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
-      .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
-      .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      .getOne();
+      .leftJoinAndSelect('metrics.metricTypeEntity', 'type');
+    if (idDataCenterParam != null) {
+      query.where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam });
+    }
+    return query.getMany();
   }
 
-  getChannelAdapterMetrics(metricTypes: MetricType[], idDataCenterParam: number): Promise<DataCenterEntity> {
+  getChannelAdapterMetrics(metricTypes: MetricType[], idDataCenterParam: number): Promise<DataCenterEntity[]> {
 
-    return this.dataCenterRepository.createQueryBuilder('datacenter')
+    const query = this.dataCenterRepository.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.adapters', 'adapter')
       .leftJoinAndSelect('adapter.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
-      .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
-      .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      .getOne();
+      .leftJoinAndSelect('metrics.metricTypeEntity', 'type');
+    if (idDataCenterParam != null) {
+      query.where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam });
+    }
+
+    return query.getMany();
   }
 
-  getHostGroupMetrics(metricTypes: MetricType[], idDataCenterParam: number): Promise<DataCenterEntity> {
+  getHostGroupMetrics(metricTypes: MetricType[], idDataCenterParam: number): Promise<DataCenterEntity[]> {
 
-    return this.dataCenterRepository.createQueryBuilder('datacenter')
+    const query = this.dataCenterRepository.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.hostGroups', 'hostGroup')
       .leftJoinAndSelect('hostGroup.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
-      .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
-      .where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam })
-      .getOne();
+      .leftJoinAndSelect('metrics.metricTypeEntity', 'type');
+    if (idDataCenterParam != null) {
+      query.where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam });
+    }
+
+    return query.getMany();
   }
 
-  getEmptyDatacenter(idDataCenterParam: number): Promise<DataCenterEntity> {
-    return this.findById(idDataCenterParam).then(dao => dao);
+  getEmptyDatacenter(idDataCenterParam: number): Promise<DataCenterEntity[]> {
+    return this.findById(idDataCenterParam);
   }
 
   getAllDataCenters(): Promise<DataCenterEntity[]> {

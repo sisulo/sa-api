@@ -11,7 +11,7 @@ export class DataCenterStatisticsService {
   constructor(private dataCenterService: DataCenterService) {
   }
 
-  private static transform(metricGroup: MetricGroup, entity: DataCenterEntity) {
+  private static transform(metricGroup: MetricGroup, entity: DataCenterEntity[]) {
     switch (metricGroup) {
       case MetricGroup.CAPACITY:
       case MetricGroup.SLA:
@@ -36,7 +36,7 @@ export class DataCenterStatisticsService {
     }
   }
 
-  async getEntities(metricGroup: MetricGroup, idDataCenter: number, date: Date): Promise<DataCenterEntity> {
+  async getEntities(metricGroup: MetricGroup, idDataCenter: number, date: Date): Promise<DataCenterEntity[]> {
     return await this.dataCenterService.getMetricsByGroup(metricGroup, idDataCenter);
   }
 

@@ -2,24 +2,28 @@ import { SystemDetail } from './models/SystemDetail';
 import { SystemMetric } from './models/metrics/SystemMetric';
 import { DataCenterEntity } from '../collector/entities/data-center.entity';
 import { SystemEntity } from '../collector/entities/system.entity';
-import { CapacityStatisticsDto } from './models/dtos/CapacityStatisticsDto';
 import { SystemPool } from './models/SystemPool';
 import { ChaEntity } from '../collector/entities/cha.entity';
 import { ChaMetricEntity } from '../collector/entities/cha-metric.entity';
+import { DatacenterCapacityListDto } from './models/dtos/datacenter-capacity-list.dto';
+import { CapacityStatisticsDto } from './models/dtos/CapacityStatisticsDto';
 
 export class AdapterMetricTransformer {
-  public static async transform(dataCenterPromise: DataCenterEntity): Promise<CapacityStatisticsDto> {
-    const response = new CapacityStatisticsDto();
-    const dataCenter = await dataCenterPromise;
-    response.id = dataCenter.idDatacenter;
-    response.name = dataCenter.name;
-    if (dataCenter.systems != null) {
-      response.systems = dataCenter.systems.map(
-        system => AdapterMetricTransformer.createSystemPool(system),
-      );
-    } else {
-      response.systems = [];
-    }
+  public static async transform(dataCenterPromise: DataCenterEntity[]): Promise<DatacenterCapacityListDto> {
+    const response = new DatacenterCapacityListDto();
+    dataCenterPromise.forEach(dataCenter => {
+      const dto = new CapacityStatisticsDto();
+      dto.id = dataCenter.idDatacenter;
+      dto.name = dataCenter.name;
+      if (dataCenter.systems != null) {
+        dto.systems = dataCenter.systems.map(
+          system => AdapterMetricTransformer.createSystemPool(system),
+        );
+      } else {
+        dto.systems = [];
+      }
+      response.datacenters.push(dto);
+    });
     return response;
   }
 
