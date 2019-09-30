@@ -7,6 +7,7 @@ import { ChaEntity } from '../collector/entities/cha.entity';
 import { ChaMetricEntity } from '../collector/entities/cha-metric.entity';
 import { DatacenterCapacityListDto } from './models/dtos/datacenter-capacity-list.dto';
 import { CapacityStatisticsDto } from './models/dtos/CapacityStatisticsDto';
+import { SystemMetricType } from './models/metrics/SystemMetricType';
 
 export class AdapterMetricTransformer {
   public static async transform(dataCenterPromise: DataCenterEntity[]): Promise<DatacenterCapacityListDto> {
@@ -54,7 +55,7 @@ export class AdapterMetricTransformer {
   private static createSystemMetric(metric: ChaMetricEntity) {
     const metricDetail = new SystemMetric();
     metricDetail.date = metric.date;
-    metricDetail.type = metric.metricTypeEntity.name;
+    metricDetail.type = metric.metricTypeEntity.name as SystemMetricType;
     metricDetail.unit = metric.metricTypeEntity.unit;
     metricDetail.value = metric.value;
     return metricDetail;

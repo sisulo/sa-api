@@ -7,6 +7,7 @@ import { SystemPool } from './models/SystemPool';
 import { HostGroupEntity } from '../collector/entities/host-group.entity';
 import { HostGroupMetricEntity } from '../collector/entities/host-group-metric.entity';
 import { DatacenterCapacityListDto } from './models/dtos/datacenter-capacity-list.dto';
+import { SystemMetricType } from './models/metrics/SystemMetricType';
 
 export class HostGroupMetricTransformer {
   // TODO CapacityStatisticsDto should be named as Composite stats not as type of metrics
@@ -58,7 +59,8 @@ export class HostGroupMetricTransformer {
   private static createSystemMetric(metric: HostGroupMetricEntity) {
     const metricDetail = new SystemMetric();
     metricDetail.date = metric.date;
-    metricDetail.type = metric.metricTypeEntity.name;
+    // TODO do it as resolve function
+    metricDetail.type = metric.metricTypeEntity.name as SystemMetricType;
     metricDetail.unit = metric.metricTypeEntity.unit;
     metricDetail.value = metric.value;
     return metricDetail;

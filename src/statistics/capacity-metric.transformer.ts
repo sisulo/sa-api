@@ -7,6 +7,7 @@ import { SystemPool } from './models/SystemPool';
 import { PoolEntity } from '../collector/entities/pool.entity';
 import { PoolMetricEntity } from '../collector/entities/pool-metric.entity';
 import { DatacenterCapacityListDto } from './models/dtos/datacenter-capacity-list.dto';
+import { SystemMetricType } from './models/metrics/SystemMetricType';
 
 export class CapacityMetricTransformer {
   public static async transform(dataCenterPromise: DataCenterEntity[]): Promise<DatacenterCapacityListDto> {
@@ -62,7 +63,7 @@ export class CapacityMetricTransformer {
   private static createSystemMetric(metric: PoolMetricEntity) {
     const metricDetail = new SystemMetric();
     metricDetail.date = metric.date;
-    metricDetail.type = metric.metricTypeEntity.name;
+    metricDetail.type = metric.metricTypeEntity.name as SystemMetricType;
     metricDetail.unit = metric.metricTypeEntity.unit;
     metricDetail.value = metric.value;
     return metricDetail;

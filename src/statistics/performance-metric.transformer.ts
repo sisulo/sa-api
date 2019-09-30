@@ -5,6 +5,7 @@ import { DataCenterEntity } from '../collector/entities/data-center.entity';
 import { SystemMetricEntity } from '../collector/entities/system-metric.entity';
 import { SystemEntity } from '../collector/entities/system.entity';
 import { DatacenterPerfListDto } from './models/dtos/datacenter-perf-list.dto';
+import { SystemMetricType } from './models/metrics/SystemMetricType';
 
 export class PerformanceMetricTransformer {
   public static async transform(dataCenterEntities: DataCenterEntity[]): Promise<DatacenterPerfListDto> {
@@ -29,7 +30,7 @@ export class PerformanceMetricTransformer {
     const metricDetail = new SystemMetric();
     metricDetail.date = metric.date;
     metricDetail.peak = metric.peak;
-    metricDetail.type = metric.metricTypeEntity.name;
+    metricDetail.type = metric.metricTypeEntity.name as SystemMetricType;
     metricDetail.unit = metric.metricTypeEntity.unit;
     metricDetail.value = metric.value;
     return metricDetail;
