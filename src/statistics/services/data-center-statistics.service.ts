@@ -5,10 +5,19 @@ import { DataCenterEntity } from '../../collector/entities/data-center.entity';
 import { AdapterMetricTransformer } from '../adapter-metric.transformer';
 import { CapacityMetricTransformer } from '../capacity-metric.transformer';
 import { HostGroupMetricTransformer } from '../host-group-metric.transformer';
+import { DatacenterCapacityListDto } from '../models/dtos/datacenter-capacity-list.dto';
+import { DatacenterPerfListDto } from '../models/dtos/datacenter-perf-list.dto';
+import { ChaMetricService } from '../../collector/services/cha-metric.service';
+import { PoolMetricService } from '../../collector/services/pool-metric.service';
+import { MetricEntityInterface } from '../../collector/entities/metric-entity.interface';
+import { SystemMetricService } from '../../collector/services/system-metric.service';
 
 @Injectable()
 export class DataCenterStatisticsService {
-  constructor(private dataCenterService: DataCenterService) {
+  constructor(private dataCenterService: DataCenterService,
+              private chaMetricService: ChaMetricService,
+              private poolMetricService: PoolMetricService,
+              private systemMetricService: SystemMetricService) {
   }
 
   private static transform(metricGroup: MetricGroup, entity: DataCenterEntity[]) {
@@ -27,7 +36,8 @@ export class DataCenterStatisticsService {
     }
   }
 
-  async getMetricByIdDataCenter(metricGroup: MetricGroup, idDataCenter: number, date: Date) {
+  async getMetricByIdDataCenter(metricGroup: MetricGroup, idDataCenter: number, date: Date)
+    : Promise<DatacenterCapacityListDto | DatacenterPerfListDto> {
     const dataCenterEntity = await this.getEntities(metricGroup, idDataCenter, date);
     if (dataCenterEntity !== undefined) {
       return DataCenterStatisticsService.transform(metricGroup, dataCenterEntity);
@@ -40,4 +50,17 @@ export class DataCenterStatisticsService {
     return await this.dataCenterService.getMetricsByGroup(metricGroup, idDataCenter);
   }
 
+  public async getAlerts(): Promise<MetricEntityInterface[]> {
+    const alerts = await this.chaMetricService.getAlerts();
+    const poolAlerts = await this.poolMetricService.getAlerts();
+    const systemAlerts = await this.systemMetricService.getAlerts();
+    const result = [...alerts, ...poolAlerts, ...systemAlerts];
+
+    return result;
+  }
+
+  public async getMetrics(): Promise<MetricEntityInterface[]> {
+
+    return await this.systemMetricService.getMetrics();
+  }
 }

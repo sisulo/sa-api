@@ -13,7 +13,7 @@ export class PoolMetricReadEntity {
   @Column('date', { name: 'date' })
   date: Date;
 
-  @ManyToOne(() => CatMetricTypeEntity)
+  @ManyToOne(() => CatMetricTypeEntity, { eager: true })
   @JoinColumn({ name: 'id_cat_metric_type' })
   metricTypeEntity: CatMetricTypeEntity;
 

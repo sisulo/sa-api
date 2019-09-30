@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { PoolMetricEntity } from '../entities/pool-metric.entity';
 import { PoolEntity } from '../entities/pool.entity';
 import { SystemService } from './system.service';
@@ -9,6 +9,8 @@ import { CommonMetricService } from './common-metric.service';
 import { MetricTypeService } from './metric-type.service';
 import { CatMetricTypeEntity } from '../entities/cat-metric-type.entity';
 import { MetricRequestDto } from '../dto/metric-request.dto';
+import { MetricType } from '../enums/metric-type.enum';
+import { PoolMetricReadEntity } from '../entities/pool-metric-read.entity';
 
 @Injectable()
 export class PoolMetricService extends CommonMetricService<PoolMetricEntity, PoolEntity> {
@@ -16,6 +18,8 @@ export class PoolMetricService extends CommonMetricService<PoolMetricEntity, Poo
   constructor(
     @InjectRepository(PoolMetricEntity)
     private readonly metricRepository: Repository<PoolMetricEntity>,
+    @InjectRepository(PoolMetricReadEntity)
+    private readonly metricReadRepository: Repository<PoolMetricReadEntity>,
     private readonly poolService: PoolService,
     private readonly systemService: SystemService,
     private readonly metricTypeService: MetricTypeService,
@@ -35,6 +39,11 @@ export class PoolMetricService extends CommonMetricService<PoolMetricEntity, Poo
     const returnedEntity = await this.metricRepository.save(entity);
 
     return returnedEntity;
+  }
+
+  public async getAlerts(): Promise<PoolMetricEntity[]> {
+    const type = await this.metricTypeService.findById(MetricType.SLA_EVENTS);
+    return await this.metricReadRepository.find({ value: MoreThan(0), metricTypeEntity: type });
   }
 
   protected async createMetricEntity(component: PoolEntity, metricType: CatMetricTypeEntity, dateSearch: Date): Promise<PoolMetricEntity> {

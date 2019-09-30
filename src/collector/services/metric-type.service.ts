@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CatMetricTypeEntity } from '../entities/cat-metric-type.entity';
 
 @Injectable()
@@ -16,5 +16,10 @@ export class MetricTypeService {
     return await this.repository
       .findOne({ idCatMetricType: id })
       .then(metricType => metricType);
+  }
+
+  async findByMetricTypes(types: number[]) {
+    return await this.repository
+      .find({ idCatMetricType: In(types) });
   }
 }

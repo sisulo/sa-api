@@ -1,9 +1,10 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { CatMetricTypeEntity } from './cat-metric-type.entity';
 import { PoolEntity } from './pool.entity';
+import { MetricEntityInterface } from './metric-entity.interface';
 
 @Entity('pool_metrics')
-export class PoolMetricEntity {
+export class PoolMetricEntity implements MetricEntityInterface {
   @PrimaryGeneratedColumn({ name: 'id_pool_metric' })
   id: number;
 
@@ -13,7 +14,7 @@ export class PoolMetricEntity {
   @Column('date', { name: 'date' })
   date: Date;
 
-  @ManyToOne(() => CatMetricTypeEntity)
+  @ManyToOne(() => CatMetricTypeEntity, { eager: true })
   @JoinColumn({ name: 'id_cat_metric_type' })
   metricTypeEntity: CatMetricTypeEntity;
 

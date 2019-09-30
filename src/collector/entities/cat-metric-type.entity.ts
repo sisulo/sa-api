@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { MetricThresholdEntity } from './metric-threshold.entity';
 
 @Entity('cat_metric_type')
 export class CatMetricTypeEntity {
@@ -13,4 +14,8 @@ export class CatMetricTypeEntity {
 
   @Column({ name: 'id_cat_metric_group' })
   idCatMetricGroup: number;
+
+  @OneToOne(() => MetricThresholdEntity, threshold => threshold.metricTypeEntity)
+  threshold: MetricThresholdEntity;
+
 }

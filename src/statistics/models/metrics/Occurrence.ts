@@ -1,6 +1,6 @@
 import { EntityType } from './EntityType';
 
-export class Occurence {
+export class Occurrence {
   datacenterId: number;
   systemId: number;
   entityId: number;

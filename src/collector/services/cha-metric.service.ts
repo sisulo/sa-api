@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { SystemService } from './system.service';
 import { ChaMetricEntity } from '../entities/cha-metric.entity';
 import { ChaEntity } from '../entities/cha.entity';
@@ -8,6 +7,9 @@ import { ChaService } from './cha.service';
 import { CommonMetricService } from './common-metric.service';
 import { MetricTypeService } from './metric-type.service';
 import { CatMetricTypeEntity } from '../entities/cat-metric-type.entity';
+import { MetricType } from '../enums/metric-type.enum';
+import { ChaMetricReadEntity } from '../entities/cha-metric-read.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ChaMetricService extends CommonMetricService<ChaMetricEntity, ChaEntity> {
@@ -15,6 +17,8 @@ export class ChaMetricService extends CommonMetricService<ChaMetricEntity, ChaEn
   constructor(
     @InjectRepository(ChaMetricEntity)
     private readonly metricRepository: Repository<ChaMetricEntity>,
+    @InjectRepository(ChaMetricReadEntity)
+    private readonly metricReadRepository: Repository<ChaMetricReadEntity>,
     protected readonly systemService: SystemService,
     protected readonly chaService: ChaService,
     protected readonly metricTypeService: MetricTypeService,
@@ -34,6 +38,11 @@ export class ChaMetricService extends CommonMetricService<ChaMetricEntity, ChaEn
     const returnedEntity = await this.metricRepository.save(entity);
 
     return returnedEntity;
+  }
+
+  public async getAlerts(): Promise<ChaMetricEntity[]> {
+    const type = await this.metricTypeService.findById(MetricType.DISBALANCE_EVENTS);
+    return await this.metricReadRepository.find({ value: MoreThan(0), metricTypeEntity: type });
   }
 
   protected async createMetricEntity(component: ChaEntity, metricType: CatMetricTypeEntity, dateSearch: Date): Promise<ChaMetricEntity> {

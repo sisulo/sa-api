@@ -1,7 +1,7 @@
 import { AlertType } from './AlertType';
-import { Occurence } from './Occurence';
+import { Occurrence } from './Occurrence';
 
 export class Alert {
   type: AlertType;
-  occurence: Occurence[];
+  occurrences: Occurrence[];
 }

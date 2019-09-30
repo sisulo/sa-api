@@ -1,9 +1,10 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { CatMetricTypeEntity } from './cat-metric-type.entity';
 import { ChaEntity } from './cha.entity';
+import { MetricEntityInterface } from './metric-entity.interface';
 
 @Entity('cha_metrics')
-export class ChaMetricEntity {
+export class ChaMetricEntity implements MetricEntityInterface {
 
   @PrimaryGeneratedColumn({ name: 'id_cha_metric' })
   id: number;

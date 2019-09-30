@@ -1,9 +1,10 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { SystemEntity } from './system.entity';
 import { CatMetricTypeEntity } from './cat-metric-type.entity';
+import { MetricEntityInterface } from './metric-entity.interface';
 
 @Entity('view_system_metrics')
-export class SystemMetricReadEntity {
+export class SystemMetricReadEntity implements MetricEntityInterface {
   @PrimaryGeneratedColumn({ name: 'id_system_metric', type: 'integer' })
   id: number;
 

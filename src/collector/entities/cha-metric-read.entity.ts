@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { CatMetricTypeEntity } from './cat-metric-type.entity';
 import { ChaEntity } from './cha.entity';
 
@@ -20,5 +20,6 @@ export class ChaMetricReadEntity {
 
   @ManyToOne(() => ChaEntity, { eager: true })
   @JoinColumn({ name: 'id_cha' })
+  @JoinTable()
   adapter: ChaEntity;
 }

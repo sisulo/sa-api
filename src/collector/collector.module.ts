@@ -32,17 +32,23 @@ import { ChaMetricResponseTransformer } from './transformers/cha-metric-response
 import { ChaCollectorFactoryImpl } from './factory/collectors/cha-collector-factory.impl';
 import { SystemMetricResponseTransformer } from './transformers/system-metric-response.transformer';
 import { SystemCollectorFactoryImpl } from './factory/collectors/system-collector-factory.impl';
+import { SystemMetricReadEntity } from './entities/system-metric-read.entity';
+import { PoolMetricReadEntity } from './entities/pool-metric-read.entity';
+import { ChaMetricReadEntity } from './entities/cha-metric-read.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature(
       [
         SystemMetricEntity,
+        SystemMetricReadEntity,
         CatMetricTypeEntity,
         SystemEntity,
         PoolMetricEntity,
+        PoolMetricReadEntity,
         PoolEntity,
         ChaMetricEntity,
+        ChaMetricReadEntity,
         ChaEntity,
         DataCenterEntity,
         CapacityStatisticsEntity,
@@ -75,7 +81,7 @@ import { SystemCollectorFactoryImpl } from './factory/collectors/system-collecto
     SystemCollectorFactoryImpl,
   ],
   controllers: [MetricController],
-  exports: [DataCenterService, CapacityStatisticsService],
+  exports: [DataCenterService, CapacityStatisticsService, ChaMetricService, PoolMetricService, SystemMetricService],
 })
 export class CollectorModule {
 }
