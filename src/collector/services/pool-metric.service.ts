@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository } from 'typeorm';
+import { In, MoreThan, Repository } from 'typeorm';
 import { PoolMetricEntity } from '../entities/pool-metric.entity';
 import { PoolEntity } from '../entities/pool.entity';
 import { SystemService } from './system.service';
@@ -42,8 +42,16 @@ export class PoolMetricService extends CommonMetricService<PoolMetricEntity, Poo
   }
 
   public async getAlerts(): Promise<PoolMetricEntity[]> {
-    const type = await this.metricTypeService.findById(MetricType.SLA_EVENTS);
-    return await this.metricReadRepository.find({ value: MoreThan(0), metricTypeEntity: type });
+    const types = await this.metricTypeService.findByMetricTypes([MetricType.SLA_EVENTS, MetricType.PHYSICAL_USED_PERC]);
+    return await this.metricReadRepository.createQueryBuilder('metric')
+      .innerJoinAndSelect('metric.metricTypeEntity', 'type')
+      .innerJoinAndSelect('type.threshold', 'threshold')
+      .innerJoinAndSelect('metric.pool', 'pool')
+      .innerJoinAndSelect('pool.system', 'system')
+      .where('metric.value >= COALESCE(threshold.min_value, -2147483648)')
+      .andWhere('metric.value < COALESCE(threshold.max_value, 2147483647)')
+      .andWhere('metric.metricTypeEntity IN (:...type)', { type: types.map(type => type.idCatMetricType) })
+      .getMany();
   }
 
   protected async createMetricEntity(component: PoolEntity, metricType: CatMetricTypeEntity, dateSearch: Date): Promise<PoolMetricEntity> {

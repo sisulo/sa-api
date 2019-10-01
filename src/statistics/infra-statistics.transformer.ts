@@ -33,10 +33,11 @@ export class InfraStatisticsTransformer {
         let occurrence = null;
         switch (metric.metricTypeEntity.idCatMetricType) {
           case MetricType.SLA_EVENTS:
-            occurrence = InfraStatisticsTransformer.transformPoolOccurrence(metric as PoolMetricEntity, EntityType.ADAPTER);
+          case MetricType.PHYSICAL_USED_PERC:
+            occurrence = InfraStatisticsTransformer.transformPoolOccurrence(metric as PoolMetricEntity, EntityType.POOL);
             break;
           case MetricType.DISBALANCE_EVENTS:
-            occurrence = InfraStatisticsTransformer.transformAdapterOccurrence(metric as ChaMetricEntity, EntityType.POOL);
+            occurrence = InfraStatisticsTransformer.transformAdapterOccurrence(metric as ChaMetricEntity, EntityType.ADAPTER);
             break;
           case MetricType.HDD_PERC:
           case MetricType.CPU_PERC:
@@ -105,6 +106,8 @@ export class InfraStatisticsTransformer {
         return AlertType.RESPONSE;
       case MetricType.WRITE_PENDING_PERC:
         return AlertType.WRITE_PENDING;
+      case MetricType.PHYSICAL_USED_PERC:
+        return AlertType.CAPACITY_USAGE;
     }
   }
 
