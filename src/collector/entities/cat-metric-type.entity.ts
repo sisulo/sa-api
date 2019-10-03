@@ -15,7 +15,7 @@ export class CatMetricTypeEntity {
   @Column({ name: 'id_cat_metric_group' })
   idCatMetricGroup: number;
 
-  @OneToOne(() => MetricThresholdEntity, threshold => threshold.metricTypeEntity)
+  @OneToOne(() => MetricThresholdEntity, threshold => threshold.metricTypeEntity, { eager: true })
   threshold: MetricThresholdEntity;
 
 }

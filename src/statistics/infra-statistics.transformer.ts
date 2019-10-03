@@ -46,6 +46,9 @@ export class InfraStatisticsTransformer {
             occurrence = InfraStatisticsTransformer.transformSystemOccurrence(metric as SystemMetricEntity, EntityType.SYSTEM);
             break;
         }
+        alert.minValue = metric.metricTypeEntity.threshold.minValue;
+        alert.maxValue = metric.metricTypeEntity.threshold.maxValue;
+        alert.unit = metric.metricTypeEntity.unit;
         alert.occurrences.push(occurrence);
       },
     );
@@ -56,15 +59,15 @@ export class InfraStatisticsTransformer {
   }
 
   private static transformPoolOccurrence(metric: PoolMetricEntity, entityType: EntityType) {
-    const occurence = new Occurrence();
-    occurence.datacenterId = metric.pool.system.idDataCenter;
-    occurence.entityId = metric.pool.idPool;
-    occurence.entityType = entityType;
-    occurence.name = metric.pool.name;
-    occurence.systemId = metric.pool.system.idSystem;
-    occurence.unit = metric.metricTypeEntity.unit;
-    occurence.value = metric.value;
-    return occurence;
+    const occurrence = new Occurrence();
+    occurrence.datacenterId = metric.pool.system.idDataCenter;
+    occurrence.entityId = metric.pool.idPool;
+    occurrence.entityType = entityType;
+    occurrence.name = metric.pool.name;
+    occurrence.systemId = metric.pool.system.idSystem;
+    occurrence.unit = metric.metricTypeEntity.unit;
+    occurrence.value = metric.value;
+    return occurrence;
   }
 
   private static transformAdapterOccurrence(metric: ChaMetricEntity, entityType: EntityType) {
