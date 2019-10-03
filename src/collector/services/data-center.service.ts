@@ -213,9 +213,9 @@ export class DataCenterService {
       MetricType.CHANGE_WEEK,
       MetricType.CHANGE_MONTH,
     ];
-    if (metrics[metricGroup][period] == null) {
+    if (metrics[metricGroup][periodType] == null) {
       throw new BadRequestException(`Wrong metric group ${metricGroup} when resolving set of metric types`);
     }
-    return metrics[metricGroup][period];
+    return metrics[metricGroup][periodType];
   }
 }
