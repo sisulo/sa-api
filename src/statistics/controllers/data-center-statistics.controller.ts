@@ -19,51 +19,51 @@ export class DataCenterStatisticsController {
 
   @Get('performance')
   performanceStatisticsAll(@Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.PERFORMANCE, null, queryParams.date);
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.PERFORMANCE, null, queryParams.period);
   }
 
   @Get(':idDataCenter/performance')
   performanceStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.PERFORMANCE, params.idDataCenter, queryParams.date);
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.PERFORMANCE, params.idDataCenter, queryParams.period);
   }
 
   @Get('capacity')
   capacityStatisticsAll(@Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.CAPACITY, null, queryParams.date);
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.CAPACITY, null);
   }
 
   @Get(':idDataCenter/capacity')
   capacityStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.CAPACITY, params.idDataCenter, queryParams.date);
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.CAPACITY, params.idDataCenter);
   }
 
   @Get('adapters')
   channelAdaptersStatisticsAll(@Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.ADAPTERS, null, queryParams.date);
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.ADAPTERS, null, queryParams.period);
   }
 
   @Get(':idDataCenter/adapters')
   channelAdaptersStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.ADAPTERS, params.idDataCenter, queryParams.date);
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.ADAPTERS, params.idDataCenter, queryParams.period);
   }
 
   @Get('sla')
   slaStatisticsAll(@Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.SLA, null, queryParams.date);
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.SLA, null, queryParams.period);
   }
 
   @Get(':idDataCenter/sla')
   slaStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.SLA, params.idDataCenter, queryParams.date);
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.SLA, params.idDataCenter, queryParams.period);
   }
 
   @Get('host-groups')
   hostGroupStatisticsAll(@Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.HOSTGROUPS, null, queryParams.date);
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.HOSTGROUPS, null);
   }
 
   @Get(':idDataCenter/host-groups')
   hostGroupStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.HOSTGROUPS, params.idDataCenter, queryParams.date);
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.HOSTGROUPS, params.idDataCenter);
   }
 }

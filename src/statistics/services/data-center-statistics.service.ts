@@ -11,6 +11,7 @@ import { ChaMetricService } from '../../collector/services/cha-metric.service';
 import { PoolMetricService } from '../../collector/services/pool-metric.service';
 import { MetricEntityInterface } from '../../collector/entities/metric-entity.interface';
 import { SystemMetricService } from '../../collector/services/system-metric.service';
+import { PeriodType } from '../../collector/enums/period-type.enum';
 
 @Injectable()
 export class DataCenterStatisticsService {
@@ -36,9 +37,9 @@ export class DataCenterStatisticsService {
     }
   }
 
-  async getMetricByIdDataCenter(metricGroup: MetricGroup, idDataCenter: number, date: Date)
+  async getMetricByIdDataCenter(metricGroup: MetricGroup, idDataCenter: number, period?: PeriodType)
     : Promise<DatacenterCapacityListDto | DatacenterPerfListDto> {
-    const dataCenterEntity = await this.getEntities(metricGroup, idDataCenter, date);
+    const dataCenterEntity = await this.getEntities(metricGroup, idDataCenter, period);
     if (dataCenterEntity !== undefined) {
       return DataCenterStatisticsService.transform(metricGroup, dataCenterEntity);
     } else {
@@ -46,8 +47,8 @@ export class DataCenterStatisticsService {
     }
   }
 
-  async getEntities(metricGroup: MetricGroup, idDataCenter: number, date: Date): Promise<DataCenterEntity[]> {
-    return await this.dataCenterService.getMetricsByGroup(metricGroup, idDataCenter);
+  async getEntities(metricGroup: MetricGroup, idDataCenter: number, period: PeriodType): Promise<DataCenterEntity[]> {
+    return await this.dataCenterService.getMetricsByGroup(metricGroup, idDataCenter, period);
   }
 
   public async getAlerts(): Promise<MetricEntityInterface[]> {
