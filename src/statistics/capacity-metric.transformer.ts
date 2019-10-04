@@ -63,7 +63,7 @@ export class CapacityMetricTransformer {
   private static createSystemMetric(metric: PoolMetricEntity) {
     const metricDetail = new SystemMetric();
     metricDetail.date = metric.date;
-    metricDetail.type = metric.metricTypeEntity.name as SystemMetricType;
+    metricDetail.type = metric.metricTypeEntity.name.replace(/(_WEEK)|(_MONTH)$/, '') as SystemMetricType;
     metricDetail.unit = metric.metricTypeEntity.unit;
     metricDetail.value = metric.value;
     return metricDetail;
