@@ -8,8 +8,11 @@ import { PoolEntity } from '../collector/entities/pool.entity';
 import { PoolMetricEntity } from '../collector/entities/pool-metric.entity';
 import { DatacenterCapacityListDto } from './models/dtos/datacenter-capacity-list.dto';
 import { SystemMetricType } from './models/metrics/SystemMetricType';
+import { MetricType } from '../collector/enums/metric-type.enum';
 
 export class CapacityMetricTransformer {
+  private static excludedMetric = [MetricType.CHANGE_DAY, MetricType.CHANGE_WEEK, MetricType.CHANGE_MONTH];
+
   public static async transform(dataCenterPromise: DataCenterEntity[]): Promise<DatacenterCapacityListDto> {
     const response = new DatacenterCapacityListDto();
     dataCenterPromise.forEach(
@@ -63,7 +66,11 @@ export class CapacityMetricTransformer {
   private static createSystemMetric(metric: PoolMetricEntity) {
     const metricDetail = new SystemMetric();
     metricDetail.date = metric.date;
-    metricDetail.type = metric.metricTypeEntity.name.replace(/(_WEEK)|(_MONTH)$/, '') as SystemMetricType;
+    if (CapacityMetricTransformer.excludedMetric.some(type => type === metric.metricTypeEntity.idCatMetricType)) {
+      metricDetail.type = metric.metricTypeEntity.name as SystemMetricType;
+    } else {
+      metricDetail.type = metric.metricTypeEntity.name.replace(/(_WEEK)|(_MONTH)$/, '') as SystemMetricType;
+    }
     metricDetail.unit = metric.metricTypeEntity.unit;
     metricDetail.value = metric.value;
     return metricDetail;
