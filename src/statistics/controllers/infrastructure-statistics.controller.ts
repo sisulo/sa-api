@@ -25,6 +25,7 @@ export class InfrastructureStatisticsController {
     return InfraStatisticsTransformer.transform(
       this.dataCenterService.getAlerts(),
       this.dataCenterService.getMetrics(),
+      this.dataCenterService.getCapacityMetrics(),
     );
   }
 }

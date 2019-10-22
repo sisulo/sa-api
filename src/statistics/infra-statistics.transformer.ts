@@ -22,11 +22,15 @@ export class InfraStatisticsTransformer {
     AlertType.CAPACITY_USAGE,
   ];
 
-  public static async transform(alertsInput: Promise<MetricEntityInterface[]>, metricsInput: Promise<MetricEntityInterface[]>) {
+  public static async transform(
+    alertsInput: Promise<MetricEntityInterface[]>,
+    metricsInput: Promise<MetricEntityInterface[]>,
+    capacityMetricInput: Promise<MetricEntityInterface[]>) {
     const dto = new InfrastructureDto();
     this.initDto(dto);
     const metrics = await alertsInput;
     const perfMetrics = await metricsInput;
+    const capacityMetrics = await capacityMetricInput;
     metrics.forEach(
       metric => {
         const alert = InfraStatisticsTransformer.findAlert(metric.metricTypeEntity.idCatMetricType, dto);
@@ -53,6 +57,9 @@ export class InfraStatisticsTransformer {
       },
     );
     dto.metrics = perfMetrics.map(metric => {
+      return InfraStatisticsTransformer.transformSimpleMetric(metric as SystemMetricEntity);
+    });
+    dto.capacityMetrics = capacityMetrics.map(metric => {
       return InfraStatisticsTransformer.transformSimpleMetric(metric as SystemMetricEntity);
     });
     return dto;
@@ -120,6 +127,12 @@ export class InfraStatisticsTransformer {
         return SystemMetricType.TRANSFER;
       case MetricType.WORKLOAD:
         return SystemMetricType.WORKLOAD;
+      case MetricType.CHANGE_MONTH:
+        return SystemMetricType.CAPACITY_CHANGE_1M;
+      case MetricType.SUBSCRIBED_CAPACITY:
+        return SystemMetricType.SUBSCRIBED_CAPACITY;
+      case MetricType.PHYSICAL_CAPACITY:
+        return SystemMetricType.PHYSICAL_CAPACITY;
     }
   }
 

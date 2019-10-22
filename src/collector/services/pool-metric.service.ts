@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, MoreThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { PoolMetricEntity } from '../entities/pool-metric.entity';
 import { PoolEntity } from '../entities/pool.entity';
 import { SystemService } from './system.service';
@@ -11,6 +11,8 @@ import { CatMetricTypeEntity } from '../entities/cat-metric-type.entity';
 import { MetricRequestDto } from '../dto/metric-request.dto';
 import { MetricType } from '../enums/metric-type.enum';
 import { PoolMetricReadEntity } from '../entities/pool-metric-read.entity';
+import { MetricEntityInterface } from '../entities/metric-entity.interface';
+import { SystemMetricReadEntity } from '../entities/system-metric-read.entity';
 
 @Injectable()
 export class PoolMetricService extends CommonMetricService<PoolMetricEntity, PoolEntity> {
@@ -62,5 +64,29 @@ export class PoolMetricService extends CommonMetricService<PoolMetricEntity, Poo
       return new PoolMetricEntity();
     }
     return metricDao;
+  }
+
+  // TODO duplicated in system-metric.service
+  public async getMetrics(): Promise<MetricEntityInterface[]> {
+    const types = await this.metricTypeService.findByMetricTypes([
+      MetricType.PHYSICAL_CAPACITY,
+      MetricType.SUBSCRIBED_CAPACITY,
+      MetricType.CHANGE_MONTH]);
+    const result = [];
+    for (const type of types) {
+      const entities = await this.metricReadRepository.find({ metricTypeEntity: type });
+      result.push(this.aggregateMetric(entities));
+    }
+    return result;
+  }
+
+  private aggregateMetric(metrics: PoolMetricReadEntity[]): MetricEntityInterface {
+    const data = metrics;
+    const result = new SystemMetricReadEntity();
+    result.metricTypeEntity = data[0].metricTypeEntity;
+    result.value = data.reduce(
+      (accumulator, currentValue) => accumulator + currentValue.value, 0,
+    );
+    return result;
   }
 }
