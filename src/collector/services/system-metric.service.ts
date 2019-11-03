@@ -60,6 +60,15 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
       .getMany();
   }
 
+  public async getGraphData(): Promise<any[]> {
+    return this.metricRepository.createQueryBuilder('metric')
+      .select('metric.date')
+      .addSelect('SUM(metric.value)', 'sum')
+      .where('metric.metricTypeEntity = :idType', { idType: MetricType.TRANSFER })
+      .groupBy('metric.date')
+      .getRawMany();
+  }
+
   public async getMetrics(): Promise<MetricEntityInterface[]> {
     const types = await this.metricTypeService.findByMetricTypes([MetricType.WORKLOAD, MetricType.TRANSFER]);
     const result = [];

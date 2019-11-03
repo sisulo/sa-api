@@ -3,11 +3,13 @@ import { CapacityStatisticsService } from '../../collector/services/capacity-sta
 import { GlobalCapacityTransformer } from '../global-capacity-transformer';
 import { DataCenterStatisticsService } from '../services/data-center-statistics.service';
 import { InfraStatisticsTransformer } from '../infra-statistics.transformer';
+import { GraphDataService } from '../services/graph-data.service';
 
 @Controller('api/v1/infrastructure')
 export class InfrastructureStatisticsController {
   constructor(private capacityStatisticsService: CapacityStatisticsService,
-              private dataCenterService: DataCenterStatisticsService) {
+              private dataCenterService: DataCenterStatisticsService,
+              private graphDataService: GraphDataService) {
   }
 
   @Get('/capacity')
@@ -27,5 +29,10 @@ export class InfrastructureStatisticsController {
       this.dataCenterService.getMetrics(),
       this.dataCenterService.getCapacityMetrics(),
     );
+  }
+
+  @Get('/performance/graph')
+  public getGraphData() {
+    return this.graphDataService.getGraphData();
   }
 }
