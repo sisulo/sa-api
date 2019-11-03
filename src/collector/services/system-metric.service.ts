@@ -12,6 +12,7 @@ import { MetricRequestDto } from '../dto/metric-request.dto';
 import { MetricType } from '../enums/metric-type.enum';
 import { SystemMetricReadEntity } from '../entities/system-metric-read.entity';
 import { MetricEntityInterface } from '../entities/metric-entity.interface';
+import { SystemMetricType } from '../../statistics/models/metrics/SystemMetricType';
 
 @Injectable()
 export class SystemMetricService extends CommonMetricService<SystemMetricEntity, SystemEntity> {
@@ -40,6 +41,18 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
     const returnedEntity = await this.metricRepository.save(entity);
 
     return returnedEntity;
+  }
+
+  async getMetricGraph(type: MetricType): Promise<any[]> {
+    const types = await this.metricTypeService.findByMetricTypes([type]);
+    const data = await this.metricRepository.createQueryBuilder('metrics')
+      .select('metrics.date', 'date')
+      .addSelect('SUM(metrics.value)', 'value')
+      .where('metrics.metricTypeEntity IN (:...idType)', { idType: types.map(typeObj => typeObj.idCatMetricType) })
+      .groupBy('metrics.date')
+      .orderBy('metrics.date')
+      .getRawMany();
+    return data;
   }
 
   // TODO this could be as generic parametrized

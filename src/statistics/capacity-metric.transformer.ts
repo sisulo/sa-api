@@ -2,7 +2,7 @@ import { SystemDetail } from './models/SystemDetail';
 import { SystemMetric } from './models/metrics/SystemMetric';
 import { DataCenterEntity } from '../collector/entities/data-center.entity';
 import { SystemEntity } from '../collector/entities/system.entity';
-import { CapacityStatisticsDto } from './models/dtos/CapacityStatisticsDto';
+import { CapacityStatisticsDto } from './models/dtos/capacity-statistics.dto';
 import { SystemPool } from './models/SystemPool';
 import { PoolEntity } from '../collector/entities/pool.entity';
 import { PoolMetricEntity } from '../collector/entities/pool-metric.entity';

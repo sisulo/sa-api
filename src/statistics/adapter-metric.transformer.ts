@@ -6,7 +6,7 @@ import { SystemPool } from './models/SystemPool';
 import { ChaEntity } from '../collector/entities/cha.entity';
 import { ChaMetricEntity } from '../collector/entities/cha-metric.entity';
 import { DatacenterCapacityListDto } from './models/dtos/datacenter-capacity-list.dto';
-import { CapacityStatisticsDto } from './models/dtos/CapacityStatisticsDto';
+import { CapacityStatisticsDto } from './models/dtos/capacity-statistics.dto';
 import { SystemMetricType } from './models/metrics/SystemMetricType';
 
 export class AdapterMetricTransformer {

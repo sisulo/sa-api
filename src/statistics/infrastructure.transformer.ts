@@ -1,5 +1,5 @@
 import { DataCenterEntity } from '../collector/entities/data-center.entity';
-import { DatacenterDto } from './models/dtos/DatacenterDto';
+import { DatacenterDto } from './models/dtos/datacenter.dto';
 import { Datacenter } from './models/Datacenter';
 import { System } from './models/System';
 
