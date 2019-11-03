@@ -8,8 +8,8 @@ import { MetricEntityInterface } from '../collector/entities/metric-entity.inter
 import { MetricType } from '../collector/enums/metric-type.enum';
 import { AlertType } from './models/metrics/AlertType';
 import { SystemMetricEntity } from '../collector/entities/system-metric.entity';
-import { SystemMetricType } from './models/metrics/SystemMetricType';
 import { Metric } from './models/metrics/Metric';
+import { TypeMappingUtils } from './utils/type-mapping.utils';
 
 export class InfraStatisticsTransformer {
   private static alertsInit = [
@@ -121,21 +121,6 @@ export class InfraStatisticsTransformer {
     }
   }
 
-  private static resolveMetricType(type: MetricType): SystemMetricType {
-    switch (type) {
-      case MetricType.TRANSFER:
-        return SystemMetricType.TRANSFER;
-      case MetricType.WORKLOAD:
-        return SystemMetricType.WORKLOAD;
-      case MetricType.CHANGE_MONTH:
-        return SystemMetricType.CAPACITY_CHANGE_1M;
-      case MetricType.SUBSCRIBED_CAPACITY:
-        return SystemMetricType.SUBSCRIBED_CAPACITY;
-      case MetricType.PHYSICAL_CAPACITY:
-        return SystemMetricType.PHYSICAL_CAPACITY;
-    }
-  }
-
   private static transformSystemOccurrence(metric: SystemMetricEntity, type: EntityType) {
     const occurrence = new Occurrence();
     occurrence.datacenterId = metric.system.idDataCenter;
@@ -164,7 +149,7 @@ export class InfraStatisticsTransformer {
     const result = new Metric();
     result.unit = metric.metricTypeEntity.unit;
     result.value = metric.value;
-    result.type = InfraStatisticsTransformer.resolveMetricType(metric.metricTypeEntity.idCatMetricType);
+    result.type = TypeMappingUtils.resolveMetricType(metric.metricTypeEntity.idCatMetricType);
     return result;
   }
 }
