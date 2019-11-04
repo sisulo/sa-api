@@ -14,6 +14,10 @@ export class TypeMappingUtils {
         return SystemMetricType.SUBSCRIBED_CAPACITY;
       case MetricType.PHYSICAL_CAPACITY:
         return SystemMetricType.PHYSICAL_CAPACITY;
+      case MetricType.LOGICAL_CAPACITY:
+        return SystemMetricType.LOGICAL_CAPACITY;
+      case MetricType.TOTAL_SAVING_EFFECT:
+        return SystemMetricType.TOTAL_SAVING_EFFECT;
     }
   }
 }

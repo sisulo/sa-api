@@ -69,8 +69,9 @@ export class PoolMetricService extends CommonMetricService<PoolMetricEntity, Poo
   // TODO duplicated in system-metric.service
   public async getMetrics(): Promise<MetricEntityInterface[]> {
     const types = await this.metricTypeService.findByMetricTypes([
-      MetricType.PHYSICAL_CAPACITY,
+      MetricType.LOGICAL_CAPACITY,
       MetricType.SUBSCRIBED_CAPACITY,
+      MetricType.TOTAL_SAVING_EFFECT,
       MetricType.CHANGE_MONTH]);
     const result = [];
     for (const type of types) {
