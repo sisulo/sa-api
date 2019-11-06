@@ -64,8 +64,4 @@ export class DataCenterStatisticsService {
 
     return await this.systemMetricService.getMetrics();
   }
-
-  public async getCapacityMetrics(): Promise<MetricEntityInterface[]> {
-    return await this.poolMetricService.getMetrics();
-  }
 }

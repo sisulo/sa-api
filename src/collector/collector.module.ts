@@ -79,9 +79,17 @@ import { ChaMetricReadEntity } from './entities/cha-metric-read.entity';
     PoolCollectorFactoryImpl,
     ChaCollectorFactoryImpl,
     SystemCollectorFactoryImpl,
+    DataCenterService,
   ],
   controllers: [MetricController],
-  exports: [DataCenterService, CapacityStatisticsService, ChaMetricService, PoolMetricService, SystemMetricService],
+  exports: [DataCenterService,
+    CapacityStatisticsService,
+    ChaMetricService,
+    PoolMetricService,
+    SystemMetricService,
+    DataCenterService,
+    MetricTypeService,
+  ],
 })
 export class CollectorModule {
 }

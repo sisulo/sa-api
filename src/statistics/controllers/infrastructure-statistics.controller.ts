@@ -1,14 +1,14 @@
-import { Controller, Get, Logger, Param, Query } from '@nestjs/common';
+import { Controller, Get, Logger, Query } from '@nestjs/common';
 import { CapacityStatisticsService } from '../../collector/services/capacity-statistics.service';
 import { GlobalCapacityTransformer } from '../global-capacity-transformer';
 import { DataCenterStatisticsService } from '../services/data-center-statistics.service';
 import { InfraStatisticsTransformer } from '../infra-statistics.transformer';
 import { GraphDataService } from '../services/graph-data.service';
 import { MetricType } from '../../collector/enums/metric-type.enum';
-import { loggers } from 'winston';
 import { GraphDataParams } from './params/graph-data.params';
 import { GraphFilterPipe } from './pipes/graph-filter.pipe';
 import { GraphDataTransformer } from '../graph-data.transformer';
+import { AggregatedMetricService } from '../services/aggregated-metric.service';
 
 @Controller('api/v1/infrastructure')
 export class InfrastructureStatisticsController {
@@ -16,7 +16,8 @@ export class InfrastructureStatisticsController {
 
   constructor(private capacityStatisticsService: CapacityStatisticsService,
               private dataCenterService: DataCenterStatisticsService,
-              private graphDataService: GraphDataService) {
+              private graphDataService: GraphDataService,
+              private aggregatedMetricService: AggregatedMetricService) {
   }
 
   @Get('/capacity')
@@ -34,7 +35,12 @@ export class InfrastructureStatisticsController {
     return InfraStatisticsTransformer.transform(
       this.dataCenterService.getAlerts(),
       this.dataCenterService.getMetrics(),
-      this.dataCenterService.getCapacityMetrics(),
+      this.aggregatedMetricService.fetchAggregatedMetrics([
+        MetricType.LOGICAL_CAPACITY,
+        MetricType.SUBSCRIBED_CAPACITY,
+        MetricType.TOTAL_SAVING_EFFECT,
+        MetricType.CHANGE_MONTH,
+        MetricType.PHYSICAL_CAPACITY]),
     );
   }
 
@@ -43,4 +49,5 @@ export class InfrastructureStatisticsController {
     this.logger.log(graphFilter);
     return GraphDataTransformer.transform(this.graphDataService.getGraphData(graphFilter));
   }
+
 }

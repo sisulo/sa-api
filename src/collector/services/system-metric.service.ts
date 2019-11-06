@@ -12,7 +12,6 @@ import { MetricRequestDto } from '../dto/metric-request.dto';
 import { MetricType } from '../enums/metric-type.enum';
 import { SystemMetricReadEntity } from '../entities/system-metric-read.entity';
 import { MetricEntityInterface } from '../entities/metric-entity.interface';
-import { SystemMetricType } from '../../statistics/models/metrics/SystemMetricType';
 
 @Injectable()
 export class SystemMetricService extends CommonMetricService<SystemMetricEntity, SystemEntity> {
@@ -71,15 +70,6 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
       .andWhere('metric.value < COALESCE(threshold.max_value, 2147483647)')
       .andWhere('metric.metricTypeEntity IN (:...type)', { type: types.map(type => type.idCatMetricType) })
       .getMany();
-  }
-
-  public async getGraphData(): Promise<any[]> {
-    return this.metricRepository.createQueryBuilder('metric')
-      .select('metric.date')
-      .addSelect('SUM(metric.value)', 'sum')
-      .where('metric.metricTypeEntity = :idType', { idType: MetricType.TRANSFER })
-      .groupBy('metric.date')
-      .getRawMany();
   }
 
   public async getMetrics(): Promise<MetricEntityInterface[]> {
