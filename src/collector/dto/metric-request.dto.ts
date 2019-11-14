@@ -1,5 +1,4 @@
 import { MetricType } from '../enums/metric-type.enum';
-import { IsValidDate } from '../../statistics/controllers/params/is-valid-date.validator';
 
 export class MetricRequestDto {
 

@@ -10,7 +10,7 @@ export class GraphDataService {
   async getGraphData(graphFilter: GraphDataParams): Promise<any[]> {
     return await Promise.all(graphFilter.types.map(async metricType => {
       const result = await this.metricService.getMetricGraph(metricType);
-      return {type: metricType, data: result};
+      return { type: metricType, data: result };
     }));
   }
 }

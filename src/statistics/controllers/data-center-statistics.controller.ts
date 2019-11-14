@@ -59,11 +59,11 @@ export class DataCenterStatisticsController {
 
   @Get('host-groups')
   hostGroupStatisticsAll(@Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.HOSTGROUPS, null);
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.HOST_GROUPS, null);
   }
 
   @Get(':idDataCenter/host-groups')
   hostGroupStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.HOSTGROUPS, params.idDataCenter);
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.HOST_GROUPS, params.idDataCenter);
   }
 }

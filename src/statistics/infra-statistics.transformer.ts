@@ -10,6 +10,7 @@ import { AlertType } from './models/metrics/AlertType';
 import { SystemMetricEntity } from '../collector/entities/system-metric.entity';
 import { Metric } from './models/metrics/Metric';
 import { TypeMappingUtils } from './utils/type-mapping.utils';
+import { RegionMetricInterface } from './services/aggregated-metric.service';
 
 export class InfraStatisticsTransformer {
   private static alertsInit = [
@@ -25,7 +26,7 @@ export class InfraStatisticsTransformer {
   public static async transform(
     alertsInput: Promise<MetricEntityInterface[]>,
     metricsInput: Promise<MetricEntityInterface[]>,
-    capacityMetricInput: Promise<MetricEntityInterface[]>) {
+    capacityMetricInput: Promise<RegionMetricInterface[]>) {
     const dto = new InfrastructureDto();
     this.initDto(dto);
     const metrics = await alertsInput;
@@ -59,8 +60,11 @@ export class InfraStatisticsTransformer {
     dto.metrics = perfMetrics.map(metric => {
       return InfraStatisticsTransformer.transformSimpleMetric(metric as SystemMetricEntity);
     });
-    dto.capacityMetrics = capacityMetrics.map(metric => {
-      return InfraStatisticsTransformer.transformSimpleMetric(metric as SystemMetricEntity);
+    dto.capacityMetrics = capacityMetrics.map(regionData => {
+      return {
+        region: regionData.region,
+        metrics: regionData.metrics.map(metric => InfraStatisticsTransformer.transformSimpleMetric(metric as SystemMetricEntity)),
+      };
     });
     return dto;
   }
@@ -145,7 +149,7 @@ export class InfraStatisticsTransformer {
     );
   }
 
-  private static transformSimpleMetric(metric: SystemMetricEntity) {
+  private static transformSimpleMetric(metric: SystemMetricEntity): Metric {
     const result = new Metric();
     result.unit = metric.metricTypeEntity.unit;
     result.value = metric.value;

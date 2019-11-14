@@ -2,13 +2,14 @@ import { Controller, Get, Logger, Query } from '@nestjs/common';
 import { CapacityStatisticsService } from '../../collector/services/capacity-statistics.service';
 import { GlobalCapacityTransformer } from '../global-capacity-transformer';
 import { DataCenterStatisticsService } from '../services/data-center-statistics.service';
-import { InfraStatisticsTransformer } from '../infra-statistics.transformer';
 import { GraphDataService } from '../services/graph-data.service';
 import { MetricType } from '../../collector/enums/metric-type.enum';
 import { GraphDataParams } from './params/graph-data.params';
 import { GraphFilterPipe } from './pipes/graph-filter.pipe';
 import { GraphDataTransformer } from '../graph-data.transformer';
 import { AggregatedMetricService } from '../services/aggregated-metric.service';
+import { Region } from '../models/dtos/region.enum';
+import { InfraStatisticsTransformer } from '../infra-statistics.transformer';
 
 @Controller('api/v1/infrastructure')
 export class InfrastructureStatisticsController {
@@ -35,12 +36,14 @@ export class InfrastructureStatisticsController {
     return InfraStatisticsTransformer.transform(
       this.dataCenterService.getAlerts(),
       this.dataCenterService.getMetrics(),
-      this.aggregatedMetricService.fetchAggregatedMetrics([
-        MetricType.LOGICAL_CAPACITY,
-        MetricType.SUBSCRIBED_CAPACITY,
-        MetricType.TOTAL_SAVING_EFFECT,
-        MetricType.CHANGE_MONTH,
-        MetricType.PHYSICAL_CAPACITY]),
+      this.aggregatedMetricService.fetchAggregatedMetricsGrouped([
+          MetricType.LOGICAL_CAPACITY,
+          MetricType.SUBSCRIBED_CAPACITY,
+          MetricType.TOTAL_SAVING_EFFECT,
+          MetricType.CHANGE_MONTH,
+          MetricType.PHYSICAL_CAPACITY],
+        [Region.AMERICA, Region.EUROPE, Region.ASIA],
+      ),
     );
   }
 

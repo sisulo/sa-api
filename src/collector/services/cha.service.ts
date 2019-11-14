@@ -15,16 +15,6 @@ export class ChaService extends ComponentService<ChaEntity> implements CreateCom
     super(repository, ChaEntity);
   }
 
-  // TODO could be in common-metric.service
-  // public async create(name: string, system: SystemEntity): Promise<ChaEntity> {
-  //   const entity = new ChaEntity();
-  //   entity.system = system;
-  //   entity.name = name;
-  //
-  //   const saved = await this.repository.save(entity);
-  //   return saved;
-  // }
-
   async findByName(childName: string, parentName: string): Promise<ChaEntity> {
     return await this.repository.createQueryBuilder('cha')
       .leftJoinAndSelect('cha.system', 'system')

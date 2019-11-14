@@ -1,5 +1,4 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import * as fs from 'fs';
 
 export class OrderInViewFix1571070561168 implements MigrationInterface {
 

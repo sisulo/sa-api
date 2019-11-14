@@ -30,7 +30,7 @@ export class DataCenterStatisticsService {
         return AdapterMetricTransformer.transform(entity);
       case MetricGroup.PERFORMANCE:
         return PerformanceMetricTransformer.transform(entity);
-      case MetricGroup.HOSTGROUPS:
+      case MetricGroup.HOST_GROUPS:
         return HostGroupMetricTransformer.transform(entity);
       default:
         throw new BadRequestException(`Cannot transform DataCenterEntity for metricGroup(${metricGroup})`);

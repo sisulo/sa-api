@@ -4,26 +4,40 @@ import { Repository } from 'typeorm';
 import { DataCenterEntity } from '../entities/data-center.entity';
 import { MetricType } from '../enums/metric-type.enum';
 import { PeriodType } from '../enums/period-type.enum';
+import { Region } from '../../statistics/models/dtos/region.enum';
 
 export enum MetricGroup {
   PERFORMANCE = 1,
   CAPACITY = 2,
   ADAPTERS = 3,
   SLA = 4,
-  HOSTGROUPS = 5,
+  HOST_GROUPS = 5,
 }
 
 @Injectable()
 export class DataCenterService {
 
+  private readonly regionDataCenters = [];
+
   constructor(
     @InjectRepository(DataCenterEntity)
     private readonly dataCenterRepository: Repository<DataCenterEntity>,
   ) {
+    this.regionDataCenters.push({ type: Region.EUROPE, dataCenterIds: [1, 2] });
+    this.regionDataCenters.push({ type: Region.ASIA, dataCenterIds: [3, 4] });
+    this.regionDataCenters.push({ type: Region.AMERICA, dataCenterIds: [5, 6] });
   }
 
   async findById(idDataCenter: number): Promise<DataCenterEntity[]> {
     return await this.dataCenterRepository.find({ where: { idDatacenter: idDataCenter } });
+  }
+
+  getDataCenterIdByRegion(region: Region) {
+    const foundItem = this.regionDataCenters.find(regionMapItem => regionMapItem.type === region);
+    if (foundItem != null) {
+      return foundItem.dataCenterIds;
+    }
+    return [];
   }
 
   async getMetricsByGroup(metricGroup: MetricGroup, idDataCenterParam: number, period: PeriodType): Promise<DataCenterEntity[]> {
@@ -44,15 +58,15 @@ export class DataCenterService {
     return query.getMany();
   }
 
-  getPoolMetrics(metricTypes: MetricType[], idDataCenterParam: number): Promise<DataCenterEntity[]> {
+  getPoolMetrics(metricTypes: MetricType[], idDataCenterParam: number[]): Promise<DataCenterEntity[]> {
 
     const query = this.dataCenterRepository.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.pools', 'pool')
       .leftJoinAndSelect('pool.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type');
-    if (idDataCenterParam != null) {
-      query.where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam });
+    if (idDataCenterParam.length > 0) {
+      query.where('datacenter.id_datacenter IN (:...idDatacenter)', { idDatacenter: idDataCenterParam });
     }
     return query.getMany();
   }
@@ -97,16 +111,20 @@ export class DataCenterService {
 
   private loadMetrics(metricGroup: MetricGroup, idDataCenterParam: number, period: PeriodType) {
     const types: MetricType[] = this.resolveMetricTypes(metricGroup, period);
+    let dataCenterIds = [];
+    if (idDataCenterParam != null) {
+      dataCenterIds = [idDataCenterParam];
+    }
     switch (metricGroup) {
       case MetricGroup.PERFORMANCE:
         return this.getPerformanceMetrics(types, idDataCenterParam);
       case MetricGroup.CAPACITY:
-        return this.getPoolMetrics(types, idDataCenterParam);
+        return this.getPoolMetrics(types, dataCenterIds);
       case MetricGroup.ADAPTERS:
         return this.getChannelAdapterMetrics(types, idDataCenterParam);
       case MetricGroup.SLA:
-        return this.getPoolMetrics(types, idDataCenterParam);
-      case MetricGroup.HOSTGROUPS:
+        return this.getPoolMetrics(types, dataCenterIds);
+      case MetricGroup.HOST_GROUPS:
         return this.getHostGroupMetrics(types, idDataCenterParam);
     }
   }
@@ -204,8 +222,8 @@ export class DataCenterService {
       MetricType.SLA_EVENTS_MONTH,
       MetricType.OUT_OF_SLA_TIME_MONTH,
     ];
-    metrics[MetricGroup.HOSTGROUPS] = [];
-    metrics[MetricGroup.HOSTGROUPS][PeriodType.DAY] = [
+    metrics[MetricGroup.HOST_GROUPS] = [];
+    metrics[MetricGroup.HOST_GROUPS][PeriodType.DAY] = [
       MetricType.NET_TOTAL,
       MetricType.NET_USED,
       MetricType.NET_USED_PERC,

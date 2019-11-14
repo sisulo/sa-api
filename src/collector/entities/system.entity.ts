@@ -18,7 +18,7 @@ export class SystemEntity {
   idDataCenter: number;
 
   @ManyToOne(() => DataCenterEntity)
-  @JoinColumn({name: 'id_datacenter'})
+  @JoinColumn({ name: 'id_datacenter' })
   datacenter: DataCenterEntity;
 
   @OneToMany(() => SystemMetricReadEntity, metric => metric.system)

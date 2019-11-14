@@ -38,7 +38,6 @@ export abstract class CommonMetricService<MetricServiceType, ComponentType> {
       .join(',');
   }
 
-  // TODO HostGroupMetricEntity shouldn't be in returned type
   async createOrUpdateMetric(childComponentName: string, parentComponentName: string, request: MetricRequestDto): Promise<MetricServiceType> {
 
     const metricType = await this.loadMetricType(request.metricType);

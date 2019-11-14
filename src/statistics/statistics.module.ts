@@ -11,4 +11,5 @@ import { AggregatedMetricService } from './services/aggregated-metric.service';
   providers: [DataCenterStatisticsService, GraphDataService, AggregatedMetricService],
   imports: [CollectorModule],
 })
-export class StatisticsModule {}
+export class StatisticsModule {
+}
