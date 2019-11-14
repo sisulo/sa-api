@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { DataCenterService } from '../../collector/services/data-center.service';
 import { MetricType } from '../../collector/enums/metric-type.enum';
 import { WeightedAverageImpl } from '../aggregations/weight-average.impl';
@@ -13,8 +12,7 @@ export interface RegionMetricInterface {
   metrics: MetricEntityInterface[];
 }
 
-@Injectable()
-export class AggregatedMetricService {
+export abstract class AggregatedMetricService {
 
   aggregationStrategies = [
     {
@@ -23,15 +21,29 @@ export class AggregatedMetricService {
       options: { weightType: MetricType.PHYSICAL_CAPACITY, ignoreValueUnder: 1 },
     },
     {
-      metricType: [MetricType.LOGICAL_CAPACITY, MetricType.SUBSCRIBED_CAPACITY, MetricType.CHANGE_MONTH, MetricType.PHYSICAL_CAPACITY],
+      metricType: [
+        MetricType.LOGICAL_CAPACITY,
+        MetricType.SUBSCRIBED_CAPACITY,
+        MetricType.CHANGE_MONTH,
+        MetricType.PHYSICAL_CAPACITY,
+        MetricType.TRANSFER,
+        MetricType.WORKLOAD,
+      ],
       algorithm: new SumImpl(),
       options: null,
     },
   ];
+  private dataCenterMetricService: DataCenterService;
+  private metricTypeService: MetricTypeService;
 
-  constructor(private dataCenterMetricService: DataCenterService,
-              private metricTypeService: MetricTypeService) {
+  constructor(dataCenteService: DataCenterService, metricType: MetricTypeService) {
+    this.dataCenterMetricService = dataCenteService;
+    this.metricTypeService = metricType;
   }
+
+  abstract getData(types: MetricType[], dataCenterIds: number[]);
+
+  abstract fetchMetricsOnly(entities: DataCenterEntity[]): any[];
 
   public async fetchAggregatedMetrics(types: MetricType[]) {
     return Promise.all(await this.fetchAndAggregateMetrics(types, []));
@@ -44,7 +56,7 @@ export class AggregatedMetricService {
   }
 
   private async fetchAndAggregateMetrics(types: MetricType[], dataCenterIds: number[]): Promise<MetricEntityInterface[]> {
-    const entities = await this.dataCenterMetricService.getPoolMetrics(this.resolveFetchingMetricTypes(types), dataCenterIds);
+    const entities = await this.getData(this.resolveFetchingMetricTypes(types), dataCenterIds);
     const metrics = this.fetchMetricsOnly(entities);
     const aggValues = [];
     await Promise.all(types.map(async type => {
@@ -56,18 +68,6 @@ export class AggregatedMetricService {
     ));
 
     return aggValues;
-  }
-
-  private fetchMetricsOnly(entities: DataCenterEntity[]): any[] {
-    const result = [];
-    entities.forEach(dataCenter =>
-      dataCenter.systems.forEach(system =>
-        system.pools.forEach(pool =>
-          result.push(pool.metrics),
-        ),
-      ),
-    );
-    return result;
   }
 
   private resolveFetchingMetricTypes(types: MetricType[]): MetricType[] {

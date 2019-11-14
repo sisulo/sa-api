@@ -25,13 +25,12 @@ export class InfraStatisticsTransformer {
 
   public static async transform(
     alertsInput: Promise<MetricEntityInterface[]>,
-    metricsInput: Promise<MetricEntityInterface[]>,
-    capacityMetricInput: Promise<RegionMetricInterface[]>) {
+    metricsInput: RegionMetricInterface[]) {
     const dto = new InfrastructureDto();
     this.initDto(dto);
     const metrics = await alertsInput;
-    const perfMetrics = await metricsInput;
-    const capacityMetrics = await capacityMetricInput;
+    const perfMetrics = metricsInput;
+    // const capacityMetrics = await capacityMetricInput;
     metrics.forEach(
       metric => {
         const alert = InfraStatisticsTransformer.findAlert(metric.metricTypeEntity.idCatMetricType, dto);
@@ -57,15 +56,18 @@ export class InfraStatisticsTransformer {
         alert.occurrences.push(occurrence);
       },
     );
-    dto.metrics = perfMetrics.map(metric => {
-      return InfraStatisticsTransformer.transformSimpleMetric(metric as SystemMetricEntity);
-    });
-    dto.capacityMetrics = capacityMetrics.map(regionData => {
+    dto.metrics = perfMetrics.map(regionData => {
       return {
         region: regionData.region,
         metrics: regionData.metrics.map(metric => InfraStatisticsTransformer.transformSimpleMetric(metric as SystemMetricEntity)),
       };
     });
+    // dto.capacityMetrics = capacityMetrics.map(regionData => {
+    //   return {
+    //     region: regionData.region,
+    //     metrics: regionData.metrics.map(metric => InfraStatisticsTransformer.transformSimpleMetric(metric as SystemMetricEntity)),
+    //   };
+    // });
     return dto;
   }
 

@@ -45,14 +45,14 @@ export class DataCenterService {
     return dcDao || await this.getEmptyDatacenter(idDataCenterParam);
   }
 
-  async getPerformanceMetrics(metricTypes: MetricType[], idDataCenterParam: number): Promise<DataCenterEntity[]> {
+  async getPerformanceMetrics(metricTypes: MetricType[], idDataCenterParam: number[]): Promise<DataCenterEntity[]> {
 
     const query = this.dataCenterRepository.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type');
     if (idDataCenterParam != null) {
-      query.where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam });
+      query.where('datacenter.id_datacenter IN (:...idDatacenter)', { idDatacenter: idDataCenterParam });
     }
 
     return query.getMany();
@@ -117,7 +117,7 @@ export class DataCenterService {
     }
     switch (metricGroup) {
       case MetricGroup.PERFORMANCE:
-        return this.getPerformanceMetrics(types, idDataCenterParam);
+        return this.getPerformanceMetrics(types, dataCenterIds);
       case MetricGroup.CAPACITY:
         return this.getPoolMetrics(types, dataCenterIds);
       case MetricGroup.ADAPTERS:

@@ -4,11 +4,12 @@ import { DataCenterStatisticsService } from './services/data-center-statistics.s
 import { CollectorModule } from '../collector/collector.module';
 import { InfrastructureStatisticsController } from './controllers/infrastructure-statistics.controller';
 import { GraphDataService } from './services/graph-data.service';
-import { AggregatedMetricService } from './services/aggregated-metric.service';
+import { PoolAggregatedMetricService } from './services/pool-aggregated-metric.service';
+import { SystemAggregatedMetricService } from './services/system-aggregated-metric.service';
 
 @Module({
   controllers: [DataCenterStatisticsController, InfrastructureStatisticsController],
-  providers: [DataCenterStatisticsService, GraphDataService, AggregatedMetricService],
+  providers: [DataCenterStatisticsService, GraphDataService, PoolAggregatedMetricService, SystemAggregatedMetricService],
   imports: [CollectorModule],
 })
 export class StatisticsModule {
