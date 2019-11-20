@@ -51,7 +51,7 @@ export class DataCenterService {
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type');
-    if (idDataCenterParam != null) {
+    if (idDataCenterParam.length > 0) {
       query.where('datacenter.id_datacenter IN (:...idDatacenter)', { idDatacenter: idDataCenterParam });
     }
 

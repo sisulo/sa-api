@@ -39,7 +39,7 @@ export abstract class CommonMetricService<MetricServiceType, ComponentType> {
   }
 
   async createOrUpdateMetric(childComponentName: string, parentComponentName: string, request: MetricRequestDto): Promise<MetricServiceType> {
-
+    // TODO when the exception is thrown than HTTP 400 should be returned instead of 500
     const metricType = await this.loadMetricType(request.metricType);
 
     if (metricType == null) {
