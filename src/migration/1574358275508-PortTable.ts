@@ -23,7 +23,7 @@ export class PortTable1574358275508 implements MigrationInterface {
             (id_port, id_cat_metric_type)
             INCLUDE(id_port_metric);
 
-        DROP VIEW IF EXISTS view_pool_metrics;
+        DROP VIEW IF EXISTS view_port_metrics;
         CREATE VIEW view_port_metrics as
         SELECT
              outer_sm.id_port_metric,
