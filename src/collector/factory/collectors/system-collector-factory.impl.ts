@@ -5,6 +5,7 @@ import { MetricRequestDto } from '../../dto/metric-request.dto';
 import { SystemMetricResponseTransformer } from '../../transformers/system-metric-response.transformer';
 import { SystemMetricService } from '../../services/system-metric.service';
 import { SystemMetricEntity } from '../../entities/system-metric.entity';
+import { ComponentKey } from '../../controllers/metric.controller';
 
 @Injectable({ scope: Scope.DEFAULT })
 export class SystemCollectorFactoryImpl implements CollectorFactory<SystemMetricEntity> {
@@ -12,8 +13,8 @@ export class SystemCollectorFactoryImpl implements CollectorFactory<SystemMetric
               private service: SystemMetricService) {
   }
 
-  async collectMetric(childComponentName: string, parentComponentName: string, request: MetricRequestDto): Promise<SystemMetricEntity> {
-    return await this.service.createOrUpdateMetric(childComponentName, parentComponentName, request);
+  async collectMetric(componentKey: ComponentKey, request: MetricRequestDto): Promise<SystemMetricEntity> {
+    return await this.service.createOrUpdateMetric(componentKey, request);
   }
 
   transform(input: any): MetricResponseDto {

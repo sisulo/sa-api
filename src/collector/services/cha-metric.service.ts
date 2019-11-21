@@ -10,9 +10,10 @@ import { CatMetricTypeEntity } from '../entities/cat-metric-type.entity';
 import { MetricType } from '../enums/metric-type.enum';
 import { ChaMetricReadEntity } from '../entities/cha-metric-read.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { SystemEntity } from '../entities/system.entity';
 
 @Injectable()
-export class ChaMetricService extends CommonMetricService<ChaMetricEntity, ChaEntity> {
+export class ChaMetricService extends CommonMetricService<ChaMetricEntity, ChaEntity, SystemEntity, null> {
 
   constructor(
     @InjectRepository(ChaMetricEntity)
@@ -23,7 +24,7 @@ export class ChaMetricService extends CommonMetricService<ChaMetricEntity, ChaEn
     protected readonly chaService: ChaService,
     protected readonly metricTypeService: MetricTypeService,
   ) {
-    super(metricTypeService, systemService, chaService);
+    super(metricTypeService, chaService, systemService, null);
   }
 
   async save(component: any, metricType: CatMetricTypeEntity, request: any): Promise<any> {
@@ -35,9 +36,7 @@ export class ChaMetricService extends CommonMetricService<ChaMetricEntity, ChaEn
     if (entity.adapter == null) {
       entity.adapter = component;
     }
-    const returnedEntity = await this.metricRepository.save(entity);
-
-    return returnedEntity;
+    return await this.metricRepository.save(entity);
   }
 
   public async getAlerts(): Promise<ChaMetricEntity[]> {

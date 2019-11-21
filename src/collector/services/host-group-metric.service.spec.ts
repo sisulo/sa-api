@@ -9,6 +9,7 @@ import { SystemEntity } from '../entities/system.entity';
 import { HostGroupService } from './host-group.service';
 import { HostGroupEntity } from '../entities/host-group.entity';
 import { SystemService } from './system.service';
+import { ComponentKey } from '../controllers/metric.controller';
 
 function createCatMetricTypeEntity(): CatMetricTypeEntity {
   const metricType = new CatMetricTypeEntity();
@@ -83,12 +84,18 @@ describe('HostGroupMetricService', () => {
 
   it('should return host-group entity', async () => {
     const request = CollectorUtils.createHostGroupMetricRequestDto();
-    expect(await service.createOrUpdateMetric('Host_Group_1', 'Systen_1', request)).toStrictEqual(createHostGroupMetricEntity());
+    expect(await service.createOrUpdateMetric({
+      childName: 'Host_Group_1',
+      parentName: 'Systen_1',
+    } as ComponentKey, request)).toStrictEqual(createHostGroupMetricEntity());
   });
   it('should throw error because metric type not found', async () => {
     jest.spyOn(metricTypeService, 'findById').mockReturnValue(null);
     const request = CollectorUtils.createHostGroupMetricRequestDto();
-    await expect(service.createOrUpdateMetric('Host_Group_1', 'Systen_1', request))
+    await expect(service.createOrUpdateMetric({
+      childName: 'Host_Group_1',
+      parentName: 'Systen_1',
+    } as ComponentKey, request))
       .rejects
       .toThrowError(EntityServiceError);
   });
@@ -97,7 +104,10 @@ describe('HostGroupMetricService', () => {
     const expectedEntity = createHostGroupMetricEntity();
     expectedEntity.id = 12;
     jest.spyOn(repository, 'findOne').mockReturnValue(Promise.resolve(createHostGroupMetricEntity(12)));
-    expect(await service.createOrUpdateMetric('Host_Group_1', 'Systen _1', request)).toStrictEqual(expectedEntity);
+    expect(await service.createOrUpdateMetric({
+      childName: 'Host_Group_1',
+      parentName: 'Systen_1',
+    } as ComponentKey, request)).toStrictEqual(expectedEntity);
   });
 
   it('should save metric with new hostgroup', async () => {
@@ -106,6 +116,9 @@ describe('HostGroupMetricService', () => {
     const request = CollectorUtils.createHostGroupMetricRequestDto();
 
     const expectedEntity = createHostGroupMetricEntity();
-    expect(await service.createOrUpdateMetric('Host_Group_1', 'Systen _1', request)).toStrictEqual(expectedEntity);
+    expect(await service.createOrUpdateMetric({
+      childName: 'Host_Group_1',
+      parentName: 'Systen_1',
+    } as ComponentKey, request)).toStrictEqual(expectedEntity);
   });
 });

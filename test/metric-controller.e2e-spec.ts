@@ -150,6 +150,31 @@ describe('HostGroup Collector', () => {
         },
       );
   });
+  it('Create port metric (POST)', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/systems/XP7_G11_58417/chas/CHA-1PC%2CCHA-33PC/ports/1D%2C2D/metrics')
+      .send({
+        metricType: 'DISBALANCE_EVENTS',
+        value: '2',
+        date: '2019-07-13',
+      })
+      .expect(201)
+      .expect(
+        {
+          // Todo delete ID generated from comparision
+          idMetric: 1,
+          date: '2019-07-13',
+          value: '2',
+          idSystem: 1,
+          systemName: 'XP7_G11_58417',
+          metricType: 'DISBALANCE_EVENTS',
+          idCha: 116,
+          chaName: 'CHA-1PC,CHA-33PC',
+          idPort: 1,
+          portName: '1D,2D',
+        },
+      );
+  });
   afterAll(async () => {
     await app.close();
   });

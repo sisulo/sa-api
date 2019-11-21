@@ -35,6 +35,13 @@ import { SystemCollectorFactoryImpl } from './factory/collectors/system-collecto
 import { SystemMetricReadEntity } from './entities/system-metric-read.entity';
 import { PoolMetricReadEntity } from './entities/pool-metric-read.entity';
 import { ChaMetricReadEntity } from './entities/cha-metric-read.entity';
+import { PortCollectorFactoryImpl } from './factory/collectors/port-collector-factory.impl';
+import { PortMetricService } from './services/port-metric.service';
+import { PortMetricEntity } from './entities/port-metric.entity';
+import { PortEntity } from './entities/port.entity';
+import { PortMetricReadEntity } from './entities/port-metric-read.entity';
+import { PortService } from './services/port.service';
+import { PortMetricResponseTransformer } from './transformers/port-metric-response.transformer';
 
 @Module({
   imports: [
@@ -54,6 +61,9 @@ import { ChaMetricReadEntity } from './entities/cha-metric-read.entity';
         CapacityStatisticsEntity,
         HostGroupMetricEntity,
         HostGroupEntity,
+        PortEntity,
+        PortMetricEntity,
+        PortMetricReadEntity,
       ],
     ),
 
@@ -79,6 +89,10 @@ import { ChaMetricReadEntity } from './entities/cha-metric-read.entity';
     PoolCollectorFactoryImpl,
     ChaCollectorFactoryImpl,
     SystemCollectorFactoryImpl,
+    PortCollectorFactoryImpl,
+    PortMetricService,
+    PortService,
+    PortMetricResponseTransformer,
     DataCenterService,
   ],
   controllers: [MetricController],
@@ -86,6 +100,7 @@ import { ChaMetricReadEntity } from './entities/cha-metric-read.entity';
     CapacityStatisticsService,
     ChaMetricService,
     PoolMetricService,
+    PortMetricService,
     SystemMetricService,
     DataCenterService,
     MetricTypeService,

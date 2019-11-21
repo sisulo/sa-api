@@ -13,9 +13,10 @@ import { MetricType } from '../enums/metric-type.enum';
 import { PoolMetricReadEntity } from '../entities/pool-metric-read.entity';
 import { MetricEntityInterface } from '../entities/metric-entity.interface';
 import { SystemMetricReadEntity } from '../entities/system-metric-read.entity';
+import { SystemEntity } from '../entities/system.entity';
 
 @Injectable()
-export class PoolMetricService extends CommonMetricService<PoolMetricEntity, PoolEntity> {
+export class PoolMetricService extends CommonMetricService<PoolMetricEntity, PoolEntity, SystemEntity, null> {
 
   constructor(
     @InjectRepository(PoolMetricEntity)
@@ -26,7 +27,7 @@ export class PoolMetricService extends CommonMetricService<PoolMetricEntity, Poo
     private readonly systemService: SystemService,
     private readonly metricTypeService: MetricTypeService,
   ) {
-    super(metricTypeService, systemService, poolService);
+    super(metricTypeService, poolService, systemService, null);
   }
 
   async save(component: PoolEntity, metricType: CatMetricTypeEntity, request: MetricRequestDto): Promise<any> {
@@ -38,9 +39,7 @@ export class PoolMetricService extends CommonMetricService<PoolMetricEntity, Poo
     if (entity.pool == null) {
       entity.pool = component;
     }
-    const returnedEntity = await this.metricRepository.save(entity);
-
-    return returnedEntity;
+    return await this.metricRepository.save(entity);
   }
 
   public async getAlerts(): Promise<PoolMetricEntity[]> {

@@ -3,4 +3,5 @@ export enum CollectorType {
   POOLS = 'pools',
   CHAS = 'chas',
   HOST_GROUPS = 'host-groups',
+  PORTS = 'ports',
 }

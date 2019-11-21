@@ -5,6 +5,7 @@ import { MetricResponseDto } from '../../dto/metric-response.dto';
 import { HostGroupMetricResponseTransformer } from '../../transformers/host-group-metric-response.transformer';
 import { HostGroupMetricService } from '../../services/host-group-metric.service';
 import { MetricRequestDto } from '../../dto/metric-request.dto';
+import { ComponentKey } from '../../controllers/metric.controller';
 
 @Injectable({ scope: Scope.DEFAULT })
 export class HostGroupCollectorFactoryImpl implements CollectorFactory<HostGroupMetricEntity> {
@@ -12,8 +13,8 @@ export class HostGroupCollectorFactoryImpl implements CollectorFactory<HostGroup
               private service: HostGroupMetricService) {
   }
 
-  async collectMetric(childComponentName: string, parentComponentName: string, request: MetricRequestDto): Promise<HostGroupMetricEntity> {
-    return await this.service.createOrUpdateMetric(childComponentName, parentComponentName, request);
+  async collectMetric(componentKey: ComponentKey, request: MetricRequestDto): Promise<HostGroupMetricEntity> {
+    return await this.service.createOrUpdateMetric(componentKey, request);
   }
 
   transform(input: HostGroupMetricEntity): MetricResponseDto {

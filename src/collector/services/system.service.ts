@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateComponentInterface } from './createComponentInterface';
 
 @Injectable()
-export class SystemService implements CreateComponentInterface<SystemEntity> {
+export class SystemService implements CreateComponentInterface<SystemEntity, null> {
 
   constructor(
     @InjectRepository(SystemEntity)
@@ -23,7 +23,7 @@ export class SystemService implements CreateComponentInterface<SystemEntity> {
       .findOne({ name: systemName });
   }
 
-  async create(systemName: string): Promise<SystemEntity> {
+  async create(systemName: string, parent?: any): Promise<SystemEntity> {
     const system = new SystemEntity();
     system.name = systemName;
     system.idDataCenter = 1; // Todo this is temporary

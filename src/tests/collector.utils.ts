@@ -13,6 +13,9 @@ import { PoolEntity } from '../collector/entities/pool.entity';
 import { PoolMetricResponseDto } from '../collector/dto/pool-metric-response.dto';
 import { SystemMetricEntity } from '../collector/entities/system-metric.entity';
 import { SystemMetricResponseDto } from '../collector/dto/system-metric-response.dto';
+import { PortMetricResponseDto } from '../collector/dto/port-metric-response.dto';
+import { PortMetricEntity } from '../collector/entities/port-metric.entity';
+import { PortEntity } from '../collector/entities/port.entity';
 
 export class CollectorUtils {
 
@@ -53,12 +56,11 @@ export class CollectorUtils {
   }
 
   static createHostGroupMetricRequestDto(): MetricRequestDto {
-    const request = {
+    return {
       metricType: MetricType.NET_TOTAL,
       value: 123,
       date: new Date('2019-09-01'),
     } as (MetricRequestDto);
-    return request;
   }
 
   static createChaMetricEntity(): ChaMetricEntity {
@@ -75,6 +77,14 @@ export class CollectorUtils {
     return entity;
   }
 
+  static createPort(): PortEntity {
+    const entity = new PortEntity();
+    entity.idPort = 1;
+    entity.name = '1D,2D';
+    entity.system = CollectorUtils.createAdapter();
+
+    return entity;
+  }
   static createAdapter(): ChaEntity {
     const entity = new ChaEntity();
     entity.idCha = 1;
@@ -94,6 +104,35 @@ export class CollectorUtils {
     dto.value = 5;
     dto.metricType = 'SLA_EVENTS';
     dto.date = new Date('2019-09-01');
+    return dto;
+  }
+
+  static createPortMetricEntity(): PortMetricEntity {
+    const entity = new PortMetricEntity();
+    entity.port = CollectorUtils.createPort();
+    entity.id = 2;
+    const metricTypeEntity = new CatMetricTypeEntity();
+    metricTypeEntity.name = 'DISBALANCE_EVENTS';
+    metricTypeEntity.idCatMetricType = 15;
+    metricTypeEntity.unit = '';
+    entity.metricTypeEntity = metricTypeEntity;
+    entity.value = 5;
+    entity.date = new Date('2019-09-01');
+    return entity;
+  }
+
+  static createPortMetricResponseDto(): PortMetricResponseDto {
+    const dto = new PortMetricResponseDto();
+    dto.chaName = 'Cha_1';
+    dto.idCha = 1;
+    dto.systemName = 'System_2';
+    dto.idSystem = 2;
+    dto.idMetric = 2;
+    dto.value = 5;
+    dto.metricType = 'DISBALANCE_EVENTS';
+    dto.date = new Date('2019-09-01');
+    dto.portName = '1D,2D';
+    dto.idPort = 1;
     return dto;
   }
 

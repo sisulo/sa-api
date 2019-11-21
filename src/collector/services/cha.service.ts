@@ -4,9 +4,10 @@ import { Repository } from 'typeorm';
 import { ChaEntity } from '../entities/cha.entity';
 import { CreateComponentInterface } from './createComponentInterface';
 import { ComponentService } from './component.service';
+import { SystemEntity } from '../entities/system.entity';
 
 @Injectable()
-export class ChaService extends ComponentService<ChaEntity> implements CreateComponentInterface<ChaEntity> {
+export class ChaService extends ComponentService<ChaEntity, SystemEntity> implements CreateComponentInterface<ChaEntity, SystemEntity> {
 
   constructor(
     @InjectRepository(ChaEntity)

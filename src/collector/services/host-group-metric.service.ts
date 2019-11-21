@@ -9,9 +9,10 @@ import { HostGroupEntity } from '../entities/host-group.entity';
 import { SystemService } from './system.service';
 import { MetricRequestDto } from '../dto/metric-request.dto';
 import { CommonMetricService } from './common-metric.service';
+import { SystemEntity } from '../entities/system.entity';
 
 @Injectable()
-export class HostGroupMetricService extends CommonMetricService<HostGroupMetricEntity, HostGroupEntity> {
+export class HostGroupMetricService extends CommonMetricService<HostGroupMetricEntity, HostGroupEntity, SystemEntity, null> {
   constructor(
     @InjectRepository(HostGroupMetricEntity)
     private metricRepository: Repository<HostGroupMetricEntity>,
@@ -19,7 +20,7 @@ export class HostGroupMetricService extends CommonMetricService<HostGroupMetricE
     protected childComponentService: HostGroupService,
     protected parentComponentService: SystemService,
   ) {
-    super(metricTypeService, parentComponentService, childComponentService);
+    super(metricTypeService, childComponentService, parentComponentService, null);
   }
 
   async save(component: HostGroupEntity, metricType: CatMetricTypeEntity, request: MetricRequestDto): Promise<any> {
@@ -31,9 +32,7 @@ export class HostGroupMetricService extends CommonMetricService<HostGroupMetricE
     if (entity.hostGroup == null) {
       entity.hostGroup = component;
     }
-    const returnedEntity = await this.metricRepository.save(entity);
-
-    return returnedEntity;
+    return await this.metricRepository.save(entity);
   }
 
   protected async createMetricEntity(component: HostGroupEntity, metricType: CatMetricTypeEntity, dateSearch: Date): Promise<HostGroupMetricEntity> {

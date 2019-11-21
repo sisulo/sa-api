@@ -18,7 +18,7 @@ describe('MetricController', () => {
 
     const service = new HostGroupMetricService(null, null, null, null);
     collector = new HostGroupCollectorFactoryImpl(transformer, service);
-    apiCollector = new ApiCollectorFactoryImpl(collector, null, null, null);
+    apiCollector = new ApiCollectorFactoryImpl(collector, null, null, null, null);
     jest.spyOn(service, 'createOrUpdateMetric').mockReturnValue(Promise.resolve(CollectorUtils.createHostGroupEntity()));
     metricController = new MetricController(apiCollector);
   });

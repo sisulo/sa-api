@@ -5,6 +5,7 @@ import { MetricRequestDto } from '../../dto/metric-request.dto';
 import { PoolMetricResponseTransformer } from '../../transformers/pool-metric-response.transformer';
 import { PoolMetricService } from '../../services/pool-metric.service';
 import { PoolMetricEntity } from '../../entities/pool-metric.entity';
+import { ComponentKey } from '../../controllers/metric.controller';
 
 @Injectable({ scope: Scope.DEFAULT })
 export class PoolCollectorFactoryImpl implements CollectorFactory<PoolMetricEntity> {
@@ -12,8 +13,8 @@ export class PoolCollectorFactoryImpl implements CollectorFactory<PoolMetricEnti
               private service: PoolMetricService) {
   }
 
-  async collectMetric(childComponentName: string, parentComponentName: string, request: MetricRequestDto): Promise<PoolMetricEntity> {
-    return await this.service.createOrUpdateMetric(childComponentName, parentComponentName, request);
+  async collectMetric(componentKey: ComponentKey, request: MetricRequestDto): Promise<PoolMetricEntity> {
+    return await this.service.createOrUpdateMetric(componentKey, request);
   }
 
   transform(input: any): MetricResponseDto {

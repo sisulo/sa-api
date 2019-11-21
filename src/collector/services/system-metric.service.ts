@@ -14,7 +14,7 @@ import { SystemMetricReadEntity } from '../entities/system-metric-read.entity';
 import { MetricEntityInterface } from '../entities/metric-entity.interface';
 
 @Injectable()
-export class SystemMetricService extends CommonMetricService<SystemMetricEntity, SystemEntity> {
+export class SystemMetricService extends CommonMetricService<SystemMetricEntity, SystemEntity, null, null> {
 
   constructor(
     @InjectRepository(SystemMetricEntity)
@@ -24,7 +24,7 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
     private readonly systemService: SystemService,
     private readonly metricTypeService: MetricTypeService,
   ) {
-    super(metricTypeService, null, systemService);
+    super(metricTypeService, systemService, null, null);
   }
 
   async save(component: SystemEntity, metricType: CatMetricTypeEntity, request: MetricRequestDto): Promise<any> {
@@ -37,21 +37,18 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
     if (entity.system == null) {
       entity.system = component;
     }
-    const returnedEntity = await this.metricRepository.save(entity);
-
-    return returnedEntity;
+    return await this.metricRepository.save(entity);
   }
 
   async getMetricGraph(type: MetricType): Promise<any[]> {
     const types = await this.metricTypeService.findByMetricTypes([type]);
-    const data = await this.metricRepository.createQueryBuilder('metrics')
+    return await this.metricRepository.createQueryBuilder('metrics')
       .select('metrics.date', 'date')
       .addSelect('SUM(metrics.value)', 'value')
       .where('metrics.metricTypeEntity IN (:...idType)', { idType: types.map(typeObj => typeObj.idCatMetricType) })
       .groupBy('metrics.date')
       .orderBy('metrics.date')
       .getRawMany();
-    return data;
   }
 
   // TODO this could be as generic parametrized

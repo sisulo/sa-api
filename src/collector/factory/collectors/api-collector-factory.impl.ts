@@ -6,6 +6,7 @@ import { CollectorFactory } from '../collector-factory.interface';
 import { PoolCollectorFactoryImpl } from './pool-collector-factory.impl';
 import { ChaCollectorFactoryImpl } from './cha-collector-factory.impl';
 import { SystemCollectorFactoryImpl } from './system-collector-factory.impl';
+import { PortCollectorFactoryImpl } from './port-collector-factory.impl';
 
 @Injectable()
 export class ApiCollectorFactoryImpl implements ApiCollectorFactory {
@@ -14,6 +15,7 @@ export class ApiCollectorFactoryImpl implements ApiCollectorFactory {
     private poolCollectorFactory: PoolCollectorFactoryImpl,
     private chaCollectorFactory: ChaCollectorFactoryImpl,
     private systemCollectorFactory: SystemCollectorFactoryImpl,
+    private portCollectorFactory: PortCollectorFactoryImpl,
   ) {
 
   }
@@ -28,6 +30,8 @@ export class ApiCollectorFactoryImpl implements ApiCollectorFactory {
         return this.chaCollectorFactory;
       case CollectorType.SYSTEMS:
         return this.systemCollectorFactory;
+      case CollectorType.PORTS:
+        return this.portCollectorFactory;
     }
   }
 

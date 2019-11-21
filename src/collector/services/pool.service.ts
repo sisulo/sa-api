@@ -4,9 +4,10 @@ import { PoolEntity } from '../entities/pool.entity';
 import { Repository } from 'typeorm';
 import { CreateComponentInterface } from './createComponentInterface';
 import { ComponentService } from './component.service';
+import { SystemEntity } from '../entities/system.entity';
 
 @Injectable()
-export class PoolService extends ComponentService<PoolEntity> implements CreateComponentInterface<PoolEntity> {
+export class PoolService extends ComponentService<PoolEntity, SystemEntity> implements CreateComponentInterface<PoolEntity, SystemEntity> {
   constructor(
     @InjectRepository(PoolEntity)
     protected readonly repository: Repository<PoolEntity>,
