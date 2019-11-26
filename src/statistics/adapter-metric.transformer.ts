@@ -8,6 +8,8 @@ import { ChaMetricEntity } from '../collector/entities/cha-metric.entity';
 import { DatacenterCapacityListDto } from './models/dtos/datacenter-capacity-list.dto';
 import { CapacityStatisticsDto } from './models/dtos/capacity-statistics.dto';
 import { SystemMetricType } from './models/metrics/SystemMetricType';
+import { PortMetricEntity } from '../collector/entities/port-metric.entity';
+import { PortEntity } from '../collector/entities/port.entity';
 
 export class AdapterMetricTransformer {
   public static async transform(dataCenterPromise: DataCenterEntity[]): Promise<DatacenterCapacityListDto> {
@@ -49,16 +51,33 @@ export class AdapterMetricTransformer {
     } else {
       poolDetails.metrics = [];
     }
+    poolDetails.ports = pool.ports.map(
+      port => AdapterMetricTransformer.createPortDetails(port),
+    );
     return poolDetails;
   }
 
-  private static createSystemMetric(metric: ChaMetricEntity) {
+  private static createSystemMetric(metric: ChaMetricEntity | PortMetricEntity) {
     const metricDetail = new SystemMetric();
     metricDetail.date = metric.date;
     metricDetail.type = metric.metricTypeEntity.name.replace(/(_WEEK)|(_MONTH)$/, '') as SystemMetricType;
     metricDetail.unit = metric.metricTypeEntity.unit;
     metricDetail.value = metric.value;
     return metricDetail;
+  }
+
+  private static createPortDetails(port: PortEntity) {
+    const detail = new SystemDetail();
+    detail.id = port.idPort;
+    detail.name = port.name;
+    if (port.metrics != null) {
+      detail.metrics = port.metrics.map(
+        metric => AdapterMetricTransformer.createSystemMetric(metric),
+      );
+    } else {
+      detail.metrics = [];
+    }
+    return detail;
   }
 
 }

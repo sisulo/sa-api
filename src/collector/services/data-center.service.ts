@@ -76,12 +76,14 @@ export class DataCenterService {
     const query = this.dataCenterRepository.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.adapters', 'adapter')
+      .leftJoinAndSelect('adapter.ports', 'port')
+      .leftJoinAndSelect('port.metrics', 'port_metric')
+      .leftJoinAndSelect('port_metric.metricTypeEntity', 'port_metric_type')
       .leftJoinAndSelect('adapter.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type');
     if (idDataCenterParam != null) {
       query.where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam });
     }
-
     return query.getMany();
   }
 
