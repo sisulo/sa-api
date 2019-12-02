@@ -8,6 +8,8 @@ import { HostGroupEntity } from '../collector/entities/host-group.entity';
 import { HostGroupMetricEntity } from '../collector/entities/host-group-metric.entity';
 import { DatacenterCapacityListDto } from './models/dtos/datacenter-capacity-list.dto';
 import { SystemMetricType } from './models/metrics/SystemMetricType';
+import { ExternalEntity } from '../collector/entities/external.entity';
+import { ComponentExternal } from './models/ComponentExternal';
 
 export class HostGroupMetricTransformer {
   // TODO CapacityStatisticsDto should be named as Composite stats not as type of metrics
@@ -53,6 +55,7 @@ export class HostGroupMetricTransformer {
     } else {
       poolDetails.metrics = [];
     }
+    poolDetails.externals = HostGroupMetricTransformer.createExternals(pool.externals);
     return poolDetails;
   }
 
@@ -66,4 +69,19 @@ export class HostGroupMetricTransformer {
     return metricDetail;
   }
 
+  private static createExternals(externals: ExternalEntity[]): ComponentExternal[] {
+    if (externals !== undefined && externals.length > 0) {
+      return externals.map(
+        external => HostGroupMetricTransformer.createExternal(external),
+      );
+    }
+    return [];
+  }
+
+  private static createExternal(external: ExternalEntity) {
+    const responseDto = new ComponentExternal();
+    responseDto.type = SystemMetricType[external.externalTypeEntity.name];
+    responseDto.value = external.value;
+    return responseDto;
+  }
 }

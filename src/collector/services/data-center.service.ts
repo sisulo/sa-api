@@ -93,7 +93,9 @@ export class DataCenterService {
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.hostGroups', 'hostGroup')
       .leftJoinAndSelect('hostGroup.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
-      .leftJoinAndSelect('metrics.metricTypeEntity', 'type');
+      .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
+      .leftJoinAndSelect('hostGroup.externals', 'external')
+      .leftJoinAndSelect('external.externalTypeEntity', 'externalType');
     if (idDataCenterParam != null) {
       query.where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam });
     }

@@ -42,6 +42,11 @@ import { PortEntity } from './entities/port.entity';
 import { PortMetricReadEntity } from './entities/port-metric-read.entity';
 import { PortService } from './services/port.service';
 import { PortMetricResponseTransformer } from './transformers/port-metric-response.transformer';
+import { CatExternalTypeEntity } from './entities/cat-external-type.entity';
+import { ExternalEntity } from './entities/external.entity';
+import { ExternalService } from './services/external.service';
+import { ExternalTypeService } from './services/external-type.service';
+import { ExternalController } from './controllers/external.controller';
 
 @Module({
   imports: [
@@ -64,6 +69,8 @@ import { PortMetricResponseTransformer } from './transformers/port-metric-respon
         PortEntity,
         PortMetricEntity,
         PortMetricReadEntity,
+        CatExternalTypeEntity,
+        ExternalEntity,
       ],
     ),
 
@@ -94,8 +101,10 @@ import { PortMetricResponseTransformer } from './transformers/port-metric-respon
     PortService,
     PortMetricResponseTransformer,
     DataCenterService,
+    ExternalService,
+    ExternalTypeService,
   ],
-  controllers: [MetricController],
+  controllers: [MetricController, ExternalController],
   exports: [DataCenterService,
     CapacityStatisticsService,
     ChaMetricService,

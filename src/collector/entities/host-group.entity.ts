@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { SystemEntity } from './system.entity';
 import { HostGroupMetricReadEntity } from './host-group-metric-read.entity';
+import { ExternalEntity } from './external.entity';
 
 @Entity('host_groups')
 export class HostGroupEntity {
@@ -17,5 +18,11 @@ export class HostGroupEntity {
 
   @OneToMany(() => HostGroupMetricReadEntity, metric => metric.hostGroup)
   metrics: HostGroupMetricReadEntity[];
+
+  @OneToMany(() => ExternalEntity, external => external.hostGroup, {
+    cascade: true,
+    eager: true,
+  })
+  externals: ExternalEntity[];
 
 }

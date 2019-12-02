@@ -19,6 +19,7 @@ export class HostGroupService
   public async findByName(childName: string, parentName: string): Promise<HostGroupEntity> {
     return await this.repository.createQueryBuilder('hostgroup')
       .leftJoinAndSelect('hostgroup.system', 'system')
+      .leftJoinAndSelect('hostgroup.externals', 'external')
       .where('hostgroup.name=:systemName', { systemName: childName })
       .andWhere('system.name=:name', { name: parentName })
       .getOne();
