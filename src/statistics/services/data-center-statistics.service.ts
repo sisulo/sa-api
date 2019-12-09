@@ -12,11 +12,13 @@ import { PoolMetricService } from '../../collector/services/pool-metric.service'
 import { MetricEntityInterface } from '../../collector/entities/metric-entity.interface';
 import { SystemMetricService } from '../../collector/services/system-metric.service';
 import { PeriodType } from '../../collector/enums/period-type.enum';
+import { PortMetricService } from '../../collector/services/port-metric.service';
 
 @Injectable()
 export class DataCenterStatisticsService {
   constructor(private dataCenterService: DataCenterService,
               private chaMetricService: ChaMetricService,
+              private portMetricService: PortMetricService,
               private poolMetricService: PoolMetricService,
               private systemMetricService: SystemMetricService) {
   }
@@ -53,9 +55,10 @@ export class DataCenterStatisticsService {
 
   public async getAlerts(): Promise<MetricEntityInterface[]> {
     const alerts = await this.chaMetricService.getAlerts();
+    const portAlerts = await this.portMetricService.getAlerts();
     const poolAlerts = await this.poolMetricService.getAlerts();
     const systemAlerts = await this.systemMetricService.getAlerts();
-    const result = [...alerts, ...poolAlerts, ...systemAlerts];
+    const result = [...alerts, ...poolAlerts, ...systemAlerts, ...portAlerts];
 
     return result;
   }

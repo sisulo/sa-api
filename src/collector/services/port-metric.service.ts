@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { SystemService } from './system.service';
 import { CommonMetricService } from './common-metric.service';
 import { MetricTypeService } from './metric-type.service';
@@ -13,6 +13,7 @@ import { PortService } from './port.service';
 import { ChaService } from './cha.service';
 import { ChaEntity } from '../entities/cha.entity';
 import { SystemEntity } from '../entities/system.entity';
+import { MetricType } from '../enums/metric-type.enum';
 
 @Injectable()
 export class PortMetricService extends CommonMetricService<PortMetricEntity, PortEntity, ChaEntity, SystemEntity> {
@@ -42,18 +43,10 @@ export class PortMetricService extends CommonMetricService<PortMetricEntity, Por
     return await this.metricRepository.save(entity);
   }
 
-  // public async getAlerts(): Promise<PoolMetricEntity[]> {
-  //   const types = await this.metricTypeService.findByMetricTypes([MetricType.SLA_EVENTS, MetricType.PHYSICAL_USED_PERC]);
-  //   return await this.metricReadRepository.createQueryBuilder('metric')
-  //     .innerJoinAndSelect('metric.metricTypeEntity', 'type')
-  //     .innerJoinAndSelect('type.threshold', 'threshold')
-  //     .innerJoinAndSelect('metric.pool', 'pool')
-  //     .innerJoinAndSelect('pool.system', 'system')
-  //     .where('metric.value >= COALESCE(threshold.min_value, -2147483648)')
-  //     .andWhere('metric.value < COALESCE(threshold.max_value, 2147483647)')
-  //     .andWhere('metric.metricTypeEntity IN (:...type)', { type: types.map(type => type.idCatMetricType) })
-  //     .getMany();
-  // }
+  public async getAlerts(): Promise<PortMetricEntity[]> {
+    const type = await this.metricTypeService.findById(MetricType.PORT_DISBALANCE_EVENTS);
+    return await this.metricReadRepository.find({ value: MoreThan(0), metricTypeEntity: type });
+  }
 
   protected async createMetricEntity(component: PortEntity, metricType: CatMetricTypeEntity, dateSearch: Date): Promise<PortMetricEntity> {
     const metricDao = await this.metricRepository

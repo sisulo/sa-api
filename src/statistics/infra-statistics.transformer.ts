@@ -11,6 +11,7 @@ import { SystemMetricEntity } from '../collector/entities/system-metric.entity';
 import { Metric } from './models/metrics/Metric';
 import { TypeMappingUtils } from './utils/type-mapping.utils';
 import { RegionMetricInterface } from './services/aggregated-metric.service';
+import { PortMetricEntity } from '../collector/entities/port-metric.entity';
 
 export class InfraStatisticsTransformer {
   private static alertsInit = [
@@ -43,6 +44,9 @@ export class InfraStatisticsTransformer {
           case MetricType.DISBALANCE_EVENTS:
             occurrence = InfraStatisticsTransformer.transformAdapterOccurrence(metric as ChaMetricEntity, EntityType.ADAPTER);
             break;
+          case MetricType.PORT_DISBALANCE_EVENTS:
+            occurrence = InfraStatisticsTransformer.transformPortMetric(metric as PortMetricEntity, EntityType.PORT);
+            break;
           case MetricType.HDD_PERC:
           case MetricType.CPU_PERC:
           case MetricType.WRITE_PENDING_PERC:
@@ -62,12 +66,6 @@ export class InfraStatisticsTransformer {
         metrics: regionData.metrics.map(metric => InfraStatisticsTransformer.transformSimpleMetric(metric as SystemMetricEntity)),
       };
     });
-    // dto.capacityMetrics = capacityMetrics.map(regionData => {
-    //   return {
-    //     region: regionData.region,
-    //     metrics: regionData.metrics.map(metric => InfraStatisticsTransformer.transformSimpleMetric(metric as SystemMetricEntity)),
-    //   };
-    // });
     return dto;
   }
 
@@ -95,6 +93,19 @@ export class InfraStatisticsTransformer {
     return occurrence;
   }
 
+  private static transformPortMetric(metric: PortMetricEntity, entityType: EntityType) {
+    const occurrence = new Occurrence();
+    occurrence.datacenterId = metric.port.system.system.idDataCenter;
+    occurrence.entityId = metric.port.idPort;
+    occurrence.entityType = entityType;
+    occurrence.name = metric.port.name;
+    occurrence.systemId = metric.port.system.system.idSystem;
+    occurrence.unit = metric.metricTypeEntity.unit;
+    occurrence.value = metric.value;
+    return occurrence;
+
+  }
+
   private static findAlert(type: MetricType, dto: InfrastructureDto) {
     let result = dto.alerts.find(
       alert => alert.type === InfraStatisticsTransformer.resolveAlertType(type),
@@ -114,6 +125,8 @@ export class InfraStatisticsTransformer {
         return AlertType.SLA_EVENTS;
       case MetricType.DISBALANCE_EVENTS:
         return AlertType.DISBALANCE_EVENTS;
+      case MetricType.PORT_DISBALANCE_EVENTS:
+        return AlertType.PORT_DISBALANCE_EVENTS;
       case MetricType.CPU_PERC:
         return AlertType.CPU;
       case MetricType.HDD_PERC:
