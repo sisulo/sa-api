@@ -2,7 +2,7 @@ import { Controller, Get, Logger, Query } from '@nestjs/common';
 import { CapacityStatisticsService } from '../../collector/services/capacity-statistics.service';
 import { GlobalCapacityTransformer } from '../global-capacity-transformer';
 import { DataCenterStatisticsService } from '../services/data-center-statistics.service';
-import { GraphDataService } from '../services/graph-data.service';
+import { GraphDataService, ServiceType } from '../services/graph-data.service';
 import { MetricType } from '../../collector/enums/metric-type.enum';
 import { GraphDataParams } from './params/graph-data.params';
 import { GraphFilterPipe } from './pipes/graph-filter.pipe';
@@ -57,9 +57,13 @@ export class InfrastructureStatisticsController {
   }
 
   @Get('performance/graph')
-  public getGraphData(@Query(new GraphFilterPipe()) graphFilter: GraphDataParams) {
-    this.logger.log(graphFilter);
-    return GraphDataTransformer.transform(this.graphDataService.getGraphData(graphFilter));
+  public getPerformanceGraphData(@Query(new GraphFilterPipe()) graphFilter: GraphDataParams) {
+    return GraphDataTransformer.transform(this.graphDataService.getGraphData(graphFilter, ServiceType.SYSTEM));
+  }
+
+  @Get('capacity/graph')
+  public getCapacityGraphData(@Query(new GraphFilterPipe()) graphFilter: GraphDataParams) {
+    return GraphDataTransformer.transform(this.graphDataService.getGraphData(graphFilter, ServiceType.POOL));
   }
 
   mergeRegionMetrics(performanceMetrics: RegionMetricInterface[], capacityMetrics: RegionMetricInterface[], returnedRegions: Region[]): RegionMetricInterface[] {

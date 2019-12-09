@@ -65,6 +65,18 @@ export class PoolMetricService extends CommonMetricService<PoolMetricEntity, Poo
     return metricDao;
   }
 
+  // TODO duplicated in pool-metric.service
+  async getMetricGraph(type: MetricType): Promise<any[]> {
+    const types = await this.metricTypeService.findByMetricTypes([type]);
+    return await this.metricRepository.createQueryBuilder('metrics')
+      .select('metrics.date', 'date')
+      .addSelect('SUM(metrics.value)', 'value')
+      .where('metrics.metricTypeEntity IN (:...idType)', { idType: types.map(typeObj => typeObj.idCatMetricType) })
+      .groupBy('metrics.date')
+      .orderBy('metrics.date')
+      .getRawMany();
+  }
+
   // TODO duplicated in system-metric.service
   public async getMetrics(): Promise<MetricEntityInterface[]> {
     const types = await this.metricTypeService.findByMetricTypes([
