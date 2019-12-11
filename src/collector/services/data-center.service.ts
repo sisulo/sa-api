@@ -199,19 +199,19 @@ export class DataCenterService {
     ];
     metrics[MetricGroup.ADAPTERS] = [];
     metrics[MetricGroup.ADAPTERS][PeriodType.DAY] = [
-      MetricType.DISBALANCE_EVENTS,
-      MetricType.DISBALANCE_ABSOLUT,
-      MetricType.DISBALANCE_PERC,
+      MetricType.IMBALANCE_EVENTS,
+      MetricType.IMBALANCE_ABSOLUT,
+      MetricType.IMBALANCE_PERC,
     ];
     metrics[MetricGroup.ADAPTERS][PeriodType.WEEK] = [
-      MetricType.DISBALANCE_EVENTS_WEEK,
-      MetricType.DISBALANCE_ABSOLUT_WEEK,
-      MetricType.DISBALANCE_PERC_WEEK,
+      MetricType.IMBALANCE_EVENTS_WEEK,
+      MetricType.IMBALANCE_ABSOLUT_WEEK,
+      MetricType.IMBALANCE_PERC_WEEK,
     ];
     metrics[MetricGroup.ADAPTERS][PeriodType.MONTH] = [
-      MetricType.DISBALANCE_EVENTS_MONTH,
-      MetricType.DISBALANCE_ABSOLUT_MONTH,
-      MetricType.DISBALANCE_PERC_MONTH,
+      MetricType.IMBALANCE_EVENTS_MONTH,
+      MetricType.IMBALANCE_ABSOLUT_MONTH,
+      MetricType.IMBALANCE_PERC_MONTH,
     ];
     metrics[MetricGroup.SLA] = [];
     metrics[MetricGroup.SLA][PeriodType.DAY] = [

@@ -40,7 +40,7 @@ export class ChaMetricService extends CommonMetricService<ChaMetricEntity, ChaEn
   }
 
   public async getAlerts(): Promise<ChaMetricEntity[]> {
-    const type = await this.metricTypeService.findById(MetricType.DISBALANCE_EVENTS);
+    const type = await this.metricTypeService.findById(MetricType.IMBALANCE_EVENTS);
     return await this.metricReadRepository.find({ value: MoreThan(0), metricTypeEntity: type });
   }
 

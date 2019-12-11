@@ -44,7 +44,7 @@ export class PortMetricService extends CommonMetricService<PortMetricEntity, Por
   }
 
   public async getAlerts(): Promise<PortMetricEntity[]> {
-    const type = await this.metricTypeService.findById(MetricType.PORT_DISBALANCE_EVENTS);
+    const type = await this.metricTypeService.findById(MetricType.PORT_IMBALANCE_EVENTS);
     return await this.metricReadRepository.find({ value: MoreThan(0), metricTypeEntity: type });
   }
 

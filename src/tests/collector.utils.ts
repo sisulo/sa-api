@@ -112,7 +112,7 @@ export class CollectorUtils {
     entity.port = CollectorUtils.createPort();
     entity.id = 2;
     const metricTypeEntity = new CatMetricTypeEntity();
-    metricTypeEntity.name = 'DISBALANCE_EVENTS';
+    metricTypeEntity.name = 'IMBALANCE_EVENTS';
     metricTypeEntity.idCatMetricType = 15;
     metricTypeEntity.unit = '';
     entity.metricTypeEntity = metricTypeEntity;
@@ -129,7 +129,7 @@ export class CollectorUtils {
     dto.idSystem = 2;
     dto.idMetric = 2;
     dto.value = 5;
-    dto.metricType = 'DISBALANCE_EVENTS';
+    dto.metricType = 'IMBALANCE_EVENTS';
     dto.date = new Date('2019-09-01');
     dto.portName = '1D,2D';
     dto.idPort = 1;

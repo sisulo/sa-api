@@ -108,7 +108,7 @@ describe('HostGroup Collector', () => {
     return request(app.getHttpServer())
       .post('/api/v1/systems/XP7_G11_58417/chas/Cha123/metrics')
       .send({
-        metricType: 'DISBALANCE_ABSOLUT',
+        metricType: 'IMBALANCE_ABSOLUT',
         value: '1',
         date: '2019-07-13',
       })
@@ -121,7 +121,7 @@ describe('HostGroup Collector', () => {
           value: '1',
           idSystem: 1,
           systemName: 'XP7_G11_58417',
-          metricType: 'DISBALANCE_ABSOLUT',
+          metricType: 'IMBALANCE_ABSOLUT',
           idCha: 115,
           chaName: 'Cha123',
         },
@@ -154,7 +154,7 @@ describe('HostGroup Collector', () => {
     return request(app.getHttpServer())
       .post('/api/v1/systems/XP7_G11_58417/chas/CHA-1PC%2CCHA-33PC/ports/1D%2C2D/metrics')
       .send({
-        metricType: 'DISBALANCE_EVENTS',
+        metricType: 'IMBALANCE_EVENTS',
         value: '2',
         date: '2019-07-13',
       })
@@ -167,7 +167,7 @@ describe('HostGroup Collector', () => {
           value: '2',
           idSystem: 1,
           systemName: 'XP7_G11_58417',
-          metricType: 'DISBALANCE_EVENTS',
+          metricType: 'IMBALANCE_EVENTS',
           idCha: 116,
           chaName: 'CHA-1PC,CHA-33PC',
           idPort: 1,

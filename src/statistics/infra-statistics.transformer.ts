@@ -41,10 +41,10 @@ export class InfraStatisticsTransformer {
           case MetricType.PHYSICAL_USED_PERC:
             occurrence = InfraStatisticsTransformer.transformPoolOccurrence(metric as PoolMetricEntity, EntityType.POOL);
             break;
-          case MetricType.DISBALANCE_EVENTS:
+          case MetricType.IMBALANCE_EVENTS:
             occurrence = InfraStatisticsTransformer.transformAdapterOccurrence(metric as ChaMetricEntity, EntityType.ADAPTER);
             break;
-          case MetricType.PORT_DISBALANCE_EVENTS:
+          case MetricType.PORT_IMBALANCE_EVENTS:
             occurrence = InfraStatisticsTransformer.transformPortMetric(metric as PortMetricEntity, EntityType.PORT);
             break;
           case MetricType.HDD_PERC:
@@ -123,9 +123,9 @@ export class InfraStatisticsTransformer {
     switch (type) {
       case MetricType.SLA_EVENTS:
         return AlertType.SLA_EVENTS;
-      case MetricType.DISBALANCE_EVENTS:
+      case MetricType.IMBALANCE_EVENTS:
         return AlertType.DISBALANCE_EVENTS;
-      case MetricType.PORT_DISBALANCE_EVENTS:
+      case MetricType.PORT_IMBALANCE_EVENTS:
         return AlertType.PORT_DISBALANCE_EVENTS;
       case MetricType.CPU_PERC:
         return AlertType.CPU;
