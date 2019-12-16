@@ -98,6 +98,9 @@ export class InfraStatisticsTransformer {
     occurrence.datacenterId = metric.port.system.system.idDataCenter;
     occurrence.entityId = metric.port.idPort;
     occurrence.entityType = entityType;
+    occurrence.middleEntityId = metric.port.system.idCha;
+    occurrence.middleEntityType = EntityType.ADAPTER;
+    occurrence.middleEntityName = metric.port.system.name;
     occurrence.name = metric.port.name;
     occurrence.systemId = metric.port.system.system.idSystem;
     occurrence.unit = metric.metricTypeEntity.unit;
