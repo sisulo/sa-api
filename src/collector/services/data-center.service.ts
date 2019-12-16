@@ -77,7 +77,7 @@ export class DataCenterService {
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.adapters', 'adapter')
       .leftJoinAndSelect('adapter.ports', 'port')
-      .leftJoinAndSelect('port.metrics', 'port_metric')
+      .leftJoinAndSelect('port.metrics', 'port_metric', 'port_metric.metricTypeEntity IN (:...portMetrics)', { portMetrics: metricTypes })
       .leftJoinAndSelect('port_metric.metricTypeEntity', 'port_metric_type')
       .leftJoinAndSelect('adapter.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type');
@@ -202,16 +202,25 @@ export class DataCenterService {
       MetricType.IMBALANCE_EVENTS,
       MetricType.IMBALANCE_ABSOLUT,
       MetricType.IMBALANCE_PERC,
+      MetricType.PORT_IMBALANCE_EVENTS,
+      MetricType.PORT_IMBALANCE_ABSOLUT,
+      MetricType.PORT_IMBALANCE_PERC,
     ];
     metrics[MetricGroup.ADAPTERS][PeriodType.WEEK] = [
       MetricType.IMBALANCE_EVENTS_WEEK,
       MetricType.IMBALANCE_ABSOLUT_WEEK,
       MetricType.IMBALANCE_PERC_WEEK,
+      MetricType.PORT_IMBALANCE_EVENTS_WEEK,
+      MetricType.PORT_IMBALANCE_ABSOLUT_WEEK,
+      MetricType.PORT_IMBALANCE_PERC_WEEK,
     ];
     metrics[MetricGroup.ADAPTERS][PeriodType.MONTH] = [
       MetricType.IMBALANCE_EVENTS_MONTH,
       MetricType.IMBALANCE_ABSOLUT_MONTH,
       MetricType.IMBALANCE_PERC_MONTH,
+      MetricType.PORT_IMBALANCE_EVENTS_MONTH,
+      MetricType.PORT_IMBALANCE_ABSOLUT_MONTH,
+      MetricType.PORT_IMBALANCE_PERC_MONTH,
     ];
     metrics[MetricGroup.SLA] = [];
     metrics[MetricGroup.SLA][PeriodType.DAY] = [
