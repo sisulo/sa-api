@@ -12,7 +12,9 @@ export class SumImpl extends AggregationAlgorithmAbstract {
     entities.forEach(
       entity => {
         const metric = this.findMetricByType(entity, metricType);
-        aggValueTotal += metric.value;
+        if (metric !== undefined) {
+          aggValueTotal += metric.value;
+        }
       },
     );
     return { value: aggValueTotal, metricTypeEntity: null, id: null };
