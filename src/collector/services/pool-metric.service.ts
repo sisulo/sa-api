@@ -72,6 +72,7 @@ export class PoolMetricService extends CommonMetricService<PoolMetricEntity, Poo
       .select('metrics.date', 'date')
       .addSelect('SUM(metrics.value)', 'value')
       .where('metrics.metricTypeEntity IN (:...idType)', { idType: types.map(typeObj => typeObj.idCatMetricType) })
+      .andWhere('metrics.date < current_date')
       .groupBy('metrics.date')
       .orderBy('metrics.date')
       .getRawMany();
