@@ -30,6 +30,6 @@ export class SystemEntity {
   @OneToMany(() => ChaEntity, adapter => adapter.system)
   adapters: ChaEntity[];
 
-  @OneToMany(() => HostGroupEntity, hostgroup => hostgroup.system)
+  @OneToMany(() => HostGroupEntity, hostGroup => hostGroup.system)
   hostGroups: HostGroupEntity[];
 }
