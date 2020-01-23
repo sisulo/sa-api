@@ -58,28 +58,4 @@ export class PortMetricService extends CommonMetricService<PortMetricEntity, Por
     return metricDao;
   }
 
-  // // TODO duplicated in system-metric.service
-  // public async getMetrics(): Promise<MetricEntityInterface[]> {
-  //   const types = await this.metricTypeService.findByMetricTypes([
-  //     MetricType.LOGICAL_CAPACITY,
-  //     MetricType.SUBSCRIBED_CAPACITY,
-  //     MetricType.TOTAL_SAVING_EFFECT,
-  //     MetricType.CHANGE_MONTH]);
-  //   const result = [];
-  //   for (const type of types) {
-  //     const entities = await this.metricReadRepository.find({ metricTypeEntity: type });
-  //     result.push(this.aggregateMetric(entities));
-  //   }
-  //   return result;
-  // }
-
-  // private aggregateMetric(metrics: PoolMetricReadEntity[]): MetricEntityInterface {
-  //   const data = metrics;
-  //   const result = new SystemMetricReadEntity();
-  //   result.metricTypeEntity = data[0].metricTypeEntity;
-  //   result.value = data.reduce(
-  //     (accumulator, currentValue) => accumulator + currentValue.value, 0,
-  //   );
-  //   return result;
-  // }
 }

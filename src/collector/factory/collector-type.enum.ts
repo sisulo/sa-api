@@ -4,4 +4,5 @@ export enum CollectorType {
   CHAS = 'chas',
   HOST_GROUPS = 'host-groups',
   PORTS = 'ports',
+  LATENCY = 'latency',
 }

@@ -14,10 +14,6 @@ const loggerComponent = createLogger({
   ),
   defaultMeta: { service: 'sa-api' },
   transports: [
-    //
-    // - Write to all logs with level `info` and below to `quick-start-combined.log`.
-    // - Write all logs error (and below) to `quick-start-error.log`.
-    //
     new WinstonDailyRotateFile({
       filename: 'logs/sa-api-error.log', level: 'error', maxSize: '20m',
       maxFiles: '14d',
@@ -34,26 +30,26 @@ export class WinstonLoggerService extends Logger {
 
   log(message: string) {
     this.winstonComponent.info(message);
-    super.log(message);
+    // super.log(message);
   }
 
   error(message: string, trace: string) {
     this.winstonComponent.error(message);
-    super.error(message, trace);
+    // super.error(message, trace);
   }
 
   warn(message: string) {
     this.winstonComponent.warn(message);
-    super.warn(message);
+    // super.warn(message);
   }
 
   debug(message: string) {
     this.winstonComponent.debug(message);
-    super.debug(message);
+    // super.debug(message);
   }
 
   verbose(message: string) {
     this.winstonComponent.notice(message);
-    super.verbose(message);
+    // super.verbose(message);
   }
 }

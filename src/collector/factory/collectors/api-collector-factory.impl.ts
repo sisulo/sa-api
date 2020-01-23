@@ -7,6 +7,7 @@ import { PoolCollectorFactoryImpl } from './pool-collector-factory.impl';
 import { ChaCollectorFactoryImpl } from './cha-collector-factory.impl';
 import { SystemCollectorFactoryImpl } from './system-collector-factory.impl';
 import { PortCollectorFactoryImpl } from './port-collector-factory.impl';
+import { LatencyCollectorFactoryImpl } from './latency-collector-factory.impl';
 
 @Injectable()
 export class ApiCollectorFactoryImpl implements ApiCollectorFactory {
@@ -16,6 +17,7 @@ export class ApiCollectorFactoryImpl implements ApiCollectorFactory {
     private chaCollectorFactory: ChaCollectorFactoryImpl,
     private systemCollectorFactory: SystemCollectorFactoryImpl,
     private portCollectorFactory: PortCollectorFactoryImpl,
+    private latencyCollectorFactory: LatencyCollectorFactoryImpl,
   ) {
 
   }
@@ -32,6 +34,8 @@ export class ApiCollectorFactoryImpl implements ApiCollectorFactory {
         return this.systemCollectorFactory;
       case CollectorType.PORTS:
         return this.portCollectorFactory;
+      case CollectorType.LATENCY:
+        return this.latencyCollectorFactory;
     }
   }
 

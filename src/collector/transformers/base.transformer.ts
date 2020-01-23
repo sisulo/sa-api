@@ -6,7 +6,7 @@ export abstract class BaseTransformer {
 
   assertNotNull(value: any, metric: any, entityType?: string, entityMetriType?: string) {
     if (value == null) {
-      throw new TransformationError(`Missing ${entityType} in ${entityType} -> ${serialize(metric)}`);
+      throw new TransformationError(`Missing ${entityType} in ${entityMetriType} -> ${serialize(metric)}`);
     }
   }
 

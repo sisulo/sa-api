@@ -38,6 +38,13 @@ export class ConfigService {
     return this.envConfig.db_synchronize === 'true';
   }
 
+  getDbLogging(): boolean {
+    if (this.envConfig.db_logging === undefined) {
+      return false;
+    }
+    return this.envConfig.db_logging === 'true';
+  }
+
   getDropSchema(): boolean {
     // TODO how set up NODE_ENV
     if (process.env.NODE_ENV === 'production') {

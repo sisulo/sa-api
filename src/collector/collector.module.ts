@@ -47,6 +47,12 @@ import { ExternalEntity } from './entities/external.entity';
 import { ExternalService } from './services/external.service';
 import { ExternalTypeService } from './services/external-type.service';
 import { ExternalController } from './controllers/external.controller';
+import { LatencyCollectorFactoryImpl } from './factory/collectors/latency-collector-factory.impl';
+import { LatencyMetricResponseTransformer } from './transformers/latency-metric-response.transformer';
+import { LatencyEntity } from './entities/latency.entity';
+import { LatencyMetricService } from './services/latency-metric.service';
+import { OperationService } from './services/operation.service';
+import { CatOperationEntity } from './entities/cat-operation.entity';
 
 @Module({
   imports: [
@@ -71,6 +77,8 @@ import { ExternalController } from './controllers/external.controller';
         PortMetricReadEntity,
         CatExternalTypeEntity,
         ExternalEntity,
+        LatencyEntity,
+        CatOperationEntity,
       ],
     ),
 
@@ -97,12 +105,16 @@ import { ExternalController } from './controllers/external.controller';
     ChaCollectorFactoryImpl,
     SystemCollectorFactoryImpl,
     PortCollectorFactoryImpl,
+    LatencyCollectorFactoryImpl,
     PortMetricService,
     PortService,
     PortMetricResponseTransformer,
+    LatencyMetricResponseTransformer,
     DataCenterService,
     ExternalService,
     ExternalTypeService,
+    LatencyMetricService,
+    OperationService,
   ],
   controllers: [MetricController, ExternalController],
   exports: [DataCenterService,
@@ -113,6 +125,7 @@ import { ExternalController } from './controllers/external.controller';
     SystemMetricService,
     DataCenterService,
     MetricTypeService,
+    LatencyMetricService,
   ],
 })
 export class CollectorModule {

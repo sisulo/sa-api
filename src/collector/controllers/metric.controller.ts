@@ -1,9 +1,11 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post, UseInterceptors } from '@nestjs/common';
 import { HostGroupMetricResponseDto } from '../dto/host-group-metric-response.dto';
 import { MetricRequestDto } from '../dto/metric-request.dto';
 import { CollectorType } from '../factory/collector-type.enum';
 import { ApiCollectorFactoryImpl } from '../factory/collectors/api-collector-factory.impl';
 import { SystemMetricResponseDto } from '../dto/system-metric-response.dto';
+import { LatencyResponseDto } from '../dto/latency-response.dto';
+import { LoggingInterceptor } from '../../logging.interceptor';
 
 export interface ComponentKey {
   parentName: string;
@@ -11,6 +13,7 @@ export interface ComponentKey {
   childName: string;
 }
 
+@UseInterceptors(LoggingInterceptor)
 @Controller('api/v1/systems/')
 export class MetricController {
   constructor(private factory: ApiCollectorFactoryImpl) {
@@ -39,6 +42,17 @@ export class MetricController {
     const componentKey = { childName: subComponentName, parentName: systemName } as ComponentKey;
     const metricEntity = await collector.collectMetric(componentKey, dto);
     return collector.transform(metricEntity) as (HostGroupMetricResponseDto);
+  }
+
+  @Post(':systemName/pools/:subComponentName/latencyPerBlockSize')
+  async latencyPerBlockSize(
+    @Param('systemName') systemName: string,
+    @Param('subComponentName') subComponentName: string,
+    @Body() dto: MetricRequestDto): Promise<LatencyResponseDto> {
+    const collector = this.factory.getCollector(CollectorType.LATENCY);
+    const componentKey = { childName: subComponentName, parentName: systemName } as ComponentKey;
+    const metricEntity = await collector.collectMetric(componentKey, dto);
+    return collector.transform(metricEntity) as (LatencyResponseDto);
   }
 
   @Post(':systemName/metrics')
