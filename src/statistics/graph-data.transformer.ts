@@ -13,7 +13,7 @@ export class GraphDataTransformer {
         const serieDto = new GraphSerie();
         serieDto.type = TypeMappingUtils.resolveMetricType(serie.type);
         serieDto.data = serie.data.map(item => {
-          return { x: item.date, y: item.value };
+          return { x: item.date, y: parseFloat(item.value.toFixed(2)) };
         });
         return serieDto;
       },
