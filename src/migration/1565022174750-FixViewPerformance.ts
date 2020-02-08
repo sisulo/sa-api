@@ -71,6 +71,7 @@ export class FixViewPerformance1565022174750 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }

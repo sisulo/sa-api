@@ -36,7 +36,7 @@ export abstract class AggregatedMetricService {
   private dataCenterMetricService: DataCenterService;
   private metricTypeService: MetricTypeService;
 
-  constructor(dataCenteService: DataCenterService, metricType: MetricTypeService) {
+  protected constructor(dataCenteService: DataCenterService, metricType: MetricTypeService) {
     this.dataCenterMetricService = dataCenteService;
     this.metricTypeService = metricType;
   }

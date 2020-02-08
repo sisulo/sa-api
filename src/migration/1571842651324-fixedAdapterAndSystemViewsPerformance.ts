@@ -18,6 +18,7 @@ export class FixedAdapterAndSystemViewsPerformance1571842651324 implements Migra
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }

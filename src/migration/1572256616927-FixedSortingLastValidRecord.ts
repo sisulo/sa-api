@@ -26,6 +26,7 @@ export class FixedSortingLastValidRecord1572256616927 implements MigrationInterf
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }
