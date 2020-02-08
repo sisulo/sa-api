@@ -1,6 +1,6 @@
-import { GraphDataDto } from './models/dtos/graph-data.dto';
-import { GraphSerie } from './models/dtos/graph-serie.dto';
-import { TypeMappingUtils } from './utils/type-mapping.utils';
+import { GraphDataDto } from '../models/dtos/graph-data.dto';
+import { GraphSerie } from '../models/dtos/graph-serie.dto';
+import { TypeMappingUtils } from '../utils/type-mapping.utils';
 
 export class GraphDataTransformer {
 

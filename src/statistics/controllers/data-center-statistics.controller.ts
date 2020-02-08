@@ -3,7 +3,7 @@ import { DataCenterStatisticsService } from '../services/data-center-statistics.
 import { DataCenterService, MetricGroup } from '../../collector/services/data-center.service';
 import { StatisticParams } from './params/statistic.params';
 import { StatisticQueryParams } from './params/statistics.query-params';
-import { InfrastructureTransformer } from '../infrastructure.transformer';
+import { InfrastructureTransformer } from '../transformers/infrastructure.transformer';
 
 @Controller('api/v1/datacenters/')
 export class DataCenterStatisticsController {

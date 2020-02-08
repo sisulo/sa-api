@@ -1,11 +1,11 @@
-import { SystemDetail } from './models/SystemDetail';
-import { SystemMetric } from './models/metrics/SystemMetric';
-import { PerformanceStatisticsDto } from './models/dtos/performance-statistics.dto';
-import { DataCenterEntity } from '../collector/entities/data-center.entity';
-import { SystemMetricEntity } from '../collector/entities/system-metric.entity';
-import { SystemEntity } from '../collector/entities/system.entity';
-import { DatacenterPerfListDto } from './models/dtos/datacenter-perf-list.dto';
-import { SystemMetricType } from './models/metrics/SystemMetricType';
+import { SystemDetail } from '../models/SystemDetail';
+import { SystemMetric } from '../models/metrics/SystemMetric';
+import { PerformanceStatisticsDto } from '../models/dtos/performance-statistics.dto';
+import { DataCenterEntity } from '../../collector/entities/data-center.entity';
+import { SystemMetricEntity } from '../../collector/entities/system-metric.entity';
+import { SystemEntity } from '../../collector/entities/system.entity';
+import { DatacenterPerfListDto } from '../models/dtos/datacenter-perf-list.dto';
+import { SystemMetricType } from '../models/metrics/SystemMetricType';
 
 export class PerformanceMetricTransformer {
   private static suffixRegexp = new RegExp('/(_WEEK)|(_MONTH)/').compile();

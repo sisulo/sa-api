@@ -1,14 +1,14 @@
 import { Controller, Get, Logger, Query } from '@nestjs/common';
 import { CapacityStatisticsService } from '../../collector/services/capacity-statistics.service';
-import { GlobalCapacityTransformer } from '../global-capacity-transformer';
+import { GlobalCapacityTransformer } from '../transformers/global-capacity-transformer';
 import { DataCenterStatisticsService } from '../services/data-center-statistics.service';
 import { GraphDataService, ServiceType } from '../services/graph-data.service';
 import { MetricType } from '../../collector/enums/metric-type.enum';
 import { GraphDataParams } from './params/graph-data.params';
 import { GraphFilterPipe } from './pipes/graph-filter.pipe';
-import { GraphDataTransformer } from '../graph-data.transformer';
+import { GraphDataTransformer } from '../transformers/graph-data.transformer';
 import { Region } from '../models/dtos/region.enum';
-import { InfraStatisticsTransformer } from '../infra-statistics.transformer';
+import { InfraStatisticsTransformer } from '../transformers/infra-statistics.transformer';
 import { PoolAggregatedMetricService } from '../services/pool-aggregated-metric.service';
 import { SystemAggregatedMetricService } from '../services/system-aggregated-metric.service';
 import { RegionMetricInterface } from '../services/aggregated-metric.service';

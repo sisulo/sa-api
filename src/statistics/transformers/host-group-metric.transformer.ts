@@ -1,15 +1,15 @@
-import { SystemDetail } from './models/SystemDetail';
-import { SystemMetric } from './models/metrics/SystemMetric';
-import { DataCenterEntity } from '../collector/entities/data-center.entity';
-import { SystemEntity } from '../collector/entities/system.entity';
-import { CapacityStatisticsDto } from './models/dtos/capacity-statistics.dto';
-import { SystemPool } from './models/SystemPool';
-import { HostGroupEntity } from '../collector/entities/host-group.entity';
-import { HostGroupMetricEntity } from '../collector/entities/host-group-metric.entity';
-import { DatacenterCapacityListDto } from './models/dtos/datacenter-capacity-list.dto';
-import { SystemMetricType } from './models/metrics/SystemMetricType';
-import { ExternalEntity } from '../collector/entities/external.entity';
-import { ComponentExternal } from './models/ComponentExternal';
+import { SystemDetail } from '../models/SystemDetail';
+import { SystemMetric } from '../models/metrics/SystemMetric';
+import { DataCenterEntity } from '../../collector/entities/data-center.entity';
+import { SystemEntity } from '../../collector/entities/system.entity';
+import { CapacityStatisticsDto } from '../models/dtos/capacity-statistics.dto';
+import { SystemPool } from '../models/SystemPool';
+import { HostGroupEntity } from '../../collector/entities/host-group.entity';
+import { HostGroupMetricEntity } from '../../collector/entities/host-group-metric.entity';
+import { DatacenterCapacityListDto } from '../models/dtos/datacenter-capacity-list.dto';
+import { SystemMetricType } from '../models/metrics/SystemMetricType';
+import { ExternalEntity } from '../../collector/entities/external.entity';
+import { ComponentExternal } from '../models/ComponentExternal';
 
 export class HostGroupMetricTransformer {
   // TODO CapacityStatisticsDto should be named as Composite stats not as type of metrics

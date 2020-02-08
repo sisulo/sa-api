@@ -1,17 +1,17 @@
-import { ChaMetricEntity } from '../collector/entities/cha-metric.entity';
-import { InfrastructureDto } from './models/metrics/InfrastructureDto';
-import { Alert } from './models/metrics/Alert';
-import { Occurrence } from './models/metrics/Occurrence';
-import { EntityType } from './models/metrics/EntityType';
-import { PoolMetricEntity } from '../collector/entities/pool-metric.entity';
-import { MetricEntityInterface } from '../collector/entities/metric-entity.interface';
-import { MetricType } from '../collector/enums/metric-type.enum';
-import { AlertType } from './models/metrics/AlertType';
-import { SystemMetricEntity } from '../collector/entities/system-metric.entity';
-import { Metric } from './models/metrics/Metric';
-import { TypeMappingUtils } from './utils/type-mapping.utils';
-import { RegionMetricInterface } from './services/aggregated-metric.service';
-import { PortMetricEntity } from '../collector/entities/port-metric.entity';
+import { ChaMetricEntity } from '../../collector/entities/cha-metric.entity';
+import { InfrastructureDto } from '../models/metrics/InfrastructureDto';
+import { Alert } from '../models/metrics/Alert';
+import { Occurrence } from '../models/metrics/Occurrence';
+import { EntityType } from '../models/metrics/EntityType';
+import { PoolMetricEntity } from '../../collector/entities/pool-metric.entity';
+import { MetricEntityInterface } from '../../collector/entities/metric-entity.interface';
+import { MetricType } from '../../collector/enums/metric-type.enum';
+import { AlertType } from '../models/metrics/AlertType';
+import { SystemMetricEntity } from '../../collector/entities/system-metric.entity';
+import { Metric } from '../models/metrics/Metric';
+import { TypeMappingUtils } from '../utils/type-mapping.utils';
+import { RegionMetricInterface } from '../services/aggregated-metric.service';
+import { PortMetricEntity } from '../../collector/entities/port-metric.entity';
 
 export class InfraStatisticsTransformer {
   private static alertsInit = [

@@ -1,5 +1,5 @@
-import { GlobalCapacityStatisticsDto } from './models/dtos/global-capacity-statistics.dto';
-import { SystemEntity } from '../collector/entities/system.entity';
+import { GlobalCapacityStatisticsDto } from '../models/dtos/global-capacity-statistics.dto';
+import { SystemEntity } from '../../collector/entities/system.entity';
 import { CapacityMetricTransformer } from './capacity-metric.transformer';
 import { HostGroupMetricTransformer } from './host-group-metric.transformer';
 
