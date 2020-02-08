@@ -10,6 +10,7 @@ export class NewCatMetricType1579723172512 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }

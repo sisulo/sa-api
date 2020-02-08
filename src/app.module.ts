@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CollectorModule } from './collector/collector.module';
 import { StatisticsModule } from './statistics/statistics.module';
@@ -23,11 +22,10 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
       migrationsRun: true,
       migrationsTableName: 'migration_schema',
       migrations: ['dist/migration/*.js'],
-      logging: configService.getDbLogging(), // TODO logging on parameter v application.env
+      logging: configService.getDbLogging(),
     } as PostgresConnectionOptions),
     inject: [ConfigService],
   }), CollectorModule, StatisticsModule],
-  controllers: [AppController],
   providers: [],
 })
 export class AppModule {

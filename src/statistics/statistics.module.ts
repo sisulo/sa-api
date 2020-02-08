@@ -8,9 +8,19 @@ import { PoolAggregatedMetricService } from './services/pool-aggregated-metric.s
 import { SystemAggregatedMetricService } from './services/system-aggregated-metric.service';
 
 @Module({
-  controllers: [DataCenterStatisticsController, InfrastructureStatisticsController],
-  providers: [DataCenterStatisticsService, GraphDataService, PoolAggregatedMetricService, SystemAggregatedMetricService],
-  imports: [CollectorModule],
+  controllers: [
+    DataCenterStatisticsController,
+    InfrastructureStatisticsController,
+  ],
+  providers: [
+    DataCenterStatisticsService,
+    GraphDataService,
+    PoolAggregatedMetricService,
+    SystemAggregatedMetricService,
+  ],
+  imports: [
+    CollectorModule,
+  ],
 })
 export class StatisticsModule {
 }

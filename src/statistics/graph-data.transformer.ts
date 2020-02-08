@@ -7,7 +7,7 @@ export class GraphDataTransformer {
   static async transform(dataPromise: Promise<any[]>) {
     const resultDto = new GraphDataDto();
     const data = await dataPromise;
-    const pipe = new Date();
+
     resultDto.data = data.map(
       serie => {
         const serieDto = new GraphSerie();

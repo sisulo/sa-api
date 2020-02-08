@@ -8,6 +8,7 @@ export class InitDatabase1564589174189 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }

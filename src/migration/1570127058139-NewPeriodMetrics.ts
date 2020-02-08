@@ -32,6 +32,7 @@ SELECT setval('cat_metric_type_id_cat_metric_type_seq', 62);
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }

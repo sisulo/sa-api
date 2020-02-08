@@ -14,6 +14,7 @@ WHERE id_datacenter=6;`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }

@@ -27,6 +27,7 @@ export class OrderInViewFix1571070561168 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }

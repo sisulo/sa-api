@@ -13,7 +13,7 @@ import { LatencyEntity } from '../entities/latency.entity';
 import { OperationService } from './operation.service';
 import { CatOperationEntity } from '../entities/cat-operation.entity';
 import { LatencyRequestDto } from '../dto/latency-request.dto';
-import { Operation } from '../enums/operation';
+import { OperationType } from '../enums/operation-type.enum';
 
 @Injectable()
 export class LatencyMetricService extends CommonMetricService<LatencyEntity, PoolEntity, SystemEntity, null> {
@@ -29,8 +29,8 @@ export class LatencyMetricService extends CommonMetricService<LatencyEntity, Poo
   }
 
   async save(component: PoolEntity, metricType: CatMetricTypeEntity, request: MetricRequestDto): Promise<any> {
-    const operation = await this.operationService.findById(parseInt(Operation[request.operation], 10) || null);
-    const savedEntities = Promise.all(request.data.map(async latencyItem => {
+    const operation = await this.operationService.findById(parseInt(OperationType[request.operation], 10) || null);
+    return Promise.all(request.data.map(async latencyItem => {
 
       const entity = await this.createMetricEntity(component, metricType, operation, request.date, latencyItem);
 
@@ -45,7 +45,6 @@ export class LatencyMetricService extends CommonMetricService<LatencyEntity, Poo
       }
       return await this.metricRepository.save(entity);
     }));
-    return savedEntities;
   }
 
   protected async createMetricEntity(component: PoolEntity, metricType: CatMetricTypeEntity, operation: CatOperationEntity, searchDate: Date, request: LatencyRequestDto): Promise<LatencyEntity> {

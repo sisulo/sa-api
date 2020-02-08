@@ -58,13 +58,6 @@ export class DataCenterStatisticsService {
     const portAlerts = await this.portMetricService.getAlerts();
     const poolAlerts = await this.poolMetricService.getAlerts();
     const systemAlerts = await this.systemMetricService.getAlerts();
-    const result = [...alerts, ...poolAlerts, ...systemAlerts, ...portAlerts];
-
-    return result;
-  }
-
-  public async getMetrics(): Promise<MetricEntityInterface[]> {
-
-    return await this.systemMetricService.getMetrics();
+    return [...alerts, ...poolAlerts, ...systemAlerts, ...portAlerts];
   }
 }

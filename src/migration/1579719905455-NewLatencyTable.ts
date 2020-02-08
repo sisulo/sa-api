@@ -28,6 +28,7 @@ export class NewLatencyTable1579719905455 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }

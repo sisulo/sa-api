@@ -11,6 +11,7 @@ export class ChangeUnit1569946872527 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }

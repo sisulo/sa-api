@@ -1,6 +1,6 @@
 import { MetricType } from '../enums/metric-type.enum';
 import { LatencyRequestDto } from './latency-request.dto';
-import { Operation } from '../enums/operation';
+import { OperationType } from '../enums/operation-type.enum';
 
 export class MetricRequestDto {
 
@@ -13,6 +13,6 @@ export class MetricRequestDto {
 
   readonly data: LatencyRequestDto[];
 
-  readonly operation: Operation;
+  readonly operation: OperationType;
 
 }

@@ -10,6 +10,6 @@ export class DataCenterEntity {
   @Column({ name: 'name' })
   name: string;
 
-  @OneToMany(type => SystemEntity, system => system.datacenter)
+  @OneToMany(() => SystemEntity, system => system.datacenter)
   systems: SystemEntity[];
 }

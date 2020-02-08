@@ -13,6 +13,7 @@ export class AddNewMetricType1565799851764 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }

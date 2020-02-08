@@ -2,7 +2,7 @@ import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } fr
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
-export class RequestLogMessage {
+class RequestLogMessage {
   execTime;
   responseBody;
   error;
@@ -46,8 +46,7 @@ export class LoggingInterceptor implements NestInterceptor {
           data => message.responseBody = data,
         ),
         tap(() => {
-          const execTime = Date.now() - now;
-          message.execTime = execTime;
+          message.execTime = Date.now() - now;
           this.logger.log(message);
         }),
         catchError(

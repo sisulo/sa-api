@@ -24,6 +24,7 @@ export class AlterViewHostGroupMetrics1578944987537 implements MigrationInterfac
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }

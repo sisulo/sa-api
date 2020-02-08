@@ -46,6 +46,7 @@ export class AddNewPortMetricTypes1575831856441 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }

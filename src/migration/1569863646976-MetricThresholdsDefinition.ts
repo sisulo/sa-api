@@ -23,6 +23,7 @@ export class MetricThresholdsDefinition1569863646976 implements MigrationInterfa
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }

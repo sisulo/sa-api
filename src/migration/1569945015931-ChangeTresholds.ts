@@ -22,6 +22,7 @@ export class ChangeTresholds1569945015931 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }
