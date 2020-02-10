@@ -5,7 +5,7 @@ import { MetricEntityInterface } from './metric-entity.interface';
 
 @Entity('cha_metrics')
 export class ChaMetricEntity implements MetricEntityInterface {
-
+  // TODO refactor all metrics with embedded Entities and Entity inheritance
   @PrimaryGeneratedColumn({ name: 'id_cha_metric' })
   id: number;
 

@@ -175,6 +175,7 @@ describe('HostGroup Collector', () => {
         },
       );
   });
+
   afterAll(async () => {
     await app.close();
   });

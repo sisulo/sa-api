@@ -30,4 +30,11 @@ export class PoolService extends ComponentService<PoolEntity, SystemEntity> impl
       .andWhere('systems.id_system=:idSystem', { idSystem: idSystemParam })
       .getOne();
   }
+
+  public async availablePools(): Promise<PoolEntity[]> {
+    return this.repository.createQueryBuilder('pool')
+      .innerJoin('block_size_latency', 'latency', 'pool.idPool=latency.id_pool')
+      .innerJoinAndSelect('pool.system', 'system')
+      .getMany();
+  }
 }

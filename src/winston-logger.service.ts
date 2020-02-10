@@ -30,26 +30,26 @@ export class WinstonLoggerService extends Logger {
 
   log(message: string) {
     this.winstonComponent.info(message);
-    // super.log(message);
+    super.log(message);
   }
 
   error(message: string, trace: string) {
     this.winstonComponent.error(message);
-    // super.error(message, trace);
+    super.error(message, trace);
   }
 
   warn(message: string) {
     this.winstonComponent.warn(message);
-    // super.warn(message);
+    super.warn(message);
   }
 
   debug(message: string) {
     this.winstonComponent.debug(message);
-    // super.debug(message);
+    super.debug(message);
   }
 
   verbose(message: string) {
     this.winstonComponent.notice(message);
-    // super.verbose(message);
+    super.verbose(message);
   }
 }

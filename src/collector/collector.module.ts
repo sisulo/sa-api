@@ -16,7 +16,6 @@ import { ChaEntity } from './entities/cha.entity';
 import { DataCenterEntity } from './entities/data-center.entity';
 import { DataCenterService } from './services/data-center.service';
 import { MetricTypeService } from './services/metric-type.service';
-import { CapacityStatisticsEntity } from './entities/capacity-statistics.entity';
 import { CapacityStatisticsService } from './services/capacity-statistics.service';
 import { MetricController } from './controllers/metric.controller';
 import { HostGroupCollectorFactoryImpl } from './factory/collectors/host-group-collector-factory.impl';
@@ -69,7 +68,6 @@ import { CatOperationEntity } from './entities/cat-operation.entity';
         ChaMetricReadEntity,
         ChaEntity,
         DataCenterEntity,
-        CapacityStatisticsEntity,
         HostGroupMetricEntity,
         HostGroupEntity,
         PortEntity,
@@ -126,6 +124,7 @@ import { CatOperationEntity } from './entities/cat-operation.entity';
     DataCenterService,
     MetricTypeService,
     LatencyMetricService,
+    PoolService,
   ],
 })
 export class CollectorModule {
