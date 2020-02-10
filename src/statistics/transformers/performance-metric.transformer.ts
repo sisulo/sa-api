@@ -8,7 +8,7 @@ import { DatacenterPerfListDto } from '../models/dtos/datacenter-perf-list.dto';
 import { SystemMetricType } from '../models/metrics/SystemMetricType';
 
 export class PerformanceMetricTransformer {
-  private static suffixRegexp = new RegExp('/(_WEEK)|(_MONTH)/').compile();
+  private static suffixRegexp = new RegExp(/(_WEEK)|(_MONTH)/).compile();
 
   public static async transform(dataCenterEntities: DataCenterEntity[]): Promise<DatacenterPerfListDto> {
     const response = new DatacenterPerfListDto();
