@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { LatencyMetricService } from '../../collector/services/latency-metric.service';
 import { OperationType } from '../../collector/enums/operation-type.enum';
 import { ArrayUtils } from '../utils/array.utils';
-import { PoolEntity } from '../../collector/entities/pool.entity';
-import { PoolService } from '../../collector/services/pool.service';
+import { SystemService } from '../../collector/services/system.service';
+import { CapacityMetricTransformer } from '../transformers/capacity-metric.transformer';
+import { SystemPool } from '../models/SystemPool';
 
 export interface OperationData {
   values: ThreeDimensionValue[];
@@ -18,14 +19,14 @@ export interface ThreeDimensionValue {
 
 export interface LatencyMetadata {
   dates: string[]; // Instead of date string is used because locale didn't set correctly
-  pools: Array<Partial<PoolEntity>>;
+  systems: Array<Partial<SystemPool>>;
 }
 
 @Injectable()
 export class LatencyBlockSizeService {
   constructor(
     private readonly service: LatencyMetricService,
-    private readonly poolService: PoolService,
+    private readonly systemService: SystemService,
   ) {
   }
 
@@ -55,7 +56,7 @@ export class LatencyBlockSizeService {
 
   public async getMetaData(): Promise<LatencyMetadata> {
     const datesValues = await this.service.availableDates();
-    const poolsValues = await this.poolService.availablePools();
-    return { dates: datesValues, pools: poolsValues };
+    const poolsValues = await this.systemService.availableSystems();
+    return { dates: datesValues, systems: poolsValues.map(system => CapacityMetricTransformer.createSystemPool(system)) };
   }
 }

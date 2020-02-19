@@ -30,4 +30,11 @@ export class SystemService implements CreateComponentInterface<SystemEntity, nul
 
     return await this.repository.save(system);
   }
+
+  public async availableSystems(): Promise<SystemEntity[]> {
+    return this.repository.createQueryBuilder('system')
+      .innerJoinAndSelect('system.pools', 'pools')
+      .innerJoin('block_size_latency', 'latency', 'pools.idPool=latency.id_pool')
+      .getMany();
+  }
 }

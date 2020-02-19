@@ -124,7 +124,7 @@ import { CatOperationEntity } from './entities/cat-operation.entity';
     DataCenterService,
     MetricTypeService,
     LatencyMetricService,
-    PoolService,
+    SystemService,
   ],
 })
 export class CollectorModule {
