@@ -14,6 +14,7 @@ import { OperationService } from './operation.service';
 import { CatOperationEntity } from '../entities/cat-operation.entity';
 import { LatencyRequestDto } from '../dto/latency-request.dto';
 import { OperationType } from '../enums/operation-type.enum';
+import { isEmpty } from '@nestjs/common/utils/shared.utils';
 
 export interface LatencyData {
   blockSize: number;
@@ -55,20 +56,27 @@ export class LatencyMetricService extends CommonMetricService<LatencyEntity, Poo
   }
 
   public async frequencyByLatencyBlockSize(poolIds: number[], datesIn: Date[], operationsIn: OperationType[]): Promise<LatencyData[]> {
-    return this.metricRepository.createQueryBuilder('metric')
+    const query = this.metricRepository.createQueryBuilder('metric')
       .select('metric.blockSize', 'blockSize')
       .addSelect('metric.latency', 'latency')
       .addSelect('operation.idCatOperation', 'operation')
       .addSelect('CAST(SUM(metric.count) as INT)', 'count')
       .innerJoin('metric.pool', 'pool')
       .innerJoin('metric.operationEntity', 'operation')
-      .where('pool.idPool IN (:...ids)', { ids: poolIds })
-      .andWhere('metric.date IN (:...dates)', { dates: datesIn })
-      .andWhere('operation.name IN (:...operations)', { operations: operationsIn.map(operation => OperationType[operation]) })
       .groupBy('metric.latency')
       .addGroupBy('metric.blockSize')
-      .addGroupBy('operation.idCatOperation')
-      .getRawMany();
+      .addGroupBy('operation.idCatOperation');
+    if (!isEmpty(poolIds)) {
+      query.where('pool.idPool IN (:...ids)', { ids: poolIds });
+    }
+    if (!isEmpty(datesIn)) {
+      query.andWhere('metric.date IN (:...dates)', { dates: datesIn });
+    }
+    if (!isEmpty(operationsIn)) {
+      query.andWhere('operation.name IN (:...operations)', { operations: operationsIn.map(operation => OperationType[operation]) });
+    }
+
+    return query.getRawMany();
   }
 
   // TODO maybe use await async in all "manager" methods when fetching
