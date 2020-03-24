@@ -41,7 +41,7 @@ export class LatencyBlockSizeService {
   private static mapValues(data: any[]): ThreeDimensionValue[] {
     return data.map(
       item => {
-        return { x: item.blockSize, y: item.latency, z: item.count } as ThreeDimensionValue;
+        return { x: item.blockSize, y: item.latency, z: parseInt(item.count, 10) } as ThreeDimensionValue;
       },
     );
   }

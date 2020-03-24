@@ -60,7 +60,7 @@ export class LatencyMetricService extends CommonMetricService<LatencyEntity, Poo
       .select('metric.blockSize', 'blockSize')
       .addSelect('metric.latency', 'latency')
       .addSelect('operation.idCatOperation', 'operation')
-      .addSelect('CAST(SUM(metric.count) as INT)', 'count')
+      .addSelect('CAST(SUM(metric.count) as BIGINT)', 'count')
       .innerJoin('metric.pool', 'pool')
       .innerJoin('metric.operationEntity', 'operation')
       .groupBy('metric.latency')
@@ -75,7 +75,6 @@ export class LatencyMetricService extends CommonMetricService<LatencyEntity, Poo
     if (!isEmpty(operationsIn)) {
       query.andWhere('operation.name IN (:...operations)', { operations: operationsIn.map(operation => OperationType[operation]) });
     }
-
     return query.getRawMany();
   }
 
