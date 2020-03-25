@@ -36,7 +36,7 @@ export class HostGroupMetricTransformer {
 
   public static createSystemPool(system: SystemEntity): SystemPool {
     const systemPool = new SystemPool();
-    systemPool.id = system.idSystem;
+    systemPool.id = system.id;
     systemPool.name = system.name;
     systemPool.pools = system.hostGroups.map(
       pool => HostGroupMetricTransformer.createPoolDetails(pool),
@@ -46,7 +46,7 @@ export class HostGroupMetricTransformer {
 
   private static createPoolDetails(pool: HostGroupEntity): SystemDetail {
     const poolDetails: SystemDetail = new SystemDetail();
-    poolDetails.id = pool.idHostGroup;
+    poolDetails.id = pool.id;
     poolDetails.name = pool.name;
     if (pool.metrics != null) {
       poolDetails.metrics = pool.metrics.map(

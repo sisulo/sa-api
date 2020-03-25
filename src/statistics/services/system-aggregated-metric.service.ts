@@ -20,7 +20,7 @@ export class SystemAggregatedMetricService extends AggregatedMetricService {
     const result = [];
     entities.forEach(dataCenter =>
       dataCenter.systems.forEach(system =>
-          // system.pools.forEach(pool =>
+          // owner.pools.forEach(owner =>
           result.push(system.metrics),
         // ),
       ),

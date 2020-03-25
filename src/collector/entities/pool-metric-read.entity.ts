@@ -19,5 +19,5 @@ export class PoolMetricReadEntity {
 
   @ManyToOne(() => PoolEntity, pool => pool.metrics, { eager: true })
   @JoinColumn({ name: 'id_pool' })
-  pool: PoolEntity;
+  owner: PoolEntity;
 }

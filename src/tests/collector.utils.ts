@@ -42,7 +42,7 @@ export class CollectorUtils {
 
     const hostGroup = new HostGroupEntity();
     hostGroup.name = 'host_group_1';
-    hostGroup.idHostGroup = 2;
+    hostGroup.id = 2;
     hostGroup.system = CollectorUtils.createSystemEntity();
 
     const metric = new HostGroupMetricEntity();
@@ -50,7 +50,7 @@ export class CollectorUtils {
     metric.metricTypeEntity = type;
     metric.date = new Date('2019-08-29');
     metric.value = 158.6;
-    metric.hostGroup = hostGroup;
+    metric.owner = hostGroup;
 
     return metric;
   }
@@ -65,7 +65,7 @@ export class CollectorUtils {
 
   static createChaMetricEntity(): ChaMetricEntity {
     const entity = new ChaMetricEntity();
-    entity.adapter = CollectorUtils.createAdapter();
+    entity.owner = CollectorUtils.createAdapter();
     entity.id = 2;
     const metricTypeEntity = new CatMetricTypeEntity();
     metricTypeEntity.name = 'SLA_EVENTS';
@@ -79,7 +79,7 @@ export class CollectorUtils {
 
   static createPort(): PortEntity {
     const entity = new PortEntity();
-    entity.idPort = 1;
+    entity.id = 1;
     entity.name = '1D,2D';
     entity.system = CollectorUtils.createAdapter();
 
@@ -87,7 +87,7 @@ export class CollectorUtils {
   }
   static createAdapter(): ChaEntity {
     const entity = new ChaEntity();
-    entity.idCha = 1;
+    entity.id = 1;
     entity.name = 'Cha_1';
     entity.system = CollectorUtils.createSystemEntity();
 
@@ -109,7 +109,7 @@ export class CollectorUtils {
 
   static createPortMetricEntity(): PortMetricEntity {
     const entity = new PortMetricEntity();
-    entity.port = CollectorUtils.createPort();
+    entity.owner = CollectorUtils.createPort();
     entity.id = 2;
     const metricTypeEntity = new CatMetricTypeEntity();
     metricTypeEntity.name = 'IMBALANCE_EVENTS';
@@ -139,7 +139,7 @@ export class CollectorUtils {
   static createPoolEntity(): PoolEntity {
     const entity = new PoolEntity();
     entity.name = 'Pool_1';
-    entity.idPool = 1;
+    entity.id = 1;
 
     entity.system = CollectorUtils.createSystemEntity();
     return entity;
@@ -158,7 +158,7 @@ export class CollectorUtils {
 
     entity.metricTypeEntity = metricType;
 
-    entity.pool = CollectorUtils.createPoolEntity();
+    entity.owner = CollectorUtils.createPoolEntity();
 
     return entity;
   }
@@ -179,7 +179,7 @@ export class CollectorUtils {
   static createSystemEntity(): SystemEntity {
     const system = new SystemEntity();
     system.name = 'System_2';
-    system.idSystem = 2;
+    system.id = 2;
 
     return system;
   }
@@ -190,7 +190,7 @@ export class CollectorUtils {
     entity.peak = 10;
     entity.value = 5;
     entity.date = new Date('2019-09-01');
-    entity.system = CollectorUtils.createSystemEntity();
+    entity.owner = CollectorUtils.createSystemEntity();
 
     const metricType = new CatMetricTypeEntity();
     metricType.unit = 'Mbps';

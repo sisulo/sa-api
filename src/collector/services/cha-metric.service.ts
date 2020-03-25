@@ -24,7 +24,7 @@ export class ChaMetricService extends CommonMetricService<ChaMetricEntity, ChaEn
     protected readonly chaService: ChaService,
     protected readonly metricTypeService: MetricTypeService,
   ) {
-    super(metricTypeService, chaService, systemService, null);
+    super(metricTypeService, chaService, systemService, null, metricRepository, ChaMetricEntity);
   }
 
   async save(component: any, metricType: CatMetricTypeEntity, request: any): Promise<any> {
@@ -33,8 +33,8 @@ export class ChaMetricService extends CommonMetricService<ChaMetricEntity, ChaEn
     entity.value = request.value;
     entity.date = request.date;
     entity.metricTypeEntity = metricType;
-    if (entity.adapter == null) {
-      entity.adapter = component;
+    if (entity.owner == null) {
+      entity.owner = component;
     }
     return await this.metricRepository.save(entity);
   }
@@ -42,15 +42,5 @@ export class ChaMetricService extends CommonMetricService<ChaMetricEntity, ChaEn
   public async getAlerts(): Promise<ChaMetricEntity[]> {
     const type = await this.metricTypeService.findById(MetricType.IMBALANCE_EVENTS);
     return await this.metricReadRepository.find({ value: MoreThan(0), metricTypeEntity: type });
-  }
-
-  protected async createMetricEntity(component: ChaEntity, metricType: CatMetricTypeEntity, dateSearch: Date): Promise<ChaMetricEntity> {
-    const metricDao = await this.metricRepository
-      .findOne({ adapter: component, metricTypeEntity: metricType, date: dateSearch })
-      .then(dao => dao);
-    if (metricDao == null) {
-      return new ChaMetricEntity();
-    }
-    return metricDao;
   }
 }

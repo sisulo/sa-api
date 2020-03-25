@@ -33,14 +33,14 @@ export class LatencyMetricService extends CommonMetricService<LatencyEntity, Poo
     protected parentComponentService: SystemService,
     protected operationService: OperationService,
   ) {
-    super(metricTypeService, childComponentService, parentComponentService, null);
+    super(metricTypeService, childComponentService, parentComponentService, null, metricRepository, LatencyEntity);
   }
 
   async save(component: PoolEntity, metricType: CatMetricTypeEntity, request: MetricRequestDto): Promise<any> {
     const operation = await this.operationService.findById(parseInt(OperationType[request.operation], 10) || null);
     return Promise.all(request.data.map(async latencyItem => {
 
-      const entity = await this.createMetricEntity(component, metricType, operation, request.date, latencyItem);
+      const entity = await this.createLatency(component, metricType, operation, request.date, latencyItem);
 
       entity.date = request.date;
       entity.latency = latencyItem.latency;
@@ -67,7 +67,7 @@ export class LatencyMetricService extends CommonMetricService<LatencyEntity, Poo
       .addGroupBy('metric.blockSize')
       .addGroupBy('operation.idCatOperation');
     if (!isEmpty(poolIds)) {
-      query.where('pool.idPool IN (:...ids)', { ids: poolIds });
+      query.where('pool.id IN (:...ids)', { ids: poolIds });
     }
     if (!isEmpty(datesIn)) {
       query.andWhere('metric.date IN (:...dates)', { dates: datesIn });
@@ -87,11 +87,11 @@ export class LatencyMetricService extends CommonMetricService<LatencyEntity, Poo
     return entities.map(entity => entity.date);
   }
 
-  protected async createMetricEntity(component: PoolEntity,
-                                     metricType: CatMetricTypeEntity,
-                                     operation: CatOperationEntity,
-                                     searchDate: Date,
-                                     request: LatencyRequestDto): Promise<LatencyEntity> {
+  protected async createLatency(component: PoolEntity,
+                                metricType: CatMetricTypeEntity,
+                                operation: CatOperationEntity,
+                                searchDate: Date,
+                                request: LatencyRequestDto): Promise<LatencyEntity> {
     const metricDao = await this.metricRepository
       .findOne({
         pool: component,

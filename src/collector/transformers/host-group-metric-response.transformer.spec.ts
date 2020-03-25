@@ -16,9 +16,9 @@ describe('HostGroupMetricResponseTransformer', () => {
     expect(transformer.transform(entity)).toStrictEqual(result);
   });
 
-  it('should throw error when system is missing in entity', () => {
+  it('should throw error when owner is missing in entity', () => {
     const entity: HostGroupMetricEntity = CollectorUtils.createHostGroupEntity();
-    entity.hostGroup.system = null;
+    entity.owner.system = null;
     const result: HostGroupMetricResponseDto = CollectorUtils.createHostGroupMetricResponseDto();
     expect(() => {
       transformer.transform(entity);
@@ -27,7 +27,7 @@ describe('HostGroupMetricResponseTransformer', () => {
 
   it('should throw error when hostgroup is missing in entity', () => {
     const entity: HostGroupMetricEntity = CollectorUtils.createHostGroupEntity();
-    entity.hostGroup = null;
+    entity.owner = null;
     const result: HostGroupMetricResponseDto = CollectorUtils.createHostGroupMetricResponseDto();
     expect(() => {
       transformer.transform(entity);

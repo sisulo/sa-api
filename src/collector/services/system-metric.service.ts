@@ -12,6 +12,7 @@ import { MetricRequestDto } from '../dto/metric-request.dto';
 import { MetricType } from '../enums/metric-type.enum';
 import { SystemMetricReadEntity } from '../entities/system-metric-read.entity';
 import { MetricEntityInterface } from '../entities/metric-entity.interface';
+import { ComponentStatus } from '../enums/component.status';
 
 @Injectable()
 export class SystemMetricService extends CommonMetricService<SystemMetricEntity, SystemEntity, null, null> {
@@ -24,7 +25,14 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
     private readonly systemService: SystemService,
     private readonly metricTypeService: MetricTypeService,
   ) {
-    super(metricTypeService, systemService, null, null);
+    super(
+      metricTypeService,
+      systemService,
+      null,
+      null,
+      metricRepository,
+      SystemMetricEntity,
+    );
   }
 
   async save(component: SystemEntity, metricType: CatMetricTypeEntity, request: MetricRequestDto): Promise<any> {
@@ -34,8 +42,8 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
     entity.date = systemRequest.date;
     entity.peak = systemRequest.peak;
     entity.metricTypeEntity = metricType;
-    if (entity.system == null) {
-      entity.system = component;
+    if (entity.owner == null) {
+      entity.owner = component;
     }
     return await this.metricRepository.save(entity);
   }
@@ -63,9 +71,10 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
     return await this.metricReadRepository.createQueryBuilder('metric')
       .innerJoinAndSelect('metric.metricTypeEntity', 'type')
       .innerJoinAndSelect('type.threshold', 'threshold')
-      .innerJoinAndSelect('metric.system', 'system')
+      .innerJoinAndSelect('metric.owner', 'system')
       .where('metric.value >= COALESCE(threshold.min_value, -2147483648)')
       .andWhere('metric.value < COALESCE(threshold.max_value, 2147483647)')
+      .andWhere('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE })
       .andWhere('metric.metricTypeEntity IN (:...type)', { type: types.map(type => type.idCatMetricType) })
       .getMany();
   }
@@ -78,16 +87,6 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
       result.push(this.aggregateMetric(entities));
     }
     return result;
-  }
-
-  protected async createMetricEntity(component: SystemEntity, metricType: CatMetricTypeEntity, dateSearch: Date): Promise<SystemMetricEntity> {
-    const metricDao = await this.metricRepository
-      .findOne({ system: component, metricTypeEntity: metricType, date: dateSearch })
-      .then(dao => dao);
-    if (metricDao == null) {
-      return new SystemMetricEntity();
-    }
-    return metricDao;
   }
 
   private aggregateMetric(metrics: SystemMetricReadEntity[]): MetricEntityInterface {

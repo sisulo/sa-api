@@ -41,22 +41,22 @@ export class LatencyMetricResponseTransformer extends BaseTransformer {
     );
     response.id = metric.idBlockSizeLatency;
     response.pool = new PoolDto();
-    response.pool.idPool = metric.pool.idPool;
+    response.pool.idPool = metric.pool.id;
     response.pool.name = metric.pool.name;
     response.pool.system = new SystemDto();
-    response.pool.system.idSystem = metric.pool.system.idSystem;
+    response.pool.system.idSystem = metric.pool.system.id;
     response.pool.system.name = metric.pool.system.name;
     response.metricType = metric.metricTypeEntity.name;
     response.blockSize = metric.blockSize;
     response.latency = metric.latency;
     response.count = metric.count;
-    // response.idSystem = metric.hostGroup.system.idSystem;
-    // response.systemName = metric.hostGroup.system.name;
+    // response.id = metric.owner.owner.id;
+    // response.systemName = metric.owner.owner.name;
     // response.value = metric.value;
     // response.date = metric.date;
     // response.metricType = metric.metricTypeEntity.name;
-    // response.idHostGroup = metric.hostGroup.idHostGroup;
-    // response.hostGroupName = metric.hostGroup.name;
+    // response.id = metric.owner.id;
+    // response.hostGroupName = metric.owner.name;
     return response;
   }
 }

@@ -3,6 +3,8 @@ import { SystemEntity } from './system.entity';
 import { CatMetricTypeEntity } from './cat-metric-type.entity';
 import { MetricEntityInterface } from './metric-entity.interface';
 
+// TODO move to statistics
+// TODO Make a view_metric_active for all "Read" Entity
 @Entity('view_system_metrics')
 export class SystemMetricReadEntity implements MetricEntityInterface {
   @PrimaryGeneratedColumn({ name: 'id_system_metric', type: 'integer' })
@@ -14,9 +16,9 @@ export class SystemMetricReadEntity implements MetricEntityInterface {
   @Column({ name: 'peak' })
   peak: number;
 
-  @ManyToOne(() => SystemEntity, system => system.idSystem, { eager: true })
+  @ManyToOne(() => SystemEntity, system => system.id, { eager: true })
   @JoinColumn({ name: 'id_system' })
-  system: SystemEntity;
+  owner: SystemEntity;
 
   @Column('date', { name: 'date' })
   date: Date;

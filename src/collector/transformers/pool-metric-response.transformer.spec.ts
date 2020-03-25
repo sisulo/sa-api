@@ -16,17 +16,17 @@ describe('PoolMetricResponseTransformer', () => {
     expect(transformer.transform(entity)).toStrictEqual(result);
   });
 
-  it('should throw error when pool missing in PoolMetricEntity', () => {
+  it('should throw error when owner missing in PoolMetricEntity', () => {
     const entity: PoolMetricEntity = CollectorUtils.createPoolMetricEntity();
-    entity.pool = null;
+    entity.owner = null;
     const result: PoolMetricResponseDto = CollectorUtils.createPoolMetricResponseDto();
     expect(() => {
       transformer.transform(entity);
     }).toThrowError(TransformationError);
   });
-  it('should throw error when system missing in PoolMetricEntity', () => {
+  it('should throw error when owner missing in PoolMetricEntity', () => {
     const entity: PoolMetricEntity = CollectorUtils.createPoolMetricEntity();
-    entity.pool.system = null;
+    entity.owner.system = null;
     const result: PoolMetricResponseDto = CollectorUtils.createPoolMetricResponseDto();
     expect(() => {
       transformer.transform(entity);

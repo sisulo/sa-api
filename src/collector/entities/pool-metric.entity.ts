@@ -1,24 +1,12 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { CatMetricTypeEntity } from './cat-metric-type.entity';
+import { Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { PoolEntity } from './pool.entity';
 import { MetricEntityInterface } from './metric-entity.interface';
+import { AbstractMetricEntity } from './abstract-metric.entity';
 
 @Entity('pool_metrics')
-export class PoolMetricEntity implements MetricEntityInterface {
-  @PrimaryGeneratedColumn({ name: 'id_pool_metric' })
-  id: number;
-
-  @Column({ name: 'value' })
-  value: number;
-
-  @Column('date', { name: 'date' })
-  date: Date;
-
-  @ManyToOne(() => CatMetricTypeEntity, { eager: true })
-  @JoinColumn({ name: 'id_cat_metric_type' })
-  metricTypeEntity: CatMetricTypeEntity;
+export class PoolMetricEntity extends AbstractMetricEntity implements MetricEntityInterface {
 
   @ManyToOne(() => PoolEntity, pool => pool.metrics, { eager: true })
   @JoinColumn({ name: 'id_pool' })
-  pool: PoolEntity;
+  owner: PoolEntity;
 }

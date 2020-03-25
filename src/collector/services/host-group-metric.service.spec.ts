@@ -28,7 +28,7 @@ function createHostGroupMetricEntity(id?: number | 999): HostGroupMetricEntity {
   } else {
     entity.id = id;
   }
-  entity.hostGroup = createHostGroupEntity();
+  entity.owner = createHostGroupEntity();
   entity.metricTypeEntity = createCatMetricTypeEntity();
 
   return entity;
@@ -36,7 +36,7 @@ function createHostGroupMetricEntity(id?: number | 999): HostGroupMetricEntity {
 
 function createSystemEntity(): SystemEntity {
   const systemEntity = new SystemEntity();
-  systemEntity.idSystem = 2;
+  systemEntity.id = 2;
   systemEntity.name = 'System_1';
   return systemEntity;
 }
@@ -44,9 +44,9 @@ function createSystemEntity(): SystemEntity {
 function createHostGroupEntity(id?: number | 999): HostGroupEntity {
   const entity = new HostGroupEntity();
   if (id === undefined) {
-    entity.idHostGroup = 999;
+    entity.id = 999;
   } else {
-    entity.idHostGroup = id;
+    entity.id = id;
   }
   entity.name = 'Host_Group_1';
 

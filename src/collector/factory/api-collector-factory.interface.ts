@@ -1,6 +1,6 @@
 import { CollectorType } from './collector-type.enum';
-import { CollectorFactory } from './collector-factory.interface';
+import { CollectorGeneric } from './collectors/collector-generic';
 
 export interface ApiCollectorFactory {
-  getCollector(type: CollectorType): CollectorFactory<any>;
+  getCollector(type: CollectorType): CollectorGeneric<any, any, any, any>;
 }

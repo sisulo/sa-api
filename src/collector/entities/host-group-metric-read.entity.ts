@@ -20,5 +20,5 @@ export class HostGroupMetricReadEntity {
 
   @ManyToOne(() => HostGroupEntity, { eager: true })
   @JoinColumn({ name: 'id_host_group' })
-  hostGroup: HostGroupEntity;
+  owner: HostGroupEntity;
 }

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import * as request from 'supertest';
 
-describe('HostGroup Collector', () => {
+describe('Collector', () => {
   let app;
 
   beforeAll(async () => {

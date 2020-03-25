@@ -7,8 +7,11 @@ import { MetricRequestDto } from '../dto/metric-request.dto';
 import { EntityServiceError } from './entity-service.error';
 import { CreateComponentInterface } from './createComponentInterface';
 import { ComponentKey } from '../controllers/metric.controller';
+import { Repository } from 'typeorm';
+import { StorageEntityInterface } from '../entities/storage-entity.interface';
+import { AbstractMetricEntity } from '../entities/abstract-metric.entity';
 
-export abstract class CommonMetricService<MetricServiceType, ChildComponentType, ParentComponentType, GrandParentComponentType> {
+export abstract class CommonMetricService<MetricServiceType extends AbstractMetricEntity, ChildComponentType extends StorageEntityInterface, ParentComponentType, GrandParentComponentType> {
 
   protected childComponentService: CreateComponentInterface<ChildComponentType, ParentComponentType>;
   protected parentComponentService: CreateComponentInterface<ParentComponentType, GrandParentComponentType>;
@@ -19,6 +22,8 @@ export abstract class CommonMetricService<MetricServiceType, ChildComponentType,
                         childComponentService: CreateComponentInterface<ChildComponentType, ParentComponentType>,
                         parentComponentService: CreateComponentInterface<ParentComponentType, GrandParentComponentType>,
                         grandParentComponentService: CreateComponentInterface<GrandParentComponentType, null>,
+                        private repository: Repository<MetricServiceType>,
+                        private type: new () => MetricServiceType,
   ) {
     this.metricType = metricTypeService;
     this.parentComponentService = parentComponentService;
@@ -35,6 +40,18 @@ export abstract class CommonMetricService<MetricServiceType, ChildComponentType,
       const groupsString = this.convertMetricGroupToStrings(expectedMetricGroups);
       throw new BadRequestException(`Metric \'${originMetricType}\' is not ${groupsString} metric`);
     }
+  }
+
+  protected createMetricEntity = async (component: ChildComponentType, metricType: CatMetricTypeEntity, dateSearch: Date): Promise<MetricServiceType> => {
+    const metricDao = await this.repository.createQueryBuilder('metric')
+      .where('metric.owner=:owner', { owner: component.id })
+      .andWhere('metric.metricTypeEntity = :type', { type: metricType.idCatMetricType })
+      .andWhere('metric.date = :date', { date: dateSearch })
+      .getOne();
+    if (metricDao == null) {
+      return new this.type();
+    }
+    return metricDao;
   }
 
   private static convertMetricGroupToStrings(groups: MetricGroup[]) {

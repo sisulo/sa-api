@@ -16,9 +16,9 @@ describe('PortMetricResponseTransformer', () => {
     expect(transformer.transform(entity)).toStrictEqual(result);
   });
 
-  it('should throw error when system is missing in entity', () => {
+  it('should throw error when owner is missing in entity', () => {
     const entity: PortMetricEntity = CollectorUtils.createPortMetricEntity();
-    entity.port.system = null;
+    entity.owner.system = null;
     expect(() => {
       transformer.transform(entity);
     }).toThrowError(TransformationError);
@@ -26,7 +26,7 @@ describe('PortMetricResponseTransformer', () => {
 
   it('should throw error when adapter is missing in entity', () => {
     const entity: PortMetricEntity = CollectorUtils.createPortMetricEntity();
-    entity.port = null;
+    entity.owner = null;
     expect(() => {
       transformer.transform(entity);
     }).toThrowError(TransformationError);

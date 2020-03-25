@@ -11,9 +11,9 @@ export class PortMetricReadEntity implements MetricEntityInterface {
   @Column({ name: 'value' })
   value: number;
 
-  @ManyToOne(() => PortEntity, port => port.idPort, { eager: true })
+  @ManyToOne(() => PortEntity, port => port.id, { eager: true })
   @JoinColumn({ name: 'id_port' })
-  port: PortEntity;
+  owner: PortEntity;
 
   @Column('date', { name: 'date' })
   date: Date;

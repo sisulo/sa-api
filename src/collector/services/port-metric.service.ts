@@ -28,7 +28,7 @@ export class PortMetricService extends CommonMetricService<PortMetricEntity, Por
     private readonly systemService: SystemService,
     private readonly metricTypeService: MetricTypeService,
   ) {
-    super(metricTypeService, portService, chaService, systemService);
+    super(metricTypeService, portService, chaService, systemService, metricRepository, PortMetricEntity);
   }
 
   async save(component: PortEntity, metricType: CatMetricTypeEntity, request: MetricRequestDto): Promise<any> {
@@ -37,25 +37,14 @@ export class PortMetricService extends CommonMetricService<PortMetricEntity, Por
     entity.value = request.value;
     entity.date = request.date;
     entity.metricTypeEntity = metricType;
-    if (entity.port == null) {
-      entity.port = component;
+    if (entity.owner == null) {
+      entity.owner = component;
     }
     return await this.metricRepository.save(entity);
   }
 
-  public async getAlerts(): Promise<PortMetricEntity[]> {
+  public async getAlerts(): Promise<PortMetricReadEntity[]> {
     const type = await this.metricTypeService.findById(MetricType.PORT_IMBALANCE_EVENTS);
     return await this.metricReadRepository.find({ value: MoreThan(0), metricTypeEntity: type });
   }
-
-  protected async createMetricEntity(component: PortEntity, metricType: CatMetricTypeEntity, dateSearch: Date): Promise<PortMetricEntity> {
-    const metricDao = await this.metricRepository
-      .findOne({ port: component, metricTypeEntity: metricType, date: dateSearch })
-      .then(dao => dao);
-    if (metricDao == null) {
-      return new PortMetricEntity();
-    }
-    return metricDao;
-  }
-
 }

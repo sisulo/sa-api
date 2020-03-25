@@ -9,16 +9,16 @@ export class HostGroupMetricResponseTransformer extends BaseTransformer {
   private static readonly ENTITY_METRIC_TYPE = 'ChaMetricEntity';
 
   public transform(metric: HostGroupMetricEntity): HostGroupMetricResponseDto {
-    // Todo duplicated code in pool, cha, sla transformers
+    // Todo duplicated code in owner, cha, sla transformers
     const response = new HostGroupMetricResponseDto();
     this.assertNotNull(
-      metric.hostGroup,
+      metric.owner,
       metric,
       HostGroupMetricResponseTransformer.ENTITY_TYPE,
       HostGroupMetricResponseTransformer.ENTITY_METRIC_TYPE,
     );
     this.assertNotNull(
-      metric.hostGroup.system,
+      metric.owner.system,
       metric,
       HostGroupMetricResponseTransformer.ENTITY_TYPE,
       HostGroupMetricResponseTransformer.ENTITY_METRIC_TYPE,
@@ -29,13 +29,13 @@ export class HostGroupMetricResponseTransformer extends BaseTransformer {
       HostGroupMetricResponseTransformer.ENTITY_METRIC_TYPE,
     );
     response.idMetric = metric.id;
-    response.idSystem = metric.hostGroup.system.idSystem;
-    response.systemName = metric.hostGroup.system.name;
+    response.idSystem = metric.owner.system.id;
+    response.systemName = metric.owner.system.name;
     response.value = metric.value;
     response.date = metric.date;
     response.metricType = metric.metricTypeEntity.name;
-    response.idHostGroup = metric.hostGroup.idHostGroup;
-    response.hostGroupName = metric.hostGroup.name;
+    response.idHostGroup = metric.owner.id;
+    response.hostGroupName = metric.owner.name;
     return response;
   }
 }

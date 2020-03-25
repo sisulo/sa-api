@@ -20,7 +20,7 @@ export class HostGroupMetricService extends CommonMetricService<HostGroupMetricE
     protected childComponentService: HostGroupService,
     protected parentComponentService: SystemService,
   ) {
-    super(metricTypeService, childComponentService, parentComponentService, null);
+    super(metricTypeService, childComponentService, parentComponentService, null, metricRepository, HostGroupMetricEntity);
   }
 
   async save(component: HostGroupEntity, metricType: CatMetricTypeEntity, request: MetricRequestDto): Promise<any> {
@@ -29,19 +29,9 @@ export class HostGroupMetricService extends CommonMetricService<HostGroupMetricE
     entity.value = request.value;
     entity.date = request.date;
     entity.metricTypeEntity = metricType;
-    if (entity.hostGroup == null) {
-      entity.hostGroup = component;
+    if (entity.owner == null) {
+      entity.owner = component;
     }
     return await this.metricRepository.save(entity);
-  }
-
-  protected async createMetricEntity(component: HostGroupEntity, metricType: CatMetricTypeEntity, dateSearch: Date): Promise<HostGroupMetricEntity> {
-    const metricDao = await this.metricRepository
-      .findOne({ hostGroup: component, metricTypeEntity: metricType, date: dateSearch })
-      .then(dao => dao);
-    if (metricDao == null) {
-      return new HostGroupMetricEntity();
-    }
-    return metricDao;
   }
 }

@@ -37,7 +37,7 @@ export class CapacityMetricTransformer {
 
   public static createSystemPool(system: SystemEntity): SystemPool {
     const systemPool = new SystemPool();
-    systemPool.id = system.idSystem;
+    systemPool.id = system.id;
     systemPool.name = system.name;
     if (system.pools != null) {
       systemPool.pools = system.pools.map(
@@ -51,7 +51,7 @@ export class CapacityMetricTransformer {
 
   private static createPoolDetails(pool: PoolEntity): SystemDetail {
     const poolDetails: SystemDetail = new SystemDetail();
-    poolDetails.id = pool.idPool;
+    poolDetails.id = pool.id;
     poolDetails.name = pool.name;
     if (pool.metrics != null) {
       poolDetails.metrics = pool.metrics.map(

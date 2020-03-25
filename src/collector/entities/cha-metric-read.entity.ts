@@ -21,5 +21,5 @@ export class ChaMetricReadEntity {
   @ManyToOne(() => ChaEntity, { eager: true })
   @JoinColumn({ name: 'id_cha' })
   @JoinTable()
-  adapter: ChaEntity;
+  owner: ChaEntity;
 }

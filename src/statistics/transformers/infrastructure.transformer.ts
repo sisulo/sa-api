@@ -13,7 +13,7 @@ export class InfrastructureTransformer {
         dataCenterDto.label = dataCenter.name;
         dataCenterDto.systems = dataCenter.systems.map(system => {
           const systemDto = new System();
-          systemDto.id = system.idSystem;
+          systemDto.id = system.id;
           systemDto.name = system.name;
           return systemDto;
         });

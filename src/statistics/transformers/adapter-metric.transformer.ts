@@ -32,7 +32,7 @@ export class AdapterMetricTransformer {
 
   private static createSystemPool(system: SystemEntity): SystemPool {
     const systemPool = new SystemPool();
-    systemPool.id = system.idSystem;
+    systemPool.id = system.id;
     systemPool.name = system.name;
     systemPool.pools = system.adapters.map(
       pool => AdapterMetricTransformer.createPoolDetails(pool),
@@ -42,7 +42,7 @@ export class AdapterMetricTransformer {
 
   private static createPoolDetails(pool: ChaEntity): SystemDetail {
     const poolDetails: SystemDetail = new SystemDetail();
-    poolDetails.id = pool.idCha;
+    poolDetails.id = pool.id;
     poolDetails.name = pool.name;
     if (pool.metrics != null) {
       poolDetails.metrics = pool.metrics.map(
@@ -68,7 +68,7 @@ export class AdapterMetricTransformer {
 
   private static createPortDetails(port: PortEntity) {
     const detail = new SystemDetail();
-    detail.id = port.idPort;
+    detail.id = port.id;
     detail.name = port.name;
     if (port.metrics != null) {
       detail.metrics = port.metrics.map(

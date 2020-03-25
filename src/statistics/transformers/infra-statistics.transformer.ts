@@ -71,11 +71,11 @@ export class InfraStatisticsTransformer {
 
   private static transformPoolOccurrence(metric: PoolMetricEntity, entityType: EntityType) {
     const occurrence = new Occurrence();
-    occurrence.datacenterId = metric.pool.system.idDataCenter;
-    occurrence.entityId = metric.pool.idPool;
+    occurrence.datacenterId = metric.owner.system.idDataCenter;
+    occurrence.entityId = metric.owner.id;
     occurrence.entityType = entityType;
-    occurrence.name = metric.pool.name;
-    occurrence.systemId = metric.pool.system.idSystem;
+    occurrence.name = metric.owner.name;
+    occurrence.systemId = metric.owner.system.id;
     occurrence.unit = metric.metricTypeEntity.unit;
     occurrence.value = metric.value;
     return occurrence;
@@ -83,11 +83,11 @@ export class InfraStatisticsTransformer {
 
   private static transformAdapterOccurrence(metric: ChaMetricEntity, entityType: EntityType) {
     const occurrence = new Occurrence();
-    occurrence.datacenterId = metric.adapter.system.idDataCenter;
-    occurrence.entityId = metric.adapter.idCha;
+    occurrence.datacenterId = metric.owner.system.idDataCenter;
+    occurrence.entityId = metric.owner.id;
     occurrence.entityType = entityType;
-    occurrence.name = metric.adapter.name;
-    occurrence.systemId = metric.adapter.system.idSystem;
+    occurrence.name = metric.owner.name;
+    occurrence.systemId = metric.owner.system.id;
     occurrence.unit = metric.metricTypeEntity.unit;
     occurrence.value = metric.value;
     return occurrence;
@@ -95,14 +95,14 @@ export class InfraStatisticsTransformer {
 
   private static transformPortMetric(metric: PortMetricEntity, entityType: EntityType) {
     const occurrence = new Occurrence();
-    occurrence.datacenterId = metric.port.system.system.idDataCenter;
-    occurrence.entityId = metric.port.idPort;
+    occurrence.datacenterId = metric.owner.system.system.idDataCenter;
+    occurrence.entityId = metric.owner.id;
     occurrence.entityType = entityType;
-    occurrence.middleEntityId = metric.port.system.idCha;
+    occurrence.middleEntityId = metric.owner.system.id;
     occurrence.middleEntityType = EntityType.ADAPTER;
-    occurrence.middleEntityName = metric.port.system.name;
-    occurrence.name = metric.port.name;
-    occurrence.systemId = metric.port.system.system.idSystem;
+    occurrence.middleEntityName = metric.owner.system.name;
+    occurrence.name = metric.owner.name;
+    occurrence.systemId = metric.owner.system.system.id;
     occurrence.unit = metric.metricTypeEntity.unit;
     occurrence.value = metric.value;
     return occurrence;
@@ -145,11 +145,11 @@ export class InfraStatisticsTransformer {
 
   private static transformSystemOccurrence(metric: SystemMetricEntity, type: EntityType) {
     const occurrence = new Occurrence();
-    occurrence.datacenterId = metric.system.idDataCenter;
-    occurrence.entityId = metric.system.idSystem;
+    occurrence.datacenterId = metric.owner.idDataCenter;
+    occurrence.entityId = metric.owner.id;
     occurrence.entityType = type;
-    occurrence.name = metric.system.name;
-    occurrence.systemId = metric.system.idSystem;
+    occurrence.name = metric.owner.name;
+    occurrence.systemId = metric.owner.id;
     occurrence.unit = metric.metricTypeEntity.unit;
     occurrence.value = metric.peak;
     occurrence.average = metric.value;

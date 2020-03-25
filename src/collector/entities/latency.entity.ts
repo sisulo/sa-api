@@ -2,9 +2,10 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 't
 import { PoolEntity } from './pool.entity';
 import { CatMetricTypeEntity } from './cat-metric-type.entity';
 import { CatOperationEntity } from './cat-operation.entity';
+import { AbstractMetricEntity } from './abstract-metric.entity';
 
 @Entity('block_size_latency')
-export class LatencyEntity {
+export class LatencyEntity extends AbstractMetricEntity {
 
   @PrimaryGeneratedColumn({ name: 'id_block_size_latency' })
   idBlockSizeLatency: number;

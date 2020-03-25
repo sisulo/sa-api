@@ -86,14 +86,14 @@ describe('Latency Controller', () => {
           .expect(
             {
               dates: [date],
-              pools: [{
-                idPool: 9,
-                name: 'Pool#6 AFA-T1',
-                system: {
-                  idDataCenter: 1,
-                  idSystem: 2,
-                  name: 'XP7_G12_58416',
-                },
+              systems: [{
+                id: 2,
+                name: 'XP7_G12_58416',
+                pools: [{
+                  id: 9,
+                  name: 'Pool#6 AFA-T1',
+                  metrics: [],
+                }],
               }],
             } as LatencyMetadata,
           ),

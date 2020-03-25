@@ -11,7 +11,7 @@ export class SystemMetricResponseTransformer extends BaseTransformer {
   public transform(metric: SystemMetricEntity): SystemMetricResponseDto {
     const response = new SystemMetricResponseDto();
     this.assertNotNull(
-      metric.system,
+      metric.owner,
       metric,
       SystemMetricResponseTransformer.ENTITY_TYPE,
       SystemMetricResponseTransformer.ENTITY_METRIC_TYPE,
@@ -26,8 +26,8 @@ export class SystemMetricResponseTransformer extends BaseTransformer {
     response.date = metric.date;
     response.value = metric.value;
     response.peak = metric.peak;
-    response.idSystem = metric.system.idSystem;
-    response.systemName = metric.system.name;
+    response.idSystem = metric.owner.id;
+    response.systemName = metric.owner.name;
     response.metricType = metric.metricTypeEntity.name;
     return response;
   }

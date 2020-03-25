@@ -40,7 +40,7 @@ export class PerformanceMetricTransformer {
 
   private static createSystemDetail(system: SystemEntity): SystemDetail {
     const systemDetails: SystemDetail = new SystemDetail();
-    systemDetails.id = system.idSystem;
+    systemDetails.id = system.id;
     systemDetails.name = system.name;
     if (system.metrics != null) {
       systemDetails.metrics = system.metrics.map(

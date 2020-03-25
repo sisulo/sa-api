@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SystemEntity } from '../entities/system.entity';
+import { ComponentStatus } from '../enums/component.status';
 
 @Injectable()
 export class CapacityStatisticsService {
@@ -14,17 +15,21 @@ export class CapacityStatisticsService {
 
   getCapacityStatistics(): Promise<SystemEntity[]> {
     return this.entityRepository.createQueryBuilder('systems')
-      .leftJoinAndSelect('systems.pools', 'pools')
+      .innerJoinAndSelect('systems.pools', 'pool')
       .leftJoinAndSelect('pools.metrics', 'metrics')
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
+      .where('pool.idCatComponentStatus = :idStatus', {idStatus: ComponentStatus.ACTIVE})
+      .andWhere('systems.idCatComponentStatus = :idSystemStatus', {idSystemStatus : ComponentStatus.ACTIVE})
       .getMany();
   }
 
   getHostGroupCapacityStatistics(): Promise<SystemEntity[]> {
     return this.entityRepository.createQueryBuilder('systems')
-      .leftJoinAndSelect('systems.hostGroups', 'hostGroup')
+      .innerJoinAndSelect('systems.hostGroups', 'hostGroup')
       .leftJoinAndSelect('hostGroup.metrics', 'metrics')
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
+      .where('hostGroup.idCatComponentStatus = :idStatus', {idStatus: ComponentStatus.ACTIVE})
+      .andWhere('systems.idCatComponentStatus = :idSystemStatus', {idSystemStatus : ComponentStatus.ACTIVE})
       .getMany();
   }
 

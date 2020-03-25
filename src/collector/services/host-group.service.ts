@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateComponentInterface } from './createComponentInterface';
 import { ComponentService } from './component.service';
 import { SystemEntity } from '../entities/system.entity';
+import { ComponentKey } from '../controllers/metric.controller';
+import { ComponentStatus } from '../enums/component.status';
 
 @Injectable()
 export class HostGroupService
@@ -23,5 +25,14 @@ export class HostGroupService
       .where('hostgroup.name=:systemName', { systemName: childName })
       .andWhere('system.name=:name', { name: parentName })
       .getOne();
+  }
+
+  public async changeStatusByName(key: ComponentKey, status: ComponentStatus): Promise<HostGroupEntity> {
+    const hostGroupEntity = await this.findByName(key.childName, key.parentName);
+    if (hostGroupEntity === undefined) {
+      throw new Error('Pool ${poolName} not found in ${systemName}');
+    }
+    hostGroupEntity.idCatComponentStatus = parseInt(ComponentStatus[status], 10) || null;
+    return await this.repository.save(hostGroupEntity);
   }
 }

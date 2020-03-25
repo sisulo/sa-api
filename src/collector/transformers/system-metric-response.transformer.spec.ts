@@ -16,9 +16,9 @@ describe('SystemMetricResponseTransformer', () => {
     expect(transformer.transform(entity)).toStrictEqual(result);
   });
 
-  it('should throw error when system missing in SystemMetricEntity', () => {
+  it('should throw error when owner missing in SystemMetricEntity', () => {
     const entity: SystemMetricEntity = CollectorUtils.createSystemMetricEntity();
-    entity.system = null;
+    entity.owner = null;
     expect(() => {
       transformer.transform(entity);
     }).toThrowError(TransformationError);

@@ -10,16 +10,16 @@ export class PoolMetricResponseTransformer extends BaseTransformer {
 
   transform(metric: PoolMetricEntity): PoolMetricResponseDto {
     const response = new PoolMetricResponseDto();
-    this.assertNotNull(metric.pool, metric, PoolMetricResponseTransformer.ENTITY_TYPE, PoolMetricResponseTransformer.ENTITY_METRIC_TYPE);
-    this.assertNotNull(metric.pool.system, metric, PoolMetricResponseTransformer.ENTITY_TYPE, PoolMetricResponseTransformer.ENTITY_METRIC_TYPE);
+    this.assertNotNull(metric.owner, metric, PoolMetricResponseTransformer.ENTITY_TYPE, PoolMetricResponseTransformer.ENTITY_METRIC_TYPE);
+    this.assertNotNull(metric.owner.system, metric, PoolMetricResponseTransformer.ENTITY_TYPE, PoolMetricResponseTransformer.ENTITY_METRIC_TYPE);
     this.assertNotNull(metric.metricTypeEntity, metric, PoolMetricResponseTransformer.ENTITY_TYPE, PoolMetricResponseTransformer.ENTITY_METRIC_TYPE);
     response.idMetric = metric.id;
     response.date = metric.date;
     response.value = metric.value;
-    response.idPool = metric.pool.idPool;
-    response.poolName = metric.pool.name;
-    response.idSystem = metric.pool.system.idSystem;
-    response.systemName = metric.pool.system.name;
+    response.idPool = metric.owner.id;
+    response.poolName = metric.owner.name;
+    response.idSystem = metric.owner.system.id;
+    response.systemName = metric.owner.system.name;
     response.metricType = metric.metricTypeEntity.name;
     return response;
   }
