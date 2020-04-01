@@ -18,7 +18,7 @@ export class CapacityMetricTransformer {
     dataCenterPromise.forEach(
       dataCenter => {
         const dto = new CapacityStatisticsDto();
-        dto.id = dataCenter.idDatacenter;
+        dto.id = dataCenter.id;
         dto.name = dataCenter.name;
         if (dataCenter.systems != null) {
 
@@ -66,7 +66,7 @@ export class CapacityMetricTransformer {
   private static createSystemMetric(metric: PoolMetricEntity) {
     const metricDetail = new SystemMetric();
     metricDetail.date = metric.date;
-    if (CapacityMetricTransformer.excludedMetric.some(type => type === metric.metricTypeEntity.idCatMetricType)) {
+    if (CapacityMetricTransformer.excludedMetric.some(type => type === metric.metricTypeEntity.id)) {
       metricDetail.type = metric.metricTypeEntity.name as SystemMetricType;
     } else {
       metricDetail.type = metric.metricTypeEntity.name.replace(/(_WEEK)|(_MONTH)$/, '') as SystemMetricType;

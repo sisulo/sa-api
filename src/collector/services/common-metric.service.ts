@@ -4,14 +4,17 @@ import { BadRequestException } from '@nestjs/common';
 import { MetricTypeService } from './metric-type.service';
 import { MetricGroup } from './data-center.service';
 import { MetricRequestDto } from '../dto/metric-request.dto';
-import { EntityServiceError } from './entity-service.error';
+import { EntityServiceError } from './errors/entity-service.error';
 import { CreateComponentInterface } from './createComponentInterface';
 import { ComponentKey } from '../controllers/metric.controller';
 import { Repository } from 'typeorm';
 import { StorageEntityInterface } from '../entities/storage-entity.interface';
 import { AbstractMetricEntity } from '../entities/abstract-metric.entity';
 
-export abstract class CommonMetricService<MetricServiceType extends AbstractMetricEntity, ChildComponentType extends StorageEntityInterface, ParentComponentType, GrandParentComponentType> {
+export abstract class CommonMetricService<MetricServiceType extends AbstractMetricEntity,
+  ChildComponentType extends StorageEntityInterface,
+  ParentComponentType,
+  GrandParentComponentType> {
 
   protected childComponentService: CreateComponentInterface<ChildComponentType, ParentComponentType>;
   protected parentComponentService: CreateComponentInterface<ParentComponentType, GrandParentComponentType>;
@@ -38,14 +41,14 @@ export abstract class CommonMetricService<MetricServiceType extends AbstractMetr
 
     if (expectedMetricGroups.find(group => group === metricType.idCatMetricGroup) === undefined) {
       const groupsString = this.convertMetricGroupToStrings(expectedMetricGroups);
-      throw new BadRequestException(`Metric \'${originMetricType}\' is not ${groupsString} metric`);
+      throw new EntityServiceError(`Metric \'${originMetricType}\' is not ${groupsString} metric`);
     }
   }
 
-  protected createMetricEntity = async (component: ChildComponentType, metricType: CatMetricTypeEntity, dateSearch: Date): Promise<MetricServiceType> => {
+  protected async createMetricEntity(component: ChildComponentType, metricType: CatMetricTypeEntity, dateSearch: Date): Promise<MetricServiceType>  {
     const metricDao = await this.repository.createQueryBuilder('metric')
       .where('metric.owner=:owner', { owner: component.id })
-      .andWhere('metric.metricTypeEntity = :type', { type: metricType.idCatMetricType })
+      .andWhere('metric.metricTypeEntity = :type', { type: metricType.id })
       .andWhere('metric.date = :date', { date: dateSearch })
       .getOne();
     if (metricDao == null) {

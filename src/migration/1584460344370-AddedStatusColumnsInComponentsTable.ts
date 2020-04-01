@@ -1,5 +1,4 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import addCustomEqualityTester = jasmine.addCustomEqualityTester;
 
 export class AddedStatusColumnsInComponentsTable1584460344370 implements MigrationInterface {
 
@@ -29,6 +28,7 @@ ALTER TABLE port_metrics RENAME COLUMN id_port_metric TO id_metric;
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
+    return;
   }
 
 }

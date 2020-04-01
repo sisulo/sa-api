@@ -1,10 +1,11 @@
 import { SystemEntity } from '../entities/system.entity';
 import { Repository } from 'typeorm';
 import { ChaEntity } from '../entities/cha.entity';
+import { ComponentStatus } from '../enums/component.status';
 
 export interface ComponentEntity {
   name: string;
-  system: SystemEntity | ChaEntity;
+  parent: SystemEntity | ChaEntity;
 }
 
 export class ComponentService<T extends ComponentEntity, U> {
@@ -18,8 +19,9 @@ export class ComponentService<T extends ComponentEntity, U> {
 
   public async create(name: string, system: U): Promise<T> {
     const entity = new this.type();
-    entity.system = system;
+    entity.parent = system;
     entity.name = name;
+    entity.idCatComponentStatus = ComponentStatus.ACTIVE;
 
     return await this.repository.save(entity);
   }

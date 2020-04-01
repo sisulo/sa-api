@@ -14,7 +14,7 @@ export class PerformanceMetricTransformer {
     const response = new DatacenterPerfListDto();
     dataCenterEntities.forEach(datacenter => {
       const dto = new PerformanceStatisticsDto();
-      dto.id = datacenter.idDatacenter;
+      dto.id = datacenter.id;
       dto.label = datacenter.name;
       if (datacenter.systems != null) {
         dto.systems = datacenter.systems.map(

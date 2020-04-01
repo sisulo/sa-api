@@ -12,8 +12,9 @@ export class MetricRequestDto {
   // @IsValidDate({ message: 'Date \'$value\' is not valid date value or it is in the future' })
   readonly date: Date;
 
-  readonly data: LatencyRequestDto[];
+  readonly peak: number;
 
+  readonly data: LatencyRequestDto[];
   // TODO remap string to type
   readonly operation: OperationType;
 

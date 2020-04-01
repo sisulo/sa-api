@@ -34,9 +34,9 @@ export class InfraStatisticsTransformer {
     // const capacityMetrics = await capacityMetricInput;
     metrics.forEach(
       metric => {
-        const alert = InfraStatisticsTransformer.findAlert(metric.metricTypeEntity.idCatMetricType, dto);
+        const alert = InfraStatisticsTransformer.findAlert(metric.metricTypeEntity.id, dto);
         let occurrence = null;
-        switch (metric.metricTypeEntity.idCatMetricType) {
+        switch (metric.metricTypeEntity.id) {
           case MetricType.SLA_EVENTS:
           case MetricType.PHYSICAL_USED_PERC:
             occurrence = InfraStatisticsTransformer.transformPoolOccurrence(metric as PoolMetricEntity, EntityType.POOL);
@@ -71,11 +71,11 @@ export class InfraStatisticsTransformer {
 
   private static transformPoolOccurrence(metric: PoolMetricEntity, entityType: EntityType) {
     const occurrence = new Occurrence();
-    occurrence.datacenterId = metric.owner.system.idDataCenter;
+    occurrence.datacenterId = metric.owner.parent.idDataCenter;
     occurrence.entityId = metric.owner.id;
     occurrence.entityType = entityType;
     occurrence.name = metric.owner.name;
-    occurrence.systemId = metric.owner.system.id;
+    occurrence.systemId = metric.owner.parent.id;
     occurrence.unit = metric.metricTypeEntity.unit;
     occurrence.value = metric.value;
     return occurrence;
@@ -83,11 +83,11 @@ export class InfraStatisticsTransformer {
 
   private static transformAdapterOccurrence(metric: ChaMetricEntity, entityType: EntityType) {
     const occurrence = new Occurrence();
-    occurrence.datacenterId = metric.owner.system.idDataCenter;
+    occurrence.datacenterId = metric.owner.parent.idDataCenter;
     occurrence.entityId = metric.owner.id;
     occurrence.entityType = entityType;
     occurrence.name = metric.owner.name;
-    occurrence.systemId = metric.owner.system.id;
+    occurrence.systemId = metric.owner.parent.id;
     occurrence.unit = metric.metricTypeEntity.unit;
     occurrence.value = metric.value;
     return occurrence;
@@ -95,14 +95,14 @@ export class InfraStatisticsTransformer {
 
   private static transformPortMetric(metric: PortMetricEntity, entityType: EntityType) {
     const occurrence = new Occurrence();
-    occurrence.datacenterId = metric.owner.system.system.idDataCenter;
+    occurrence.datacenterId = metric.owner.parent.parent.idDataCenter;
     occurrence.entityId = metric.owner.id;
     occurrence.entityType = entityType;
-    occurrence.middleEntityId = metric.owner.system.id;
+    occurrence.middleEntityId = metric.owner.parent.id;
     occurrence.middleEntityType = EntityType.ADAPTER;
-    occurrence.middleEntityName = metric.owner.system.name;
+    occurrence.middleEntityName = metric.owner.parent.name;
     occurrence.name = metric.owner.name;
-    occurrence.systemId = metric.owner.system.system.id;
+    occurrence.systemId = metric.owner.parent.parent.id;
     occurrence.unit = metric.metricTypeEntity.unit;
     occurrence.value = metric.value;
     return occurrence;
@@ -171,7 +171,7 @@ export class InfraStatisticsTransformer {
     const result = new Metric();
     result.unit = metric.metricTypeEntity.unit;
     result.value = metric.value;
-    result.type = TypeMappingUtils.resolveMetricType(metric.metricTypeEntity.idCatMetricType);
+    result.type = TypeMappingUtils.resolveMetricType(metric.metricTypeEntity.id);
     return result;
   }
 }

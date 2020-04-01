@@ -18,7 +18,7 @@ export class HostGroupEntity implements StorageEntityInterface {
 
   @ManyToOne(() => SystemEntity, { eager: true })
   @JoinColumn({ name: 'id_system' })
-  system: SystemEntity;
+  parent: SystemEntity;
 
   @OneToMany(() => HostGroupMetricReadEntity, metric => metric.owner)
   metrics: HostGroupMetricReadEntity[];

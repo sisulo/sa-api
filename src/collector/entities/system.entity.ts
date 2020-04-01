@@ -7,7 +7,7 @@ import { HostGroupEntity } from './host-group.entity';
 import { StorageEntityInterface } from './storage-entity.interface';
 
 @Entity('systems')
-export class SystemEntity implements StorageEntityInterface{
+export class SystemEntity implements StorageEntityInterface {
 
   @PrimaryGeneratedColumn({ name: 'id_system' })
   id: number;
@@ -23,17 +23,18 @@ export class SystemEntity implements StorageEntityInterface{
 
   @ManyToOne(() => DataCenterEntity)
   @JoinColumn({ name: 'id_datacenter' })
-  datacenter: DataCenterEntity;
+  parent: DataCenterEntity;
 
   @OneToMany(() => SystemMetricReadEntity, metric => metric.owner)
   metrics: SystemMetricReadEntity[];
 
-  @OneToMany(() => PoolEntity, pool => pool.system)
+  @OneToMany(() => PoolEntity, pool => pool.parent)
   pools: PoolEntity[];
 
-  @OneToMany(() => ChaEntity, adapter => adapter.system)
+  @OneToMany(() => ChaEntity, adapter => adapter.parent)
   adapters: ChaEntity[];
 
-  @OneToMany(() => HostGroupEntity, hostGroup => hostGroup.system)
+  @OneToMany(() => HostGroupEntity, hostGroup => hostGroup.parent)
   hostGroups: HostGroupEntity[];
+
 }

@@ -20,16 +20,12 @@ import { CapacityStatisticsService } from './services/capacity-statistics.servic
 import { MetricController } from './controllers/metric.controller';
 import { HostGroupCollectorService } from './factory/collectors/host-group-collector.service';
 import { HostGroupMetricService } from './services/host-group-metric.service';
-import { HostGroupMetricResponseTransformer } from './transformers/host-group-metric-response.transformer';
 import { HostGroupMetricEntity } from './entities/host-group-metric.entity';
 import { HostGroupService } from './services/host-group.service';
 import { HostGroupEntity } from './entities/host-group.entity';
 import { ApiCollectorFactoryImpl } from './factory/api-collector-factory.impl';
 import { PoolCollectorService } from './factory/collectors/pool-collector.service';
-import { PoolMetricResponseTransformer } from './transformers/pool-metric-response.transformer';
-import { ChaMetricResponseTransformer } from './transformers/cha-metric-response.transformer';
 import { ChaCollectorService } from './factory/collectors/cha-collector.service';
-import { SystemMetricResponseTransformer } from './transformers/system-metric-response.transformer';
 import { SystemCollectorService } from './factory/collectors/system-collector.service';
 import { SystemMetricReadEntity } from './entities/system-metric-read.entity';
 import { PoolMetricReadEntity } from './entities/pool-metric-read.entity';
@@ -40,19 +36,18 @@ import { PortMetricEntity } from './entities/port-metric.entity';
 import { PortEntity } from './entities/port.entity';
 import { PortMetricReadEntity } from './entities/port-metric-read.entity';
 import { PortService } from './services/port.service';
-import { PortMetricResponseTransformer } from './transformers/port-metric-response.transformer';
 import { CatExternalTypeEntity } from './entities/cat-external-type.entity';
 import { ExternalEntity } from './entities/external.entity';
 import { ExternalService } from './services/external.service';
 import { ExternalTypeService } from './services/external-type.service';
 import { ExternalController } from './controllers/external.controller';
 import { LatencyCollectorService } from './factory/collectors/latency-collector.service';
-import { LatencyMetricResponseTransformer } from './transformers/latency-metric-response.transformer';
+import { LatencyMetricTransformer } from './transformers/latency-metric.transformer';
 import { LatencyEntity } from './entities/latency.entity';
 import { LatencyMetricService } from './services/latency-metric.service';
 import { OperationService } from './services/operation.service';
 import { CatOperationEntity } from './entities/cat-operation.entity';
-import { ComponentServiceFactory } from './factory/component-service.factory';
+import { StorageEntityServiceFactory } from './factory/storage-entity-service.factory';
 
 @Module({
   imports: [
@@ -95,10 +90,6 @@ import { ComponentServiceFactory } from './factory/component-service.factory';
     MetricTypeService,
     CapacityStatisticsService,
     HostGroupCollectorService,
-    HostGroupMetricResponseTransformer,
-    ChaMetricResponseTransformer,
-    SystemMetricResponseTransformer,
-    PoolMetricResponseTransformer,
     ApiCollectorFactoryImpl,
     PoolCollectorService,
     ChaCollectorService,
@@ -107,14 +98,13 @@ import { ComponentServiceFactory } from './factory/component-service.factory';
     LatencyCollectorService,
     PortMetricService,
     PortService,
-    PortMetricResponseTransformer,
-    LatencyMetricResponseTransformer,
+    LatencyMetricTransformer,
     DataCenterService,
     ExternalService,
     ExternalTypeService,
     LatencyMetricService,
     OperationService,
-    ComponentServiceFactory,
+    StorageEntityServiceFactory,
   ],
   controllers: [MetricController, ExternalController],
   exports: [DataCenterService,

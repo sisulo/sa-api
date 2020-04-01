@@ -7,6 +7,7 @@ import { ComponentService } from './component.service';
 import { PortEntity } from '../entities/port.entity';
 import { ComponentStatus } from '../enums/component.status';
 import { ComponentKey } from '../controllers/metric.controller';
+import { StorageEntityNotFoundError } from './errors/storage-entity-not-found.error';
 
 @Injectable()
 export class PortService extends ComponentService<PortEntity, ChaEntity> implements CreateComponentInterface<PortEntity, ChaEntity> {
@@ -20,8 +21,8 @@ export class PortService extends ComponentService<PortEntity, ChaEntity> impleme
 
   async findByName(grandChildName: string, childName: string, parentName: string): Promise<PortEntity> {
     return await this.repository.createQueryBuilder('port')
-      .leftJoinAndSelect('port.system', 'cha')
-      .leftJoinAndSelect('cha.system', 'system')
+      .leftJoinAndSelect('port.parent', 'cha')
+      .leftJoinAndSelect('cha.parent', 'system')
       .where('port.name=:portName', { portName: grandChildName })
       .andWhere('cha.name=:chaName', { chaName: childName })
       .andWhere('system.name=:systemName', { systemName: parentName })
@@ -37,7 +38,7 @@ export class PortService extends ComponentService<PortEntity, ChaEntity> impleme
   public async changeStatusByName(key: ComponentKey, status: ComponentStatus): Promise<PortEntity> {
     const port = await this.findByName(key.childName, key.parentName, key.grandParentName);
     if (port === undefined) {
-      throw new Error('Pool ${poolName} not found in ${systemName}');
+      throw new StorageEntityNotFoundError(`Port ${key.childName} not found in adapter${key.parentName} and system ${key.grandParentName}.`);
     }
     port.idCatComponentStatus = parseInt(ComponentStatus[status], 10) || null;
     return await this.repository.save(port);

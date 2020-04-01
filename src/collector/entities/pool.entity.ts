@@ -17,7 +17,7 @@ export class PoolEntity implements StorageEntityInterface {
 
   @ManyToOne(() => SystemEntity, { eager: true })
   @JoinColumn({ name: 'id_system' })
-  system: SystemEntity;
+  parent: SystemEntity;
 
   @OneToMany(() => PoolMetricReadEntity, metric => metric.owner)
   metrics: PoolMetricReadEntity[];

@@ -7,6 +7,7 @@ import { ComponentService } from './component.service';
 import { SystemEntity } from '../entities/system.entity';
 import { ComponentStatus } from '../enums/component.status';
 import { ComponentKey } from '../controllers/metric.controller';
+import { StorageEntityNotFoundError } from './errors/storage-entity-not-found.error';
 
 @Injectable()
 export class PoolService extends ComponentService<PoolEntity, SystemEntity> implements CreateComponentInterface<PoolEntity, SystemEntity> {
@@ -19,7 +20,7 @@ export class PoolService extends ComponentService<PoolEntity, SystemEntity> impl
 
   async findByName(childName: string, parentName: string): Promise<PoolEntity> {
     return await this.repository.createQueryBuilder('pool')
-      .leftJoinAndSelect('pool.system', 'system')
+      .leftJoinAndSelect('pool.parent', 'system')
       .where('pool.name=:poolName', { poolName: childName })
       .andWhere('system.name=:systemName', { systemName: parentName })
       .getOne();
@@ -27,7 +28,7 @@ export class PoolService extends ComponentService<PoolEntity, SystemEntity> impl
 
   public async findById(idSystemParam: number, idPoolParam: number): Promise<PoolEntity> {
     return await this.repository.createQueryBuilder('pools')
-      .innerJoinAndSelect('pools.system', 'systems')
+      .innerJoinAndSelect('pools.parent', 'systems')
       .where('pools.id_pool=:idPool', { idPool: idPoolParam })
       .andWhere('systems.id_system=:idSystem', { idSystem: idSystemParam })
       .getOne();
@@ -36,7 +37,7 @@ export class PoolService extends ComponentService<PoolEntity, SystemEntity> impl
   public async changeStatusByName(key: ComponentKey, status: ComponentStatus): Promise<PoolEntity> {
     const pool = await this.findByName(key.childName, key.parentName);
     if (pool === undefined) {
-      throw new Error('Pool ${poolName} not found in ${systemName}');
+      throw new StorageEntityNotFoundError(`Host group ${key.childName} not found in ${key.parentName}`);
     }
     pool.idCatComponentStatus = parseInt(ComponentStatus[status], 10) || null;
     return await this.repository.save(pool);

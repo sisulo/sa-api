@@ -5,6 +5,11 @@ import { Repository } from 'typeorm';
 import { CreateComponentInterface } from './createComponentInterface';
 import { ComponentKey } from '../controllers/metric.controller';
 import { ComponentStatus } from '../enums/component.status';
+import { StorageEntityInterface } from '../entities/storage-entity.interface';
+import { PoolEntity } from '../entities/pool.entity';
+import { ChaEntity } from '../entities/cha.entity';
+import { HostGroupEntity } from '../entities/host-group.entity';
+import { StorageEntityNotFoundError } from './errors/storage-entity-not-found.error';
 
 @Injectable()
 export class SystemService implements CreateComponentInterface<SystemEntity, null> {
@@ -43,26 +48,25 @@ export class SystemService implements CreateComponentInterface<SystemEntity, nul
   public async changeStatusByName(key: ComponentKey, status: ComponentStatus): Promise<SystemEntity> {
     const systemEntity = await this.findByName(key.childName);
     if (systemEntity === undefined) {
-      throw new Error('Pool ${poolName} not found in ${systemName}');
+      throw new StorageEntityNotFoundError(`System ${key.childName} not found.`);
     }
     const intStatus = parseInt(ComponentStatus[status], 10) || null;
 
-    systemEntity.pools = systemEntity.pools.map(pool => {
-      pool.idCatComponentStatus = intStatus;
-      return pool;
-    });
-
-    systemEntity.adapters = systemEntity.adapters.map(adapter => {
-      adapter.idCatComponentStatus = intStatus;
-      return adapter;
-    });
-
-    systemEntity.hostGroups = systemEntity.hostGroups.map(hostGroup => {
-      hostGroup.idCatComponentStatus = intStatus;
-      return hostGroup;
-    });
+    systemEntity.pools = this.changeStatusOnChildren(systemEntity.pools, intStatus) as PoolEntity[];
+    systemEntity.adapters = this.changeStatusOnChildren(systemEntity.adapters, intStatus) as ChaEntity[];
+    systemEntity.hostGroups = this.changeStatusOnChildren(systemEntity.hostGroups, intStatus) as HostGroupEntity[];
 
     systemEntity.idCatComponentStatus = intStatus;
     return await this.repository.save(systemEntity);
+  }
+
+  private changeStatusOnChildren(entities: StorageEntityInterface[], intStatus: number): StorageEntityInterface[] {
+    if (entities !== undefined) {
+      return entities.map(pool => {
+        pool.idCatComponentStatus = intStatus;
+        return pool;
+      });
+    }
+    return undefined;
   }
 }

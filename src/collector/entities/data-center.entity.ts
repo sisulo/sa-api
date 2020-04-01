@@ -1,15 +1,20 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { SystemEntity } from './system.entity';
+import { StorageEntityInterface } from './storage-entity.interface';
 
 @Entity('datacenters')
-export class DataCenterEntity {
+export class DataCenterEntity implements StorageEntityInterface {
 
   @PrimaryGeneratedColumn({ name: 'id_datacenter' })
-  idDatacenter: number;
+  id: number;
 
   @Column({ name: 'name' })
   name: string;
 
-  @OneToMany(() => SystemEntity, system => system.datacenter)
+  idCatComponentStatus: number;
+
+  @OneToMany(() => SystemEntity, system => system.parent)
   systems: SystemEntity[];
+
+  parent: StorageEntityInterface = null;
 }

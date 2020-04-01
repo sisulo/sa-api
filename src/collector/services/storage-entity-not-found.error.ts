@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 
-export class HostGroupNotFound extends NotFoundException {
+export class StorageEntityNotFound extends NotFoundException {
   constructor(msg: string) {
     super(msg);
   }

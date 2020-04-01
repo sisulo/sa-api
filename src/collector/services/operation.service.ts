@@ -12,14 +12,14 @@ export class OperationService {
   ) {
   }
 
-  async findById(id: number): Promise<CatOperationEntity> {
+  async findById(idParam: number): Promise<CatOperationEntity> {
     return await this.repository
-      .findOne({ idCatOperation: id })
+      .findOne({ id: idParam })
       .then(metricType => metricType);
   }
 
   async findByMetricTypes(types: number[]) {
     return await this.repository
-      .find({ idCatOperation: In(types) });
+      .find({ id: In(types) });
   }
 }

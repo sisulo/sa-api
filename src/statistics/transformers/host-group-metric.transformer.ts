@@ -19,7 +19,7 @@ export class HostGroupMetricTransformer {
       dataCenter => {
 
         const dto = new CapacityStatisticsDto();
-        dto.id = dataCenter.idDatacenter;
+        dto.id = dataCenter.id;
         dto.name = dataCenter.name;
         if (dataCenter.systems != null) {
           dto.systems = dataCenter.systems.map(

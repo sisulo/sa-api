@@ -4,7 +4,7 @@ import { HostGroupMetricEntity } from '../entities/host-group-metric.entity';
 import { Repository } from 'typeorm';
 import { MetricTypeService } from './metric-type.service';
 import { CatMetricTypeEntity } from '../entities/cat-metric-type.entity';
-import { EntityServiceError } from './entity-service.error';
+import { EntityServiceError } from './errors/entity-service.error';
 import { SystemEntity } from '../entities/system.entity';
 import { HostGroupService } from './host-group.service';
 import { HostGroupEntity } from '../entities/host-group.entity';
@@ -14,7 +14,7 @@ import { ComponentKey } from '../controllers/metric.controller';
 function createCatMetricTypeEntity(): CatMetricTypeEntity {
   const metricType = new CatMetricTypeEntity();
   metricType.unit = 'TB';
-  metricType.idCatMetricType = 29;
+  metricType.id = 29;
   metricType.name = 'NET_TOTAL';
   return metricType;
 }
@@ -50,7 +50,7 @@ function createHostGroupEntity(id?: number | 999): HostGroupEntity {
   }
   entity.name = 'Host_Group_1';
 
-  entity.system = createSystemEntity();
+  entity.parent = createSystemEntity();
 
   return entity;
 }

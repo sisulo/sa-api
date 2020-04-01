@@ -7,7 +7,7 @@ import { HostGroupService } from '../services/host-group.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class ComponentServiceFactory {
+export class StorageEntityServiceFactory {
   constructor(private poolService: PoolService,
               private portService: PortService,
               private chaService: ChaService,
@@ -15,7 +15,7 @@ export class ComponentServiceFactory {
               private hostGroupService: HostGroupService) {
   }
 
-  getComponentService(type: CollectorType) {
+  getStorageEntityService(type: CollectorType) {
     switch (type) {
       case CollectorType.POOLS:
         return this.poolService;

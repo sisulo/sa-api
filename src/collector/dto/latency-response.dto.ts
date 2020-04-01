@@ -1,5 +1,5 @@
-import { LatencyDto } from './latency.dto';
+import { LatencyMetricDto } from './latency-metric.dto';
 
 export class LatencyResponseDto {
-  data: LatencyDto[];
+  data: LatencyMetricDto[] = [];
 }

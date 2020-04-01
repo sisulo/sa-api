@@ -1,5 +1,5 @@
 import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
-import { Observable, of } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 class RequestLogMessage {
@@ -53,7 +53,7 @@ export class LoggingInterceptor implements NestInterceptor {
           err => {
             message.error = err;
             this.logger.error(message);
-            return of({ level: err.severity, message: err.message });
+            return throwError(err);
           },
         ),
       );

@@ -45,11 +45,11 @@ export class LatencyMetricService extends CommonMetricService<LatencyEntity, Poo
       entity.date = request.date;
       entity.latency = latencyItem.latency;
       entity.blockSize = latencyItem.blockSize;
-      entity.count = latencyItem.count;
+      entity.value = latencyItem.count;
       entity.operationEntity = operation;
       entity.metricTypeEntity = metricType;
-      if (entity.pool == null) {
-        entity.pool = component;
+      if (entity.owner == null) {
+        entity.owner = component;
       }
       return await this.metricRepository.save(entity);
     }));
@@ -59,13 +59,13 @@ export class LatencyMetricService extends CommonMetricService<LatencyEntity, Poo
     const query = this.metricRepository.createQueryBuilder('metric')
       .select('metric.blockSize', 'blockSize')
       .addSelect('metric.latency', 'latency')
-      .addSelect('operation.idCatOperation', 'operation')
-      .addSelect('CAST(SUM(metric.count) as BIGINT)', 'count')
-      .innerJoin('metric.pool', 'pool')
+      .addSelect('operation.id', 'operation')
+      .addSelect('CAST(SUM(metric.value) as BIGINT)', 'count')
+      .innerJoin('metric.owner', 'pool')
       .innerJoin('metric.operationEntity', 'operation')
       .groupBy('metric.latency')
       .addGroupBy('metric.blockSize')
-      .addGroupBy('operation.idCatOperation');
+      .addGroupBy('operation.id');
     if (!isEmpty(poolIds)) {
       query.where('pool.id IN (:...ids)', { ids: poolIds });
     }
@@ -94,7 +94,7 @@ export class LatencyMetricService extends CommonMetricService<LatencyEntity, Poo
                                 request: LatencyRequestDto): Promise<LatencyEntity> {
     const metricDao = await this.metricRepository
       .findOne({
-        pool: component,
+        owner: component,
         metricTypeEntity: metricType,
         date: searchDate,
         operationEntity: operation,

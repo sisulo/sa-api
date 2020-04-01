@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SystemMetricEntity } from '../entities/system-metric.entity';
-import { SystemMetricRequestDto } from '../dto/system-metric-request.dto';
 import { SystemEntity } from '../entities/system.entity';
 import { SystemService } from './system.service';
 import { CatMetricTypeEntity } from '../entities/cat-metric-type.entity';
@@ -37,7 +36,7 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
 
   async save(component: SystemEntity, metricType: CatMetricTypeEntity, request: MetricRequestDto): Promise<any> {
     const entity = await this.createMetricEntity(component, metricType, request.date);
-    const systemRequest = request as SystemMetricRequestDto;
+    const systemRequest = request as MetricRequestDto;
     entity.value = systemRequest.value;
     entity.date = systemRequest.date;
     entity.peak = systemRequest.peak;
@@ -53,7 +52,7 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
     return await this.metricRepository.createQueryBuilder('metrics')
       .select('metrics.date', 'date')
       .addSelect('SUM(metrics.value)', 'value')
-      .where('metrics.metricTypeEntity IN (:...idType)', { idType: types.map(typeObj => typeObj.idCatMetricType) })
+      .where('metrics.metricTypeEntity IN (:...idType)', { idType: types.map(typeObj => typeObj.id) })
       .andWhere('metrics.date < current_date')
       .groupBy('metrics.date')
       .orderBy('metrics.date')
@@ -75,7 +74,7 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
       .where('metric.value >= COALESCE(threshold.min_value, -2147483648)')
       .andWhere('metric.value < COALESCE(threshold.max_value, 2147483647)')
       .andWhere('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE })
-      .andWhere('metric.metricTypeEntity IN (:...type)', { type: types.map(type => type.idCatMetricType) })
+      .andWhere('metric.metricTypeEntity IN (:...type)', { type: types.map(type => type.id) })
       .getMany();
   }
 
@@ -84,12 +83,12 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
     const result = [];
     for (const type of types) {
       const entities = await this.metricReadRepository.find({ metricTypeEntity: type });
-      result.push(this.aggregateMetric(entities));
+      result.push(SystemMetricService.aggregateMetric(entities));
     }
     return result;
   }
 
-  private aggregateMetric(metrics: SystemMetricReadEntity[]): MetricEntityInterface {
+  private static aggregateMetric(metrics: SystemMetricReadEntity[]): MetricEntityInterface {
     const data = metrics;
     const result = new SystemMetricReadEntity();
     result.metricTypeEntity = data[0].metricTypeEntity;

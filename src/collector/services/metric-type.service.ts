@@ -12,14 +12,14 @@ export class MetricTypeService {
   ) {
   }
 
-  async findById(id: number): Promise<CatMetricTypeEntity> {
+  async findById(idParam: number): Promise<CatMetricTypeEntity> {
     return await this.repository
-      .findOne({ idCatMetricType: id })
+      .findOne({ id: idParam })
       .then(metricType => metricType);
   }
 
   async findByMetricTypes(types: number[]) {
     return await this.repository
-      .find({ idCatMetricType: In(types) });
+      .find({ id: In(types) });
   }
 }

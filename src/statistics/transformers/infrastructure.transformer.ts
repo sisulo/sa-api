@@ -9,7 +9,7 @@ export class InfrastructureTransformer {
     resultDto.datacenters = dataCenterPromise.map(
       dataCenter => {
         const dataCenterDto = new Datacenter();
-        dataCenterDto.id = dataCenter.idDatacenter;
+        dataCenterDto.id = dataCenter.id;
         dataCenterDto.label = dataCenter.name;
         dataCenterDto.systems = dataCenter.systems.map(system => {
           const systemDto = new System();

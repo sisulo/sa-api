@@ -30,7 +30,7 @@ export class DataCenterService {
   }
 
   async findById(idDataCenter: number): Promise<DataCenterEntity[]> {
-    return await this.dataCenterRepository.find({ where: { idDatacenter: idDataCenter } });
+    return await this.dataCenterRepository.find({ where: { id: idDataCenter } });
   }
 
   getDataCenterIdByRegion(region: Region) {
@@ -124,7 +124,7 @@ export class DataCenterService {
   }
 
   private loadMetrics(metricGroup: MetricGroup, idDataCenterParam: number, period: PeriodType) {
-    const types: MetricType[] = this.resolveMetricTypes(metricGroup, period);
+    const types: MetricType[] = DataCenterService.resolveMetricTypes(metricGroup, period);
     let dataCenterIds = [];
     if (idDataCenterParam != null) {
       dataCenterIds = [idDataCenterParam];
@@ -143,7 +143,7 @@ export class DataCenterService {
     }
   }
 
-  private resolveMetricTypes(metricGroup: MetricGroup, period: PeriodType): MetricType[] {
+  private static resolveMetricTypes(metricGroup: MetricGroup, period: PeriodType): MetricType[] {
     let periodType = period;
     if (period == null) {
       periodType = PeriodType.DAY;

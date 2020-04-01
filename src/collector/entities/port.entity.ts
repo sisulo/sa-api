@@ -17,7 +17,7 @@ export class PortEntity implements StorageEntityInterface {
 
   @ManyToOne(() => ChaEntity, { eager: true })
   @JoinColumn({ name: 'id_cha' })
-  system: ChaEntity;
+  parent: ChaEntity;
 
   @OneToMany(() => PortMetricReadEntity, metric => metric.owner)
   metrics: PortMetricReadEntity[];

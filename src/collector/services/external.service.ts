@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HostGroupEntity } from '../entities/host-group.entity';
 import { Repository } from 'typeorm';
 import { ExternalType } from '../enums/external-type.enum';
-import { HostGroupNotFound } from './host-group-not-found.error';
+import { StorageEntityNotFound } from './storage-entity-not-found.error';
 
 @Injectable()
 export class ExternalService {
@@ -24,14 +24,13 @@ export class ExternalService {
   public async putExternals(systemName: string, hostGroupName: string, dto: ExternalRequestDto) {
     const hostGroup = await this.hostGroupService.findByName(hostGroupName, systemName);
     if (hostGroup === undefined) {
-      throw new HostGroupNotFound(`Host-group ${hostGroupName} not found in ${systemName}`);
+      throw new StorageEntityNotFound(`Host-group ${hostGroupName} not found in ${systemName}`);
     }
     if (hostGroup.externals !== undefined && hostGroup.externals.length > 0) {
       await this.externalRepository.delete(hostGroup.externals.map(external => external.idExternal));
     }
     hostGroup.externals = await Promise.all(dto.data.map(external => this.createExternal(external)));
     return this.repository.save(hostGroup);
-
   }
 
   private async createExternal(external: ExternalDto) {

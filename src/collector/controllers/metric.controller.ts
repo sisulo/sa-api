@@ -3,8 +3,10 @@ import { MetricRequestDto } from '../dto/metric-request.dto';
 import { CollectorType } from '../factory/collector-type.enum';
 import { ApiCollectorFactoryImpl } from '../factory/api-collector-factory.impl';
 import { LoggingInterceptor } from '../../logging.interceptor';
-import { ComponentServiceFactory } from '../factory/component-service.factory';
+import { StorageEntityServiceFactory } from '../factory/storage-entity-service.factory';
 import { ChangeStatusRequestDto } from '../dto/change-status-request.dto';
+import { MetricResponseDto } from '../dto/metric-response.dto';
+import { StorageEntityTransformer } from '../transformers/storageEntityTransformer';
 
 export interface ComponentKey {
   parentName: string;
@@ -12,12 +14,11 @@ export interface ComponentKey {
   childName: string;
 }
 
-// TODO create new Error handler for ErrorDto
 @UseInterceptors(LoggingInterceptor)
 @Controller('api/v1/')
 export class MetricController {
   constructor(private factory: ApiCollectorFactoryImpl,
-              private componentService: ComponentServiceFactory) {
+              private storageEntityServiceFactory: StorageEntityServiceFactory) {
   }
 
   @Post([
@@ -30,11 +31,11 @@ export class MetricController {
     @Param('subComponent') subComponentType: CollectorType,
     @Param('subComponentName') subComponentName: string,
     @Param('portName') portName: string,
-    @Body() dto: MetricRequestDto) {
+    @Body() dto: MetricRequestDto): Promise<MetricResponseDto> {
     const collector = this.factory.getCollector(subComponentType);
-    const componentKey = this.createComponentKey(systemName, subComponentName, portName);
+    const componentKey = MetricController.createComponentKey(systemName, subComponentName, portName);
     const metricEntity = await collector.collectMetric(componentKey, dto);
-    return collector.transform(metricEntity);
+    return this.factory.getTransformer(subComponentType).transform(metricEntity);
   }
 
   @Post('systems/:systemName/pools/:subComponentName/latencyPerBlockSize')
@@ -45,7 +46,6 @@ export class MetricController {
     return this.insertMetric(systemName, CollectorType.LATENCY, subComponentName, undefined, dto);
   }
 
-  // TODO implement e2e tests for change status
   @Put([
     ':subComponent/:systemName/status',
     'systems/:systemName/:subComponent/:subComponentName/status',
@@ -58,12 +58,12 @@ export class MetricController {
     @Param('portName') portName: string,
     @Body() dto: ChangeStatusRequestDto,
   ) {
-    const componentService = this.componentService.getComponentService(subComponentType);
-    const componentKey = this.createComponentKey(systemName, subComponentName, portName);
-    return componentService.changeStatusByName(componentKey, dto.status);
+    const componentService = this.storageEntityServiceFactory.getStorageEntityService(subComponentType);
+    const componentKey = MetricController.createComponentKey(systemName, subComponentName, portName);
+    return StorageEntityTransformer.transform(await componentService.changeStatusByName(componentKey, dto.status));
   }
 
-  private createComponentKey(systemName, subComponentName, portName): ComponentKey {
+  private static createComponentKey(systemName, subComponentName, portName): ComponentKey {
     let componentKey: ComponentKey;
     if (portName !== undefined) {
       componentKey = { parentName: subComponentName, grandParentName: systemName, childName: portName } as ComponentKey;

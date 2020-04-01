@@ -18,11 +18,11 @@ export class ChaEntity implements StorageEntityInterface {
 
   @ManyToOne(() => SystemEntity, { eager: true })
   @JoinColumn({ name: 'id_system' })
-  system: SystemEntity;
+  parent: SystemEntity;
 
   @OneToMany(() => ChaMetricReadEntity, metric => metric.owner)
   metrics: ChaMetricReadEntity[];
 
-  @OneToMany(() => PortEntity, port => port.system)
+  @OneToMany(() => PortEntity, port => port.parent)
   ports: PortEntity[];
 }
