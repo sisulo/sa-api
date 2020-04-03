@@ -5,6 +5,7 @@ import { ArrayUtils } from '../utils/array.utils';
 import { SystemService } from '../../collector/services/system.service';
 import { CapacityMetricTransformer } from '../transformers/capacity-metric.transformer';
 import { SystemPool } from '../models/SystemPool';
+import { LatencyFilter } from '../controllers/latency/latency.controller';
 
 export interface OperationData {
   values: ThreeDimensionValue[];
@@ -46,10 +47,10 @@ export class LatencyBlockSizeService {
     );
   }
 
-  public async frequencyByLatencyBlockSize(poolIds: number[], dates: Date[], operations: OperationType[]): Promise<OperationData[]> {
-    const entities = await this.service.frequencyByLatencyBlockSize(poolIds, dates, operations);
+  public async frequencyByLatencyBlockSize(filter: LatencyFilter): Promise<OperationData[]> {
+    const entities = await this.service.frequencyByLatencyBlockSize(filter);
     const groupedBy = ArrayUtils.groupBy(entities, 'operation');
-    return operations.map(
+    return filter.operations.map(
       operation => LatencyBlockSizeService.mapEntity(groupedBy[operation] || [], operation),
     );
   }

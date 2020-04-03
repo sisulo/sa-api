@@ -16,7 +16,7 @@ export class CapacityStatisticsService {
   getCapacityStatistics(): Promise<SystemEntity[]> {
     return this.entityRepository.createQueryBuilder('systems')
       .innerJoinAndSelect('systems.pools', 'pool')
-      .leftJoinAndSelect('pools.metrics', 'metrics')
+      .leftJoinAndSelect('pool.metrics', 'metrics')
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
       .where('pool.idCatComponentStatus = :idStatus', {idStatus: ComponentStatus.ACTIVE})
       .andWhere('systems.idCatComponentStatus = :idSystemStatus', {idSystemStatus : ComponentStatus.ACTIVE})

@@ -53,6 +53,7 @@ export class DataCenterStatisticsService {
     return await this.dataCenterService.getMetricsByGroup(metricGroup, idDataCenter, period);
   }
 
+  // TODO iterate over array of service (with getAlerts) and return all values
   public async getAlerts(): Promise<MetricEntityInterface[]> {
     const alerts = await this.chaMetricService.getAlerts();
     const portAlerts = await this.portMetricService.getAlerts();

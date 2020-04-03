@@ -7,6 +7,8 @@ export interface LatencyFilter {
   poolIds: number[];
   dates: Date[];
   operations: OperationType[];
+  latencies: number[];
+  blockSizes: number[];
 }
 
 @Controller('api/v1/latency')
@@ -17,7 +19,7 @@ export class LatencyController {
   @Post('data')
   @HttpCode(HttpStatus.OK)
   public getData(@Body(LatencyRequestPipe) filter: LatencyFilter) {
-    return this.service.frequencyByLatencyBlockSize(filter.poolIds, filter.dates, filter.operations);
+    return this.service.frequencyByLatencyBlockSize(filter);
   }
 
   @Get('metadata')

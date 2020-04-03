@@ -14,10 +14,12 @@ export class WeightedAverageImpl extends AggregationAlgorithmAbstract {
     entities.forEach(
       entity => {
         const metric = this.findMetricByType(entity, metricType);
-        const metricWeight = this.findMetricByType(entity, options.weightType);
-        if (metric.value > options.ignoreValueUnder) {
-          aggValueTotal += metric.value * metricWeight.value;
-          weightValueTotal += metricWeight.value;
+        if (metric !== undefined) {
+          const metricWeight = this.findMetricByType(entity, options.weightType);
+          if (metric.value > options.ignoreValueUnder) {
+            aggValueTotal += metric.value * metricWeight.value;
+            weightValueTotal += metricWeight.value;
+          }
         }
       },
     );

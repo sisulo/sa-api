@@ -7,6 +7,6 @@ export abstract class AggregationAlgorithmAbstract implements MetricAggregationI
   abstract aggregate(entities: MetricEntityInterface[][], metricType: MetricType, options: any): MetricEntityInterface;
 
   findMetricByType(entity, type: MetricType): MetricEntityInterface {
-    return entity.find(metric => metric.metricTypeEntity.idCatMetricType === type);
+    return entity.find(metric => metric.metricTypeEntity.id === type);
   }
 }

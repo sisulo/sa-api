@@ -15,6 +15,7 @@ import { CatOperationEntity } from '../entities/cat-operation.entity';
 import { LatencyRequestDto } from '../dto/latency-request.dto';
 import { OperationType } from '../enums/operation-type.enum';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
+import { LatencyFilter } from '../../statistics/controllers/latency/latency.controller';
 
 export interface LatencyData {
   blockSize: number;
@@ -55,7 +56,7 @@ export class LatencyMetricService extends CommonMetricService<LatencyEntity, Poo
     }));
   }
 
-  public async frequencyByLatencyBlockSize(poolIds: number[], datesIn: Date[], operationsIn: OperationType[]): Promise<LatencyData[]> {
+  public async frequencyByLatencyBlockSize(filter: LatencyFilter): Promise<LatencyData[]> {
     const query = this.metricRepository.createQueryBuilder('metric')
       .select('metric.blockSize', 'blockSize')
       .addSelect('metric.latency', 'latency')
@@ -66,14 +67,20 @@ export class LatencyMetricService extends CommonMetricService<LatencyEntity, Poo
       .groupBy('metric.latency')
       .addGroupBy('metric.blockSize')
       .addGroupBy('operation.id');
-    if (!isEmpty(poolIds)) {
-      query.where('pool.id IN (:...ids)', { ids: poolIds });
+    if (!isEmpty(filter.poolIds)) {
+      query.where('pool.id IN (:...ids)', { ids: filter.poolIds });
     }
-    if (!isEmpty(datesIn)) {
-      query.andWhere('metric.date IN (:...dates)', { dates: datesIn });
+    if (!isEmpty(filter.dates)) {
+      query.andWhere('metric.date IN (:...dates)', { dates: filter.dates });
     }
-    if (!isEmpty(operationsIn)) {
-      query.andWhere('operation.name IN (:...operations)', { operations: operationsIn.map(operation => OperationType[operation]) });
+    if (!isEmpty(filter.operations)) {
+      query.andWhere('operation.name IN (:...operations)', { operations: filter.operations.map(operation => OperationType[operation]) });
+    }
+    if (!isEmpty(filter.blockSizes)) {
+      query.andWhere('metric.blockSize IN (:...blockSizes)', { blockSizes: filter.blockSizes });
+    }
+    if (!isEmpty(filter.latencies)) {
+      query.andWhere('metric.latency IN (:...latencies)', { latencies: filter.latencies });
     }
     return query.getRawMany();
   }
