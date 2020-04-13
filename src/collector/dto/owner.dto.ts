@@ -12,5 +12,6 @@ export class Owner {
   name: string;
   type: string;
   status: string;
+  serialNumber: string;
   parent: Owner;
 }

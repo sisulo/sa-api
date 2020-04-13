@@ -14,7 +14,7 @@ export class StorageEntityTransformer {
   public static transform(storageEntity: HostGroupEntity | SystemEntity | PoolEntity
     | PortEntity | ChaEntity) {
     const dto = new StorageEntityResponseDto();
-    dto.storageEntity = MetricTransformer.transformOwner(storageEntity);
+    dto.storageEntity = MetricTransformer.transformFromOwner(storageEntity);
 
     if (storageEntity instanceof HostGroupEntity && !isEmpty(storageEntity.externals)) {
       dto.externals = storageEntity.externals.map(externalEntity => this.transformExternal(externalEntity));

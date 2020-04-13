@@ -15,6 +15,9 @@ export class PoolEntity implements StorageEntityInterface {
   @Column({name: 'id_cat_component_status'})
   idCatComponentStatus: number;
 
+  @Column({name: 'serial_number'})
+  serialNumber: string;
+
   @ManyToOne(() => SystemEntity, { eager: true })
   @JoinColumn({ name: 'id_system' })
   parent: SystemEntity;

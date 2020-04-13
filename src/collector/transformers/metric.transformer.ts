@@ -32,7 +32,7 @@ export class MetricTransformer {
       dto.peak = metricEntity.peak;
     }
 
-    dto.owner = MetricTransformer.transformOwner(metricEntity.owner);
+    dto.owner = MetricTransformer.transformFromOwner(metricEntity.owner);
 
     return dto;
   }
@@ -44,7 +44,7 @@ export class MetricTransformer {
     throw new TransformationError(`Metric type from entity is not in enum 'MetricType'`);
   }
 
-  public static transformOwner(metricOwner) {
+  public static transformFromOwner(metricOwner) {
     if (metricOwner === null) {
       throw new TransformationError(`Cannot transform owner because it is null`);
     }
@@ -54,7 +54,10 @@ export class MetricTransformer {
     dto.type = MetricTransformer.resolveOwnerType(metricOwner);
     dto.status = this.resolveStatus(metricOwner);
     if (metricOwner.parent !== undefined) {
-      dto.parent = MetricTransformer.transformOwner(metricOwner.parent);
+      dto.parent = MetricTransformer.transformFromOwner(metricOwner.parent);
+    }
+    if (metricOwner.serialNumber !== undefined) {
+      dto.serialNumber = metricOwner.serialNumber;
     }
     return dto;
   }

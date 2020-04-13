@@ -21,6 +21,9 @@ export class SystemEntity implements StorageEntityInterface {
   @Column({ name: 'id_datacenter' })
   parentId: number;
 
+  @Column({name: 'serial_number'})
+  serialNumber: string;
+
   @ManyToOne(() => DataCenterEntity)
   @JoinColumn({ name: 'id_datacenter' })
   parent: DataCenterEntity;

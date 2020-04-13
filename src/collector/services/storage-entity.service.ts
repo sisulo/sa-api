@@ -10,6 +10,8 @@ import { StorageEntityAlreadyExistsError } from './errors/storage-entity-already
 import { ChannelAdapterRepository } from '../repositories/channel-adapter.repository';
 import { HostGroupRepository } from '../repositories/host-group.repository';
 import { PortRepository } from '../repositories/port.repository';
+import { SystemEntity } from '../entities/system.entity';
+import { PoolEntity } from '../entities/pool.entity';
 
 @Injectable()
 export class StorageEntityService {
@@ -70,6 +72,10 @@ export class StorageEntityService {
     const entity = repository.create();
     entity.name = requestEntity.name;
     entity.parent = parent;
+
+    if (entity instanceof SystemEntity || entity instanceof PoolEntity) {
+      entity.serialNumber = requestEntity.serialNumber;
+    }
 
     return entity;
   }

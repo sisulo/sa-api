@@ -8,45 +8,53 @@ import { ErrorCodeConst } from '../src/errors/error-code.enum';
 import { HttpStatus } from '@nestjs/common';
 import { StorageEntityType } from '../src/collector/dto/owner.dto';
 
-const systemPayload = {
-  name: 'System_ABC',
-  type: StorageEntityType[StorageEntityType.SYSTEM],
-  parentId: 1,
-};
-
-const poolPayload = {
-  name: 'Pool_1',
-  type: StorageEntityType[StorageEntityType.POOL],
-  parentId: 1,
-};
-
-const channelAdapterPayload = {
-  name: 'Cha_1',
-  type: StorageEntityType[StorageEntityType.ADAPTER],
-  parentId: 1,
-};
-
-const hostGroupPayload = {
-  name: 'Host_group_1',
-  type: StorageEntityType[StorageEntityType.HOST_GROUP],
-  parentId: 1,
-};
-
-const portPayload = {
-  name: 'Port_1',
-  type: StorageEntityType[StorageEntityType.PORT],
-  parentId: 1,
-};
-
-const validateResponse = (err, res, expected, done) => {
-  if (err !== undefined) {
-    return done(err);
-  }
-  expect(res.body).toEqual(expected);
-  return done();
-};
-
 describe('Storage Entity', () => {
+
+  const SYSTEM_NAME = 'System_ABC';
+  const POOL_NAME = 'Pool_1';
+  const CHA_NAME = 'Cha_1';
+  const HOST_GROUP_NAME = 'Host_group_1';
+  const PORT_NAME = 'Port_1';
+  const SYSTEM_SERIAL_NAME = 'Sys-123-abf';
+  const POOL_SERIAL_NAME = 'Pool-XYZ-1';
+
+  const systemPayload = {
+    name: SYSTEM_NAME,
+    type: StorageEntityType[StorageEntityType.SYSTEM],
+    parentId: 1,
+    serialNumber: SYSTEM_SERIAL_NAME,
+  };
+
+  const poolPayload = {
+    name: POOL_NAME,
+    type: StorageEntityType[StorageEntityType.POOL],
+    parentId: 1,
+    serialNumber: POOL_SERIAL_NAME,
+  };
+
+  const channelAdapterPayload = {
+    name: CHA_NAME,
+    type: StorageEntityType[StorageEntityType.ADAPTER],
+    parentId: 1,
+  };
+
+  const hostGroupPayload = {
+    name: HOST_GROUP_NAME,
+    type: StorageEntityType[StorageEntityType.HOST_GROUP],
+    parentId: 1,
+  };
+
+  const portPayload = {
+    name: PORT_NAME,
+    type: StorageEntityType[StorageEntityType.PORT],
+    parentId: 1,
+  };
+
+  const validateResponse = (response, expected) => {
+    // console.log(response.body);
+    expect(response.body).toEqual(expected);
+  };
+
   let app;
 
   beforeAll(async () => {
@@ -59,27 +67,28 @@ describe('Storage Entity', () => {
     await app.init();
   });
 
-  afterAll(async () => {
-    await app.close();
-  });
+  afterAll(
+    async () => app.close(),
+  );
 
-  it('Saving system storage entity data', (done) => {
+  it('Saving system storage entity data', () => {
       const expected = expect.objectContaining({
         externals: [],
         storageEntity: expect.objectContaining({
           id: expect.any(Number),
-          name: 'System_ABC',
+          name: SYSTEM_NAME,
           type: StorageEntityType[StorageEntityType.SYSTEM],
+          serialNumber: SYSTEM_SERIAL_NAME,
         }),
       });
-      request(app.getHttpServer())
+      return request(app.getHttpServer())
         .post('/api/v2/storage-entities')
         .send(systemPayload)
         .expect(HttpStatus.CREATED)
-        .end((err, res) => validateResponse(err, res, expected, done));
+        .then((responses) => validateResponse(responses, expected));
     },
   );
-  it('Saving same storage entity - CONFLICT', async () => {
+  it('Saving same storage entity - CONFLICT', () => {
       const modifiedPayload = systemPayload;
       modifiedPayload.name = 'System_2';
 
@@ -96,7 +105,7 @@ describe('Storage Entity', () => {
 
     },
   );
-  it('Saving storage with unknown parent', (done) => {
+  it('Saving storage with unknown parent', () => {
       const modifiedPayload = systemPayload;
       modifiedPayload.parentId = -5;
 
@@ -105,56 +114,54 @@ describe('Storage Entity', () => {
         message: ErrorCodeConst.ENTITY_NOT_FOUND.message,
       });
 
-      request(app.getHttpServer())
+      return request(app.getHttpServer())
         .post('/api/v2/storage-entities')
         .send(modifiedPayload)
         .expect(400)
-        .end((err, res) => validateResponse(err, res, expected, done));
+        .then((responses) => validateResponse(responses, expected));
     },
   );
-
-  it('Saving pool entity data', (done) => {
-      const expectedBody = expect.objectContaining({
-        externals: [],
-        storageEntity: expect.objectContaining({
-          id: expect.any(Number),
-          name: 'Pool_1',
-          type: StorageEntityType[StorageEntityType.POOL],
-        }),
-      });
-      request(app.getHttpServer())
-        .post('/api/v2/storage-entities')
-        .send(poolPayload)
-        .expect(HttpStatus.CREATED)
-        .end((err, res) => validateResponse(err, res, expectedBody, done),
-        );
-    },
-  );
-
-  it('Saving channel adapter entity data', (done) => {
+  it('Saving pool entity data', () => {
       const expected = expect.objectContaining({
         externals: [],
         storageEntity: expect.objectContaining({
           id: expect.any(Number),
-          name: 'Cha_1',
+          name: POOL_NAME,
+          type: StorageEntityType[StorageEntityType.POOL],
+          serialNumber: POOL_SERIAL_NAME,
+        }),
+      });
+      return request(app.getHttpServer())
+        .post('/api/v2/storage-entities')
+        .send(poolPayload)
+        .expect(HttpStatus.CREATED)
+        .then((responses) => validateResponse(responses, expected));
+    },
+  );
+
+  it('Saving channel adapter entity data', () => {
+      const expected = expect.objectContaining({
+        externals: [],
+        storageEntity: expect.objectContaining({
+          id: expect.any(Number),
+          name: CHA_NAME,
           type: StorageEntityType[StorageEntityType.ADAPTER],
         }),
       });
 
-      request(app.getHttpServer())
+      return request(app.getHttpServer())
         .post('/api/v2/storage-entities')
         .send(channelAdapterPayload)
         .expect(HttpStatus.CREATED)
-        .end((err, res) => validateResponse(err, res, expected, done),
-        );
+        .then((responses) => validateResponse(responses, expected));
     },
   );
-  it('Saving host group entity data', (done) => {
+  it('Saving host group entity data', () => {
       const expected = expect.objectContaining({
         externals: [],
         storageEntity: expect.objectContaining({
           id: expect.any(Number),
-          name: 'Host_group_1',
+          name: HOST_GROUP_NAME,
           type: StorageEntityType[StorageEntityType.HOST_GROUP],
         }),
       });
@@ -163,16 +170,16 @@ describe('Storage Entity', () => {
         .post('/api/v2/storage-entities')
         .send(hostGroupPayload)
         .expect(HttpStatus.CREATED)
-        .end((err, res) => validateResponse(err, res, expected, done));
+        .then((responses) => validateResponse(responses, expected));
     },
   );
 
-  it('Saving port entity data', (done) => {
+  it('Saving port entity data', () => {
       const expected = expect.objectContaining({
         externals: [],
         storageEntity: expect.objectContaining({
           id: expect.any(Number),
-          name: 'Port_1',
+          name: PORT_NAME,
           type: StorageEntityType[StorageEntityType.PORT],
         }),
       });
@@ -181,7 +188,7 @@ describe('Storage Entity', () => {
         .post('/api/v2/storage-entities')
         .send(portPayload)
         .expect(HttpStatus.CREATED)
-        .end((err, res) => validateResponse(err, res, expected, done));
+        .then((responses) => validateResponse(responses, expected));
     },
   );
 });
