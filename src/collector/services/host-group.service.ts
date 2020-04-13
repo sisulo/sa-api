@@ -8,24 +8,19 @@ import { SystemEntity } from '../entities/system.entity';
 import { ComponentKey } from '../controllers/metric.controller';
 import { ComponentStatus } from '../enums/component.status';
 import { StorageEntityNotFoundError } from './errors/storage-entity-not-found.error';
+import { HostGroupRepository } from '../repositories/host-group.repository';
 
 @Injectable()
 export class HostGroupService
   extends ComponentService<HostGroupEntity, SystemEntity>
   implements CreateComponentInterface<HostGroupEntity, SystemEntity> {
   constructor(
-    @InjectRepository(HostGroupEntity)
-    protected repository: Repository<HostGroupEntity>) {
+    protected repository: HostGroupRepository) {
     super(repository, HostGroupEntity);
   }
 
   public async findByName(childName: string, parentName: string): Promise<HostGroupEntity> {
-    return await this.repository.createQueryBuilder('hostgroup')
-      .leftJoinAndSelect('hostgroup.parent', 'system')
-      .leftJoinAndSelect('hostgroup.externals', 'external')
-      .where('hostgroup.name=:systemName', { systemName: childName })
-      .andWhere('system.name=:name', { name: parentName })
-      .getOne();
+    return await this.repository.findByName(childName, parentName);
   }
 
   public async changeStatusByName(key: ComponentKey, status: ComponentStatus): Promise<HostGroupEntity> {

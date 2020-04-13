@@ -66,18 +66,18 @@ export class MetricTransformer {
     return ComponentStatus[metricOwner.idCatComponentStatus];
   }
   private static resolveOwnerType(metricOwner) {
-    switch (metricOwner.constructor) {
-      case SystemEntity:
+    switch (metricOwner.idType) {
+      case StorageEntityType.SYSTEM:
         return StorageEntityType[StorageEntityType.SYSTEM];
-      case PoolEntity:
+      case StorageEntityType.POOL:
         return StorageEntityType[StorageEntityType.POOL];
-      case HostGroupEntity:
+      case StorageEntityType.HOST_GROUP:
         return StorageEntityType[StorageEntityType.HOST_GROUP];
-      case ChaEntity:
+      case StorageEntityType.ADAPTER:
         return StorageEntityType[StorageEntityType.ADAPTER];
-      case PortEntity:
+      case StorageEntityType.PORT:
         return StorageEntityType[StorageEntityType.PORT];
-      case DataCenterEntity:
+      case StorageEntityType.DATA_CENTER:
         return StorageEntityType[StorageEntityType.DATA_CENTER];
       default:
         throw new TransformationError(`Type '${metricOwner.constructor.name}' is not possible to map to StorageEntityType`);

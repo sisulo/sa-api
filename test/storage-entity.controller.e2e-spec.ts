@@ -4,9 +4,9 @@ import * as request from 'supertest';
 import { FallbackErrorFilter } from '../src/errors/filters/fallback-exception.filter';
 import { HttpExceptionFilter } from '../src/errors/filters/http-exception.filter';
 import { SaApiExceptionFilter } from '../src/errors/filters/sa-api-exception.filter';
-import { ErrorCodeConst } from '../src/errors/error-code.enum';
 import { HttpStatus } from '@nestjs/common';
 import { StorageEntityType } from '../src/collector/dto/owner.dto';
+import { ErrorCodeConst } from '../src/errors/error-code.enum';
 
 describe('Storage Entity', () => {
 
@@ -21,37 +21,37 @@ describe('Storage Entity', () => {
   const systemPayload = {
     name: SYSTEM_NAME,
     type: StorageEntityType[StorageEntityType.SYSTEM],
-    parentId: 1,
+    parentId: 2,
     serialNumber: SYSTEM_SERIAL_NAME,
   };
 
   const poolPayload = {
     name: POOL_NAME,
     type: StorageEntityType[StorageEntityType.POOL],
-    parentId: 1,
+    parentId: 3,
     serialNumber: POOL_SERIAL_NAME,
   };
 
   const channelAdapterPayload = {
     name: CHA_NAME,
     type: StorageEntityType[StorageEntityType.ADAPTER],
-    parentId: 1,
+    parentId: 3,
   };
 
   const hostGroupPayload = {
     name: HOST_GROUP_NAME,
     type: StorageEntityType[StorageEntityType.HOST_GROUP],
-    parentId: 1,
+    parentId: 3,
   };
 
   const portPayload = {
     name: PORT_NAME,
     type: StorageEntityType[StorageEntityType.PORT],
-    parentId: 1,
+    parentId: 8,
   };
 
   const validateResponse = (response, expected) => {
-    // console.log(response.body);
+    console.log(response.body);
     expect(response.body).toEqual(expected);
   };
 

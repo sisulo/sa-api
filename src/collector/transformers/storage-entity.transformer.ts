@@ -9,10 +9,10 @@ import { PoolEntity } from '../entities/pool.entity';
 import { PortEntity } from '../entities/port.entity';
 import { ChaEntity } from '../entities/cha.entity';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
+import { StorageEntityEntity } from '../entities/storage-entity.entity';
 
 export class StorageEntityTransformer {
-  public static transform(storageEntity: HostGroupEntity | SystemEntity | PoolEntity
-    | PortEntity | ChaEntity) {
+  public static transform(storageEntity: StorageEntityEntity) {
     const dto = new StorageEntityResponseDto();
     dto.storageEntity = MetricTransformer.transformFromOwner(storageEntity);
 

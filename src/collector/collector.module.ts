@@ -56,6 +56,8 @@ import { PoolRepository } from './repositories/pool.repository';
 import { ChannelAdapterRepository } from './repositories/channel-adapter.repository';
 import { HostGroupRepository } from './repositories/host-group.repository';
 import { PortRepository } from './repositories/port.repository';
+import { StorageEntityEntity } from './entities/storage-entity.entity';
+import { StorageEntityRepository } from './repositories/storage-entity.repository';
 
 @Module({
   imports: [
@@ -81,6 +83,7 @@ import { PortRepository } from './repositories/port.repository';
         ExternalEntity,
         LatencyEntity,
         CatOperationEntity,
+        StorageEntityEntity,
         /**
          * Custom repositories
          */
@@ -90,6 +93,7 @@ import { PortRepository } from './repositories/port.repository';
         ChannelAdapterRepository,
         HostGroupRepository,
         PortRepository,
+        StorageEntityRepository,
       ],
     ),
 
