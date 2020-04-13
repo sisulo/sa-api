@@ -2,8 +2,8 @@ import { SaApiException } from '../../../errors/sa-api.exception';
 import { ErrorCodeConst } from '../../../errors/error-code.enum';
 import { HttpStatus } from '@nestjs/common';
 
-export class StorageEntityNotFoundError extends SaApiException {
+export class StorageEntityAlreadyExistsError extends SaApiException {
   constructor(msg: string) {
-    super(ErrorCodeConst.ENTITY_NOT_FOUND, msg, HttpStatus.BAD_REQUEST);
+    super(ErrorCodeConst.ENTITY_ALREADY_EXISTS, msg, HttpStatus.CONFLICT);
   }
 }

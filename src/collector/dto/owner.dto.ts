@@ -1,4 +1,5 @@
 export enum StorageEntityType {
+  DATA_CENTER = 1,
   SYSTEM,
   POOL,
   ADAPTER,

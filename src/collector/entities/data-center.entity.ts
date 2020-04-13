@@ -16,5 +16,5 @@ export class DataCenterEntity implements StorageEntityInterface {
   @OneToMany(() => SystemEntity, system => system.parent)
   systems: SystemEntity[];
 
-  parent: StorageEntityInterface = null;
+  parent: StorageEntityInterface;
 }

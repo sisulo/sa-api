@@ -48,6 +48,14 @@ import { LatencyMetricService } from './services/latency-metric.service';
 import { OperationService } from './services/operation.service';
 import { CatOperationEntity } from './entities/cat-operation.entity';
 import { StorageEntityServiceFactory } from './factory/storage-entity-service.factory';
+import { SystemRepository } from './repositories/system.repository';
+import { DataCenterRepository } from './repositories/data-center.repository';
+import { StorageEntityController } from './controllers/v2/storage-entity.controller';
+import { StorageEntityService } from './services/storage-entity.service';
+import { PoolRepository } from './repositories/pool.repository';
+import { ChannelAdapterRepository } from './repositories/channel-adapter.repository';
+import { HostGroupRepository } from './repositories/host-group.repository';
+import { PortRepository } from './repositories/port.repository';
 
 @Module({
   imports: [
@@ -73,6 +81,15 @@ import { StorageEntityServiceFactory } from './factory/storage-entity-service.fa
         ExternalEntity,
         LatencyEntity,
         CatOperationEntity,
+        /**
+         * Custom repositories
+         */
+        DataCenterRepository,
+        SystemRepository,
+        PoolRepository,
+        ChannelAdapterRepository,
+        HostGroupRepository,
+        PortRepository,
       ],
     ),
 
@@ -105,8 +122,13 @@ import { StorageEntityServiceFactory } from './factory/storage-entity-service.fa
     LatencyMetricService,
     OperationService,
     StorageEntityServiceFactory,
+    StorageEntityService,
   ],
-  controllers: [MetricController, ExternalController],
+  controllers: [
+    MetricController,
+    ExternalController,
+    StorageEntityController,
+  ],
   exports: [DataCenterService,
     CapacityStatisticsService,
     ChaMetricService,

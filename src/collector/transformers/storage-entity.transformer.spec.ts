@@ -1,6 +1,6 @@
 import { CollectorUtils } from '../../tests/collector.utils';
 import { HostGroupEntity } from '../entities/host-group.entity';
-import { StorageEntityTransformer } from './storageEntityTransformer';
+import { StorageEntityTransformer } from './storage-entity.transformer';
 import { StorageEntityResponseDto } from '../dto/storage-entity-response.dto';
 import { TransformationError } from './transformation.error';
 

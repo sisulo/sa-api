@@ -8,6 +8,7 @@ import { SystemEntity } from '../entities/system.entity';
 import { PoolEntity } from '../entities/pool.entity';
 import { PortEntity } from '../entities/port.entity';
 import { ChaEntity } from '../entities/cha.entity';
+import { isEmpty } from '@nestjs/common/utils/shared.utils';
 
 export class StorageEntityTransformer {
   public static transform(storageEntity: HostGroupEntity | SystemEntity | PoolEntity
@@ -15,7 +16,7 @@ export class StorageEntityTransformer {
     const dto = new StorageEntityResponseDto();
     dto.storageEntity = MetricTransformer.transformOwner(storageEntity);
 
-    if (storageEntity instanceof HostGroupEntity) {
+    if (storageEntity instanceof HostGroupEntity && !isEmpty(storageEntity.externals)) {
       dto.externals = storageEntity.externals.map(externalEntity => this.transformExternal(externalEntity));
     } else {
       dto.externals = [];

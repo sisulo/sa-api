@@ -33,7 +33,7 @@ export class SystemService implements CreateComponentInterface<SystemEntity, nul
   async create(systemName: string, parent?: any): Promise<SystemEntity> {
     const system = new SystemEntity();
     system.name = systemName;
-    system.idDataCenter = 1; // Todo this is temporary
+    system.parentId = 1; // Todo this is temporary
 
     return await this.repository.save(system);
   }

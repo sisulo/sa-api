@@ -6,7 +6,7 @@ import { LoggingInterceptor } from '../../logging.interceptor';
 import { StorageEntityServiceFactory } from '../factory/storage-entity-service.factory';
 import { ChangeStatusRequestDto } from '../dto/change-status-request.dto';
 import { MetricResponseDto } from '../dto/metric-response.dto';
-import { StorageEntityTransformer } from '../transformers/storageEntityTransformer';
+import { StorageEntityTransformer } from '../transformers/storage-entity.transformer';
 
 export interface ComponentKey {
   parentName: string;

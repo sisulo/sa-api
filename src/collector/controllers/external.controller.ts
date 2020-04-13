@@ -1,7 +1,7 @@
 import { Body, Controller, Param, Put } from '@nestjs/common';
 import { ExternalService } from '../services/external.service';
 import { ExternalRequestDto } from '../dto/external-request.dto';
-import { StorageEntityTransformer } from '../transformers/storageEntityTransformer';
+import { StorageEntityTransformer } from '../transformers/storage-entity.transformer';
 import { StorageEntityResponseDto } from '../dto/storage-entity-response.dto';
 
 @Controller('api/v1/systems/')

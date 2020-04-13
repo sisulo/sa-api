@@ -52,7 +52,7 @@ export class DataCenterService {
       .leftJoinAndSelect('datacenter.systems', 'system')
       .leftJoinAndSelect('system.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
-      .andWhere('system.idCatComponentStatus = :idSystemStatus', {idSystemStatus : ComponentStatus.ACTIVE});
+      .andWhere('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE });
     if (idDataCenterParam.length > 0) {
       query.andWhere('datacenter.id_datacenter IN (:...idDatacenter)', { idDatacenter: idDataCenterParam });
     }
@@ -67,8 +67,8 @@ export class DataCenterService {
       .leftJoinAndSelect('system.pools', 'pool')
       .leftJoinAndSelect('pool.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
-      .where('pool.idCatComponentStatus = :idStatus', {idStatus: ComponentStatus.ACTIVE})
-      .andWhere('system.idCatComponentStatus = :idSystemStatus', {idSystemStatus : ComponentStatus.ACTIVE});
+      .where('pool.idCatComponentStatus = :idStatus', { idStatus: ComponentStatus.ACTIVE })
+      .andWhere('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE });
     if (idDataCenterParam.length > 0) {
       query.andWhere('datacenter.id_datacenter IN (:...idDatacenter)', { idDatacenter: idDataCenterParam });
     }
@@ -85,9 +85,9 @@ export class DataCenterService {
       .leftJoinAndSelect('port_metric.metricTypeEntity', 'port_metric_type')
       .leftJoinAndSelect('adapter.metrics', 'metrics', 'metrics.metricTypeEntity IN (:...metrics)', { metrics: metricTypes })
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
-      .where('adapter.idCatComponentStatus = :idStatus', {idStatus: ComponentStatus.ACTIVE})
-      .andWhere('system.idCatComponentStatus = :idSystemStatus', {idSystemStatus : ComponentStatus.ACTIVE})
-      .andWhere('port.idCatComponentStatus = :idPortStatus', {idPortStatus : ComponentStatus.ACTIVE});
+      .where('adapter.idCatComponentStatus = :idStatus', { idStatus: ComponentStatus.ACTIVE })
+      .andWhere('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE })
+      .andWhere('port.idCatComponentStatus = :idPortStatus', { idPortStatus: ComponentStatus.ACTIVE });
     if (idDataCenterParam != null) {
       query.where('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam });
     }
@@ -103,8 +103,8 @@ export class DataCenterService {
       .leftJoinAndSelect('metrics.metricTypeEntity', 'type')
       .leftJoinAndSelect('hostGroup.externals', 'external')
       .leftJoinAndSelect('external.externalTypeEntity', 'externalType')
-      .where('hostGroup.idCatComponentStatus = :idStatus', {idStatus: ComponentStatus.ACTIVE})
-      .andWhere('system.idCatComponentStatus = :idSystemStatus', {idSystemStatus : ComponentStatus.ACTIVE});
+      .where('hostGroup.idCatComponentStatus = :idStatus', { idStatus: ComponentStatus.ACTIVE })
+      .andWhere('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE });
     if (idDataCenterParam != null) {
       query.andWhere('datacenter.id_datacenter = :idDatacenter', { idDatacenter: idDataCenterParam });
     }
@@ -119,7 +119,7 @@ export class DataCenterService {
   getAllDataCenters(): Promise<DataCenterEntity[]> {
     return this.dataCenterRepository.createQueryBuilder('datacenter')
       .innerJoinAndSelect('datacenter.systems', 'system')
-      .where('system.idCatComponentStatus = :idSystemStatus', {idSystemStatus : ComponentStatus.ACTIVE})
+      .where('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE })
       .getMany();
   }
 

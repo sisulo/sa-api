@@ -15,6 +15,7 @@ import { PortMetricEntity } from '../entities/port-metric.entity';
 import { HostGroupMetricEntity } from '../entities/host-group-metric.entity';
 import { LatencyEntity } from '../entities/latency.entity';
 import { ComponentStatus } from '../enums/component.status';
+import { DataCenterEntity } from '../entities/data-center.entity';
 
 export class MetricTransformer {
 
@@ -73,8 +74,10 @@ export class MetricTransformer {
         return StorageEntityType[StorageEntityType.ADAPTER];
       case PortEntity:
         return StorageEntityType[StorageEntityType.PORT];
+      case DataCenterEntity:
+        return StorageEntityType[StorageEntityType.DATA_CENTER];
       default:
-        throw new TransformationError(`Type '${metricOwner.constructor}' is not possible to resolve to StorageEntityType`);
+        throw new TransformationError(`Type '${metricOwner.constructor.name}' is not possible to map to StorageEntityType`);
     }
   }
 }

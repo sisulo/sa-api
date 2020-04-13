@@ -19,7 +19,7 @@ export class SystemEntity implements StorageEntityInterface {
   idCatComponentStatus: number;
 
   @Column({ name: 'id_datacenter' })
-  idDataCenter: number;
+  parentId: number;
 
   @ManyToOne(() => DataCenterEntity)
   @JoinColumn({ name: 'id_datacenter' })
