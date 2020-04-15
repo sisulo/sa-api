@@ -5,8 +5,4 @@ import { AbstractMetricEntity } from './abstract-metric.entity';
 
 @Entity('port_metrics')
 export class PortMetricEntity extends AbstractMetricEntity implements MetricEntityInterface {
-
-  @ManyToOne(() => PortEntity, port => port.metrics, { eager: true })
-  @JoinColumn({ name: 'id_port' })
-  owner: PortEntity;
 }

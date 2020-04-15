@@ -10,7 +10,6 @@ import { ExternalType } from '../enums/external-type.enum';
 import { StorageEntityNotFound } from './storage-entity-not-found.error';
 import { CollectorType } from '../factory/collector-type.enum';
 import { HostGroupRepository } from '../repositories/host-group.repository';
-import { PoolRepository } from '../repositories/pool.repository';
 
 @Injectable()
 export class ExternalService {
@@ -20,7 +19,6 @@ export class ExternalService {
     @InjectRepository(ExternalEntity)
     protected externalRepository: Repository<ExternalEntity>,
     protected hostGroupRepository: HostGroupRepository,
-    protected poolRepository: PoolRepository,
     protected externalTypeService: ExternalTypeService) {
   }
 
@@ -48,8 +46,6 @@ export class ExternalService {
     switch (type) {
       case CollectorType.HOST_GROUPS:
         return this.hostGroupRepository;
-      case CollectorType.POOLS:
-        return this.poolRepository;
 
     }
   }

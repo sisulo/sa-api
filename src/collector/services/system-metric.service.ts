@@ -41,9 +41,9 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
     entity.date = systemRequest.date;
     entity.peak = systemRequest.peak;
     entity.metricTypeEntity = metricType;
-    if (entity.owner == null) {
-      entity.owner = component;
-    }
+    // if (entity.owner == null) {
+    //   entity.owner = component;
+    // }
     return await this.metricRepository.save(entity);
   }
 

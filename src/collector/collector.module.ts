@@ -48,16 +48,14 @@ import { LatencyMetricService } from './services/latency-metric.service';
 import { OperationService } from './services/operation.service';
 import { CatOperationEntity } from './entities/cat-operation.entity';
 import { StorageEntityServiceFactory } from './factory/storage-entity-service.factory';
-import { SystemRepository } from './repositories/system.repository';
-import { DataCenterRepository } from './repositories/data-center.repository';
 import { StorageEntityController } from './controllers/v2/storage-entity.controller';
 import { StorageEntityService } from './services/storage-entity.service';
-import { PoolRepository } from './repositories/pool.repository';
-import { ChannelAdapterRepository } from './repositories/channel-adapter.repository';
-import { HostGroupRepository } from './repositories/host-group.repository';
-import { PortRepository } from './repositories/port.repository';
 import { StorageEntityEntity } from './entities/storage-entity.entity';
 import { StorageEntityRepository } from './repositories/storage-entity.repository';
+import { MetricCollectorService } from './services/collect/metric-collector.service';
+import { MetricRepositoryFactory } from './factory/metric-repository.factory';
+import { HostGroupRepository } from './repositories/host-group.repository';
+import { MultiValueMetricCollectorService } from './services/collect/multi-value-metric-collector.service';
 
 @Module({
   imports: [
@@ -87,13 +85,8 @@ import { StorageEntityRepository } from './repositories/storage-entity.repositor
         /**
          * Custom repositories
          */
-        DataCenterRepository,
-        SystemRepository,
-        PoolRepository,
-        ChannelAdapterRepository,
-        HostGroupRepository,
-        PortRepository,
         StorageEntityRepository,
+        HostGroupRepository,
       ],
     ),
 
@@ -127,6 +120,9 @@ import { StorageEntityRepository } from './repositories/storage-entity.repositor
     OperationService,
     StorageEntityServiceFactory,
     StorageEntityService,
+    MetricCollectorService,
+    MetricRepositoryFactory,
+    MultiValueMetricCollectorService,
   ],
   controllers: [
     MetricController,

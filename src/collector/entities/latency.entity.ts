@@ -12,12 +12,7 @@ export class LatencyEntity extends AbstractMetricEntity {
   @Column({ name: 'latency' })
   latency: number;
 
-  @ManyToOne(() => CatOperationEntity, { eager: true })
-  @JoinColumn({ name: 'id_cat_operation' })
-  operationEntity: CatOperationEntity;
-
-  @ManyToOne(() => PoolEntity, { eager: true })
-  @JoinColumn({ name: 'id_pool' })
-  owner: PoolEntity;
+  @Column({ name: 'id_cat_operation' })
+  idOperation: number;
 
 }

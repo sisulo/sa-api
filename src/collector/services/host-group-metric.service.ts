@@ -30,7 +30,7 @@ export class HostGroupMetricService extends CommonMetricService<HostGroupMetricE
     entity.date = request.date;
     entity.metricTypeEntity = metricType;
     if (entity.owner == null) {
-      entity.owner = component;
+      // entity.owner = component;
     }
     return await this.metricRepository.save(entity);
   }

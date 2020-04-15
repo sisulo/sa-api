@@ -18,7 +18,7 @@ export class LatencyMetricTransformer {
     const dto: LatencyMetricDto = Object.assign(new LatencyMetricDto(), MetricTransformer.transform(metric)) as LatencyMetricDto;
     dto.latency = metric.latency;
     dto.blockSize = metric.blockSize;
-    dto.operationType = metric.operationEntity.id;
+    dto.operationType = metric.idOperation;
 
     return dto;
   }

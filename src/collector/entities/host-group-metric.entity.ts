@@ -4,8 +4,4 @@ import { AbstractMetricEntity } from './abstract-metric.entity';
 
 @Entity('host_group_metrics')
 export class HostGroupMetricEntity extends AbstractMetricEntity {
-
-  @ManyToOne(() => HostGroupEntity, { eager: true })
-  @JoinColumn({ name: 'id_host_group' })
-  owner: HostGroupEntity;
 }

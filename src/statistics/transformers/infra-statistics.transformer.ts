@@ -71,7 +71,7 @@ export class InfraStatisticsTransformer {
 
   private static transformPoolOccurrence(metric: PoolMetricEntity, entityType: EntityType) {
     const occurrence = new Occurrence();
-    occurrence.datacenterId = metric.owner.parent.parentId;
+    occurrence.datacenterId = metric.owner.parent.parent.id;
     occurrence.entityId = metric.owner.id;
     occurrence.entityType = entityType;
     occurrence.name = metric.owner.name;
@@ -83,7 +83,7 @@ export class InfraStatisticsTransformer {
 
   private static transformAdapterOccurrence(metric: ChaMetricEntity, entityType: EntityType) {
     const occurrence = new Occurrence();
-    occurrence.datacenterId = metric.owner.parent.parentId;
+    occurrence.datacenterId = metric.owner.parent.parent.id;
     occurrence.entityId = metric.owner.id;
     occurrence.entityType = entityType;
     occurrence.name = metric.owner.name;
@@ -95,7 +95,7 @@ export class InfraStatisticsTransformer {
 
   private static transformPortMetric(metric: PortMetricEntity, entityType: EntityType) {
     const occurrence = new Occurrence();
-    occurrence.datacenterId = metric.owner.parent.parent.parentId;
+    occurrence.datacenterId = metric.owner.parent.parent.parent.id;
     occurrence.entityId = metric.owner.id;
     occurrence.entityType = entityType;
     occurrence.middleEntityId = metric.owner.parent.id;
@@ -145,7 +145,7 @@ export class InfraStatisticsTransformer {
 
   private static transformSystemOccurrence(metric: SystemMetricEntity, type: EntityType) {
     const occurrence = new Occurrence();
-    occurrence.datacenterId = metric.owner.parentId;
+    occurrence.datacenterId = metric.owner.parent.id;
     occurrence.entityId = metric.owner.id;
     occurrence.entityType = type;
     occurrence.name = metric.owner.name;
