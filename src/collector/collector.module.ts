@@ -18,19 +18,13 @@ import { DataCenterService } from './services/data-center.service';
 import { MetricTypeService } from './services/metric-type.service';
 import { CapacityStatisticsService } from './services/capacity-statistics.service';
 import { MetricController } from './controllers/metric.controller';
-import { HostGroupCollectorService } from './factory/collectors/host-group-collector.service';
 import { HostGroupMetricService } from './services/host-group-metric.service';
 import { HostGroupMetricEntity } from './entities/host-group-metric.entity';
 import { HostGroupService } from './services/host-group.service';
 import { HostGroupEntity } from './entities/host-group.entity';
-import { ApiCollectorFactoryImpl } from './factory/api-collector-factory.impl';
-import { PoolCollectorService } from './factory/collectors/pool-collector.service';
-import { ChaCollectorService } from './factory/collectors/cha-collector.service';
-import { SystemCollectorService } from './factory/collectors/system-collector.service';
 import { SystemMetricReadEntity } from './entities/system-metric-read.entity';
 import { PoolMetricReadEntity } from './entities/pool-metric-read.entity';
 import { ChaMetricReadEntity } from './entities/cha-metric-read.entity';
-import { PortCollectorService } from './factory/collectors/port-collector.service';
 import { PortMetricService } from './services/port-metric.service';
 import { PortMetricEntity } from './entities/port-metric.entity';
 import { PortEntity } from './entities/port.entity';
@@ -41,7 +35,6 @@ import { ExternalEntity } from './entities/external.entity';
 import { ExternalService } from './services/external.service';
 import { ExternalTypeService } from './services/external-type.service';
 import { ExternalController } from './controllers/external.controller';
-import { LatencyCollectorService } from './factory/collectors/latency-collector.service';
 import { LatencyMetricTransformer } from './transformers/latency-metric.transformer';
 import { LatencyEntity } from './entities/latency.entity';
 import { LatencyMetricService } from './services/latency-metric.service';
@@ -103,13 +96,6 @@ import { MultiValueMetricCollectorService } from './services/collect/multi-value
     DataCenterService,
     MetricTypeService,
     CapacityStatisticsService,
-    HostGroupCollectorService,
-    ApiCollectorFactoryImpl,
-    PoolCollectorService,
-    ChaCollectorService,
-    SystemCollectorService,
-    PortCollectorService,
-    LatencyCollectorService,
     PortMetricService,
     PortService,
     LatencyMetricTransformer,
@@ -139,6 +125,7 @@ import { MultiValueMetricCollectorService } from './services/collect/multi-value
     MetricTypeService,
     LatencyMetricService,
     SystemService,
+    StorageEntityService,
   ],
 })
 export class CollectorModule {

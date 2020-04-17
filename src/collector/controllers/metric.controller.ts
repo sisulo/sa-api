@@ -1,20 +1,20 @@
-import { Body, Controller, HttpException, NotFoundException, Param, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, NotFoundException, Param, Post, Put, UseInterceptors } from '@nestjs/common';
 import { MetricRequestDto } from '../dto/metric-request.dto';
 import { CollectorType } from '../factory/collector-type.enum';
-import { ApiCollectorFactoryImpl } from '../factory/api-collector-factory.impl';
 import { LoggingInterceptor } from '../../logging.interceptor';
-import { StorageEntityServiceFactory } from '../factory/storage-entity-service.factory';
-import { MetricResponseDto } from '../dto/metric-response.dto';
 import { MetricRequestPipe } from '../dto/pipes/metric-request-pipe.service';
 import { StorageEntityType } from '../dto/owner.dto';
 import { MetricCollectorService } from '../services/collect/metric-collector.service';
 import { MetricTransformer } from '../transformers/metric.transformer';
-import { ArgumentError } from '../services/errors/argument.error';
-import { ErrorCodeConst } from '../../errors/error-code.enum';
 import { LatencyMetricTransformer } from '../transformers/latency-metric.transformer';
 import { LatencyEntity } from '../entities/latency.entity';
 import { MultiValueMetricCollectorService } from '../services/collect/multi-value-metric-collector.service';
 import { AbstractMetricCollectorService } from '../services/collect/abstract-metric-collector.service';
+import { ChangeStatusRequestDto } from '../dto/change-status-request.dto';
+import { StorageEntityTransformer } from '../transformers/storage-entity.transformer';
+import { StorageEntityService } from '../services/storage-entity.service';
+import { StorageEntityResponseDto } from '../dto/storage-entity-response.dto';
+import { StorageEntityStatusPipe } from '../dto/pipes/storage-entity-status.pipe';
 
 export interface KeyPart {
   name: string;
@@ -38,25 +38,9 @@ export interface ComponentKey {
 @Controller('api/v1/')
 export class MetricController {
   constructor(private singleValueCollector: MetricCollectorService,
-              private multiValueCollector: MultiValueMetricCollectorService) {
+              private multiValueCollector: MultiValueMetricCollectorService,
+              private storageEntityService: StorageEntityService) {
   }
-
-  // @Post([
-  //   ':subComponent/:systemName/metrics',
-  //   'systems/:systemName/:subComponent/:subComponentName/metrics',
-  //   'systems/:systemName/chas/:subComponentName/:subComponent/:portName/metrics',
-  // ])
-  // async insertMetric(
-  //   @Param('systemName') systemName: string,
-  //   @Param('subComponent') subComponentType: CollectorType,
-  //   @Param('subComponentName') subComponentName: string,
-  //   @Param('portName') portName: string,
-  //   @Body(new MetricTypePipe()) dto: MetricRequestDto): Promise<MetricResponseDto> {
-  //   const componentKey = MetricController.createComponentKey(systemName, subComponentName, portName, this.resolveKeyType(subComponentType));
-  //   const metricEntity = await this.collectorService.collectMetric(componentKey, dto);
-  //   return MetricTransformer.transform(metricEntity);
-  //   //return this.factory.getTransformer(subComponentType).transform(metricEntity);
-  // }
 
   @Post([
     ':subComponent/:systemName/metrics',
@@ -79,7 +63,7 @@ export class MetricController {
     @Param('subComponentName') subComponentName: string,
     @Body(new MetricRequestPipe()) dto: MetricRequestDto) {
     const entities = await this.collectMetric(this.multiValueCollector, systemName, CollectorType.LATENCY, subComponentName, undefined, dto);
-    console.log(LatencyMetricTransformer.transform(entities as unknown as LatencyEntity[]));
+    return LatencyMetricTransformer.transform(entities as unknown as LatencyEntity[]);
   }
 
   async collectMetric(collector: AbstractMetricCollectorService, systemName: string, type, subComponentName, portName, dto) {
@@ -88,22 +72,22 @@ export class MetricController {
     return metricEntity;
   }
 
-  // @Put([
-  //   ':subComponent/:systemName/status',
-  //   'systems/:systemName/:subComponent/:subComponentName/status',
-  //   'systems/:systemName/chas/:subComponentName/:subComponent/:portName/status',
-  // ])
-  // async changeStatus(
-  //   @Param('systemName') systemName: string,
-  //   @Param('subComponent') subComponentType: CollectorType,
-  //   @Param('subComponentName') subComponentName: string,
-  //   @Param('portName') portName: string,
-  //   @Body() dto: ChangeStatusRequestDto,
-  // ) {
-  //   const componentService = this.storageEntityServiceFactory.getStorageEntityService(subComponentType);
-  //   const componentKey = MetricController.createComponentKey(systemName, subComponentName, portName);
-  //   return StorageEntityTransformer.transform(await componentService.changeStatusByName(componentKey, dto.status));
-  // }
+  @Put([
+    ':subComponent/:systemName/status',
+    'systems/:systemName/:subComponent/:subComponentName/status',
+    'systems/:systemName/chas/:subComponentName/:subComponent/:portName/status',
+  ])
+  async changeStatus(
+    @Param('systemName') systemName: string,
+    @Param('subComponent') subComponentType: CollectorType,
+    @Param('subComponentName') subComponentName: string,
+    @Param('portName') portName: string,
+    @Body(new StorageEntityStatusPipe()) dto: ChangeStatusRequestDto,
+  ): Promise<StorageEntityResponseDto> {
+    const componentKey = MetricController.createComponentKey(systemName, subComponentName, portName, this.resolveKeyType(subComponentType));
+    const storageEntity = await this.storageEntityService.updateStatus(componentKey, dto);
+    return StorageEntityTransformer.transform(storageEntity);
+  }
 
   private static createComponentKey(systemName, subComponentName, portName, paramType: StorageEntityType): StorageEntityKey {
     let componentKey: StorageEntityKey;

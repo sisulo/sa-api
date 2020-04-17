@@ -1,12 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
 import * as request from 'supertest';
-import { FallbackErrorFilter } from '../src/errors/filters/fallback-exception.filter';
-import { HttpExceptionFilter } from '../src/errors/filters/http-exception.filter';
-import { SaApiExceptionFilter } from '../src/errors/filters/sa-api-exception.filter';
 import { HttpStatus } from '@nestjs/common';
 import { StorageEntityType } from '../src/collector/dto/owner.dto';
 import { ErrorCodeConst } from '../src/errors/error-code.enum';
+import { Test, TestingModule } from '@nestjs/testing';
+import { FallbackErrorFilter } from '../src/errors/filters/fallback-exception.filter';
+import { AppModule } from '../src/app.module';
+import { SaApiExceptionFilter } from '../src/errors/filters/sa-api-exception.filter';
+import { HttpExceptionFilter } from '../src/errors/filters/http-exception.filter';
 
 describe('Storage Entity', () => {
 
@@ -51,7 +51,6 @@ describe('Storage Entity', () => {
   };
 
   const validateResponse = (response, expected) => {
-    console.log(response.body);
     expect(response.body).toEqual(expected);
   };
 

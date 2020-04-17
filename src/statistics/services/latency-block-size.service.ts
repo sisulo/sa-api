@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { LatencyMetricService } from '../../collector/services/latency-metric.service';
 import { OperationType } from '../../collector/enums/operation-type.enum';
 import { ArrayUtils } from '../utils/array.utils';
-import { SystemService } from '../../collector/services/system.service';
-import { CapacityMetricTransformer } from '../transformers/capacity-metric.transformer';
 import { SystemPool } from '../models/SystemPool';
 import { LatencyFilter } from '../controllers/latency/latency.controller';
+import { StorageEntityService } from '../../collector/services/storage-entity.service';
+import { MetricTransformer } from '../../collector/transformers/metric.transformer';
 
 export interface OperationData {
   values: ThreeDimensionValue[];
@@ -27,7 +27,7 @@ export interface LatencyMetadata {
 export class LatencyBlockSizeService {
   constructor(
     private readonly service: LatencyMetricService,
-    private readonly systemService: SystemService,
+    private readonly storageEntityService: StorageEntityService,
   ) {
   }
 
@@ -57,7 +57,7 @@ export class LatencyBlockSizeService {
 
   public async getMetaData(): Promise<LatencyMetadata> {
     const datesValues = await this.service.availableDates();
-    const poolsValues = await this.systemService.availableSystems();
-    return { dates: datesValues, systems: poolsValues.map(system => CapacityMetricTransformer.createSystemPool(system)) };
+    const poolsValues = await this.storageEntityService.availableSystems();
+    return { dates: datesValues, systems: poolsValues.map(system => MetricTransformer.transformFromOwner(system, true)) };
   }
 }

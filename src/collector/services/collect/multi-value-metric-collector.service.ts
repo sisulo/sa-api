@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { AbstractMetricCollectorService } from './abstract-metric-collector.service';
+import { AbstractMetricCollectorService, MetricCollectorCommand } from './abstract-metric-collector.service';
 import { StorageEntityEntity } from '../../entities/storage-entity.entity';
 import { MetricRequestDto } from '../../dto/metric-request.dto';
-import { Repository } from 'typeorm';
 import { LatencyEntity } from '../../entities/latency.entity';
 import { StorageEntityRepository } from '../../repositories/storage-entity.repository';
 import { MetricRepositoryFactory } from '../../factory/metric-repository.factory';
@@ -13,6 +12,7 @@ export class MultiValueMetricCollectorService extends AbstractMetricCollectorSer
               protected metricRepositoryFactory: MetricRepositoryFactory) {
     super(storageEntityRepository, metricRepositoryFactory);
   }
+
   protected getMatchCriteria(metricRequestDto: MetricRequestDto, storageEntity: StorageEntityEntity, metricValueItem?) {
     return {
       owner: storageEntity,
@@ -24,13 +24,16 @@ export class MultiValueMetricCollectorService extends AbstractMetricCollectorSer
     };
   }
 
-  protected async mapData(repository: Repository<any>, metricRequest: MetricRequestDto, storageEntity: StorageEntityEntity, multiValueData?) {
-    const entity = await this.createMetricEntity(repository, metricRequest, storageEntity, multiValueData) as LatencyEntity;
+  protected async mapData(command: MetricCollectorCommand) {
+    const entity = await this.createMetricEntity(command) as LatencyEntity;
+    const metricRequest = command.requestDto;
+    const latencyRequest = command.latencyMetricDto;
+    const storageEntity = command.storageEntity;
 
     entity.date = metricRequest.date;
-    entity.latency = multiValueData.latency;
-    entity.blockSize = multiValueData.blockSize;
-    entity.value = multiValueData.count;
+    entity.latency = latencyRequest.latency;
+    entity.blockSize = latencyRequest.blockSize;
+    entity.value = latencyRequest.count;
     entity.idOperation = metricRequest.operation;
     entity.idType = metricRequest.metricType;
     if (entity.owner == null) {

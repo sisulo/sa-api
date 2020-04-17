@@ -6,16 +6,23 @@ import { MetricRepositoryFactory } from '../../factory/metric-repository.factory
 import { StorageEntityEntity } from '../../entities/storage-entity.entity';
 import { Repository } from 'typeorm';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
-import { LatencyMetricDto } from '../../dto/latency-metric.dto';
+import { LatencyRequestDto } from '../../dto/latency-request.dto';
+
+export interface MetricCollectorCommand {
+  repository: Repository<any>;
+  requestDto: MetricRequestDto;
+  storageEntity: StorageEntityEntity;
+  latencyMetricDto: LatencyRequestDto;
+}
 
 export abstract class AbstractMetricCollectorService {
   public constructor(protected storageEntityRepository: StorageEntityRepository,
                      protected metricRepositoryFactory: MetricRepositoryFactory) {
   }
 
-  protected abstract getMatchCriteria(metricRequestDto: MetricRequestDto, storageEntity: StorageEntityEntity, multiValueData?: LatencyMetricDto);
+  protected abstract getMatchCriteria(metricRequestDto: MetricRequestDto, storageEntity: StorageEntityEntity, multiValueData?: LatencyRequestDto);
 
-  protected abstract mapData(repository: Repository<any>, metricRequest: MetricRequestDto, storageEntity: StorageEntityEntity, multiValueData?: LatencyMetricDto);
+  protected abstract mapData(command: MetricCollectorCommand);
 
   public async collectMetric(componentKey: StorageEntityKey, metricRequest: MetricRequestDto) {
     const storageEntity = await this.storageEntityRepository.fetchOrCreateByStorageEntityKey(componentKey);
@@ -28,19 +35,27 @@ export abstract class AbstractMetricCollectorService {
       data = metricRequest.data;
     }
     const entitiesToSave = await Promise.all(data.map(
-      async item => await this.mapData(repository, metricRequest, storageEntity, item),
+      async item => {
+        const command: MetricCollectorCommand = {
+          repository,
+          requestDto: metricRequest,
+          storageEntity,
+          latencyMetricDto: item,
+        };
+        return await this.mapData(command);
+      },
     ));
     return await repository.save(entitiesToSave);
   }
 
-  protected async createMetricEntity(repository: Repository<AbstractMetricEntity>, metricRequest: MetricRequestDto, storageEntity: StorageEntityEntity, multiValueData?: LatencyMetricDto): Promise<AbstractMetricEntity> {
+  protected async createMetricEntity(command: MetricCollectorCommand): Promise<AbstractMetricEntity> {
 
-    const criteria = this.getMatchCriteria(metricRequest, storageEntity, multiValueData);
+    const criteria = this.getMatchCriteria(command.requestDto, command.storageEntity, command.latencyMetricDto);
 
-    const metricEntity = await repository.findOne({ where: criteria });
+    const metricEntity = await command.repository.findOne({ where: criteria });
 
     if (metricEntity === undefined) {
-      return repository.create();
+      return command.repository.create();
     }
     return metricEntity;
   }

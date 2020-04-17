@@ -1,6 +1,6 @@
 export class LatencyRequestDto {
-  readonly latency: number;
-  readonly blockSize: number;
-  readonly count: number;
+  latency: number;
+  blockSize: number;
+  count: number;
 
 }

@@ -4,7 +4,7 @@ import { StorageEntityRepository } from '../../repositories/storage-entity.repos
 import { MetricRepositoryFactory } from '../../factory/metric-repository.factory';
 import { AbstractMetricEntity } from '../../entities/abstract-metric.entity';
 import { StorageEntityEntity } from '../../entities/storage-entity.entity';
-import { AbstractMetricCollectorService } from './abstract-metric-collector.service';
+import { AbstractMetricCollectorService, MetricCollectorCommand } from './abstract-metric-collector.service';
 import { SystemMetricEntity } from '../../entities/system-metric.entity';
 
 @Injectable()
@@ -14,14 +14,15 @@ export class MetricCollectorService extends AbstractMetricCollectorService {
     super(storageEntityRepository, metricRepositoryFactory);
   }
 
-  protected async mapData(repository, metricRequest, storageEntity) {
-    const metricEntity = await this.createMetricEntity(repository, metricRequest, storageEntity);
+  protected async mapData(command: MetricCollectorCommand) {
+    const metricEntity = await this.createMetricEntity(command);
+    const metricRequest = command.requestDto;
     metricEntity.date = metricRequest.date;
     metricEntity.value = metricRequest.value;
     metricEntity.idType = metricRequest.metricType;
 
     if (metricEntity.owner === undefined) {
-      metricEntity.owner = storageEntity;
+      metricEntity.owner = command.storageEntity;
     }
 
     if (metricEntity instanceof SystemMetricEntity) {

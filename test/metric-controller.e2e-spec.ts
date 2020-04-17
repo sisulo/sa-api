@@ -1,15 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
 import * as request from 'supertest';
 import { MetricType } from '../src/collector/enums/metric-type.enum';
 import { StorageEntityType } from '../src/collector/dto/owner.dto';
 import { ComponentStatus } from '../src/collector/enums/component.status';
 import { HttpStatus } from '@nestjs/common';
-import { urlencoded } from 'express';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AppModule } from '../src/app.module';
 
 describe('Collector', () => {
   let app;
   const SYSTEM_NAME = 'XP7_G11_58417';
+  const SYSTEM_NAME_2 = 'XP7_G12_58416';
   const POOL_NAME = 'Pool123';
   const HOST_GROUP_NAME = 'czchoct007';
   const ADAPTER_NAME = 'CHA-1PC,CHA-33PC';
@@ -47,7 +47,6 @@ describe('Collector', () => {
     date: DATE,
   };
   const validateResponse = (response, expected) => {
-    console.log(response.body);
     expect(response.body).toEqual(expected);
   };
 
@@ -122,26 +121,26 @@ describe('Collector', () => {
           });
       });
   });
-  // it('Update system status (POST)', () => {
-  //   return request(app.getHttpServer())
-  //     .put('/api/v1/systems/XP7_G11_58417/status')
-  //     .send({
-  //       status: 'INACTIVE',
-  //     })
-  //     .expect(200)
-  //     .expect(
-  //       {
-  //         // Todo delete ID generated from comparision
-  //         storageEntity: {
-  //           id: 1,
-  //           name: 'XP7_G11_58417',
-  //           status: 'INACTIVE',
-  //           type: 'SYSTEM',
-  //         },
-  //         externals: [],
-  //       },
-  //     );
-  // });
+  it('Update system status (POST)', () => {
+    const expected = {
+      storageEntity: expect.objectContaining({
+          name: SYSTEM_NAME_2,
+          status: ComponentStatus[ComponentStatus.INACTIVE],
+          type: StorageEntityType[StorageEntityType.SYSTEM],
+        },
+      ),
+      externals: [],
+    };
+    return request(app.getHttpServer())
+      .put(`/api/v1/systems/${SYSTEM_NAME_2}/status`)
+      .send({
+        status: ComponentStatus[ComponentStatus.INACTIVE],
+      })
+      .expect(HttpStatus.OK)
+      .then((response) =>
+        validateResponse(response, expected),
+      );
+  });
   it('Create host group metric (POST)', () => {
     const expected = expect.objectContaining({
         idMetric: expect.any(Number),
@@ -386,7 +385,7 @@ describe('Collector', () => {
   //       },
   //     );
   // });
-  afterAll(async () => {
-    await app.close();
-  });
+  // afterAll(async () => {
+  //   await app.close();
+  // });
 });

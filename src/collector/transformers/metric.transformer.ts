@@ -9,6 +9,7 @@ import { PortMetricEntity } from '../entities/port-metric.entity';
 import { HostGroupMetricEntity } from '../entities/host-group-metric.entity';
 import { LatencyEntity } from '../entities/latency.entity';
 import { ComponentStatus } from '../enums/component.status';
+import { isEmpty } from '@nestjs/common/utils/shared.utils';
 
 export class MetricTransformer {
 
@@ -37,7 +38,7 @@ export class MetricTransformer {
     throw new TransformationError(`Metric type \'${type}\' from entity is not in enum 'MetricType'`);
   }
 
-  public static transformFromOwner(metricOwner) {
+  public static transformFromOwner(metricOwner, reverse = false) {
     if (metricOwner === null) {
       throw new TransformationError(`Cannot transform owner because it is null`);
     }
@@ -46,8 +47,10 @@ export class MetricTransformer {
     dto.name = metricOwner.name;
     dto.type = MetricTransformer.resolveOwnerType(metricOwner);
     dto.status = this.resolveStatus(metricOwner);
-    if (metricOwner.parent !== undefined && metricOwner.parent !== null) {
+    if (reverse === false && metricOwner.parent !== undefined && metricOwner.parent !== null) {
       dto.parent = MetricTransformer.transformFromOwner(metricOwner.parent);
+    } else if (reverse === true && !isEmpty(metricOwner.children)) {
+      dto.children = metricOwner.children.map(child => MetricTransformer.transformFromOwner(child, reverse));
     }
     if (metricOwner.serialNumber !== null) {
       dto.serialNumber = metricOwner.serialNumber;

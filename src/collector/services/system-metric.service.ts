@@ -2,19 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SystemMetricEntity } from '../entities/system-metric.entity';
-import { SystemEntity } from '../entities/system.entity';
 import { SystemService } from './system.service';
-import { CatMetricTypeEntity } from '../entities/cat-metric-type.entity';
-import { CommonMetricService } from './common-metric.service';
 import { MetricTypeService } from './metric-type.service';
-import { MetricRequestDto } from '../dto/metric-request.dto';
 import { MetricType } from '../enums/metric-type.enum';
 import { SystemMetricReadEntity } from '../entities/system-metric-read.entity';
 import { MetricEntityInterface } from '../entities/metric-entity.interface';
 import { ComponentStatus } from '../enums/component.status';
 
 @Injectable()
-export class SystemMetricService extends CommonMetricService<SystemMetricEntity, SystemEntity, null, null> {
+export class SystemMetricService {
 
   constructor(
     @InjectRepository(SystemMetricEntity)
@@ -24,27 +20,6 @@ export class SystemMetricService extends CommonMetricService<SystemMetricEntity,
     private readonly systemService: SystemService,
     private readonly metricTypeService: MetricTypeService,
   ) {
-    super(
-      metricTypeService,
-      systemService,
-      null,
-      null,
-      metricRepository,
-      SystemMetricEntity,
-    );
-  }
-
-  async save(component: SystemEntity, metricType: CatMetricTypeEntity, request: MetricRequestDto): Promise<any> {
-    const entity = await this.createMetricEntity(component, metricType, request.date);
-    const systemRequest = request as MetricRequestDto;
-    entity.value = systemRequest.value;
-    entity.date = systemRequest.date;
-    entity.peak = systemRequest.peak;
-    entity.metricTypeEntity = metricType;
-    // if (entity.owner == null) {
-    //   entity.owner = component;
-    // }
-    return await this.metricRepository.save(entity);
   }
 
   async getMetricGraph(type: MetricType): Promise<any[]> {

@@ -4,10 +4,6 @@ import { MetricTransformer } from './metric.transformer';
 import { ExternalEntity } from '../entities/external.entity';
 import { ExternalDto } from '../dto/external.dto';
 import { TransformationError } from './transformation.error';
-import { SystemEntity } from '../entities/system.entity';
-import { PoolEntity } from '../entities/pool.entity';
-import { PortEntity } from '../entities/port.entity';
-import { ChaEntity } from '../entities/cha.entity';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import { StorageEntityEntity } from '../entities/storage-entity.entity';
 
