@@ -4,7 +4,6 @@ import { OperationType } from '../enums/operation-type.enum';
 
 export class MetricRequestDto {
 
-  // TODO remap string to type
   readonly metricType: MetricType;
 
   readonly value: number;
@@ -15,7 +14,7 @@ export class MetricRequestDto {
   readonly peak: number;
 
   readonly data: LatencyRequestDto[];
-  // TODO remap string to type
+
   readonly operation: OperationType;
 
 }

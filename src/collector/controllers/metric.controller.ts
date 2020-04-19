@@ -1,9 +1,8 @@
-import { Body, Controller, NotFoundException, Param, Post, Put, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Param, Post, Put, UseInterceptors } from '@nestjs/common';
 import { MetricRequestDto } from '../dto/metric-request.dto';
 import { CollectorType } from '../factory/collector-type.enum';
 import { LoggingInterceptor } from '../../logging.interceptor';
 import { MetricRequestPipe } from '../dto/pipes/metric-request-pipe.service';
-import { StorageEntityType } from '../dto/owner.dto';
 import { MetricCollectorService } from '../services/collect/metric-collector.service';
 import { MetricTransformer } from '../transformers/metric.transformer';
 import { LatencyMetricTransformer } from '../transformers/latency-metric.transformer';
@@ -15,18 +14,7 @@ import { StorageEntityTransformer } from '../transformers/storage-entity.transfo
 import { StorageEntityService } from '../services/storage-entity.service';
 import { StorageEntityResponseDto } from '../dto/storage-entity-response.dto';
 import { StorageEntityStatusPipe } from '../dto/pipes/storage-entity-status.pipe';
-
-export interface KeyPart {
-  name: string;
-  type: StorageEntityType;
-}
-
-export interface StorageEntityKey {
-  datacenter: KeyPart;
-  grandParent: KeyPart;
-  parent: KeyPart;
-  child: KeyPart;
-}
+import { StorageEntityKeyUtils } from '../utils/storage-entity-key.utils';
 
 export interface ComponentKey {
   parentName: string;
@@ -67,9 +55,8 @@ export class MetricController {
   }
 
   async collectMetric(collector: AbstractMetricCollectorService, systemName: string, type, subComponentName, portName, dto) {
-    const componentKey = MetricController.createComponentKey(systemName, subComponentName, portName, this.resolveKeyType(type));
-    const metricEntity = await collector.collectMetric(componentKey, dto);
-    return metricEntity;
+    const componentKey = StorageEntityKeyUtils.createComponentKey(systemName, subComponentName, portName, StorageEntityKeyUtils.of(type));
+    return await collector.collectMetric(componentKey, dto);
   }
 
   @Put([
@@ -84,54 +71,8 @@ export class MetricController {
     @Param('portName') portName: string,
     @Body(new StorageEntityStatusPipe()) dto: ChangeStatusRequestDto,
   ): Promise<StorageEntityResponseDto> {
-    const componentKey = MetricController.createComponentKey(systemName, subComponentName, portName, this.resolveKeyType(subComponentType));
+    const componentKey = StorageEntityKeyUtils.createComponentKey(systemName, subComponentName, portName, StorageEntityKeyUtils.of(subComponentType));
     const storageEntity = await this.storageEntityService.updateStatus(componentKey, dto);
     return StorageEntityTransformer.transform(storageEntity);
-  }
-
-  private static createComponentKey(systemName, subComponentName, portName, paramType: StorageEntityType): StorageEntityKey {
-    let componentKey: StorageEntityKey;
-    if (portName !== undefined) {
-      componentKey = {
-        datacenter: { name: 'CZ_Chodov', type: StorageEntityType.DATA_CENTER },
-        grandParent: { name: systemName, type: StorageEntityType.SYSTEM },
-        parent: { name: subComponentName, type: StorageEntityType.ADAPTER },
-        child: { name: portName, type: paramType },
-      };
-    } else if (subComponentName !== undefined) {
-      componentKey = {
-        datacenter: { name: 'CZ_Chodov', type: StorageEntityType.DATA_CENTER },
-        grandParent: null,
-        parent: { name: systemName, type: StorageEntityType.SYSTEM },
-        child: { name: subComponentName, type: paramType },
-      };
-    } else {
-      componentKey = {
-        datacenter: { name: 'CZ_Chodov', type: StorageEntityType.DATA_CENTER },
-        grandParent: null,
-        parent: null,
-        child: { name: systemName, type: paramType },
-      };
-    }
-    return componentKey;
-  }
-
-  private resolveKeyType(type: CollectorType): StorageEntityType {
-    switch (type) {
-      case CollectorType.HOST_GROUPS:
-        return StorageEntityType.HOST_GROUP;
-      case CollectorType.POOLS:
-        return StorageEntityType.POOL;
-      case CollectorType.CHAS:
-        return StorageEntityType.ADAPTER;
-      case CollectorType.SYSTEMS:
-        return StorageEntityType.SYSTEM;
-      case CollectorType.PORTS:
-        return StorageEntityType.PORT;
-      case CollectorType.LATENCY:
-        return StorageEntityType.POOL;
-      default:
-        throw new NotFoundException(`Cannot resolve Storage entity type \'${type}\'`);
-    }
   }
 }

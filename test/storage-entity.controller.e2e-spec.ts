@@ -7,6 +7,7 @@ import { FallbackErrorFilter } from '../src/errors/filters/fallback-exception.fi
 import { AppModule } from '../src/app.module';
 import { SaApiExceptionFilter } from '../src/errors/filters/sa-api-exception.filter';
 import { HttpExceptionFilter } from '../src/errors/filters/http-exception.filter';
+import { ValidateResponseUtils } from '../src/tests/validate-response.utils';
 
 describe('Storage Entity', () => {
 
@@ -50,10 +51,6 @@ describe('Storage Entity', () => {
     parentId: 8,
   };
 
-  const validateResponse = (response, expected) => {
-    expect(response.body).toEqual(expected);
-  };
-
   let app;
 
   beforeAll(async () => {
@@ -84,12 +81,11 @@ describe('Storage Entity', () => {
         .post('/api/v2/storage-entities')
         .send(systemPayload)
         .expect(HttpStatus.CREATED)
-        .then((responses) => validateResponse(responses, expected));
+        .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
     },
   );
   it('Saving same storage entity - CONFLICT', () => {
-      const modifiedPayload = systemPayload;
-      modifiedPayload.name = 'System_2';
+      systemPayload.name = 'System_2';
 
       return request(app.getHttpServer())
         .post('/api/v2/storage-entities')
@@ -117,7 +113,7 @@ describe('Storage Entity', () => {
         .post('/api/v2/storage-entities')
         .send(modifiedPayload)
         .expect(400)
-        .then((responses) => validateResponse(responses, expected));
+        .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
     },
   );
   it('Saving pool entity data', () => {
@@ -134,7 +130,7 @@ describe('Storage Entity', () => {
         .post('/api/v2/storage-entities')
         .send(poolPayload)
         .expect(HttpStatus.CREATED)
-        .then((responses) => validateResponse(responses, expected));
+        .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
     },
   );
 
@@ -152,7 +148,7 @@ describe('Storage Entity', () => {
         .post('/api/v2/storage-entities')
         .send(channelAdapterPayload)
         .expect(HttpStatus.CREATED)
-        .then((responses) => validateResponse(responses, expected));
+        .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
     },
   );
   it('Saving host group entity data', () => {
@@ -169,7 +165,7 @@ describe('Storage Entity', () => {
         .post('/api/v2/storage-entities')
         .send(hostGroupPayload)
         .expect(HttpStatus.CREATED)
-        .then((responses) => validateResponse(responses, expected));
+        .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
     },
   );
 
@@ -187,7 +183,7 @@ describe('Storage Entity', () => {
         .post('/api/v2/storage-entities')
         .send(portPayload)
         .expect(HttpStatus.CREATED)
-        .then((responses) => validateResponse(responses, expected));
+        .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
     },
   );
 });

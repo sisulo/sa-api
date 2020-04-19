@@ -40,7 +40,6 @@ import { LatencyEntity } from './entities/latency.entity';
 import { LatencyMetricService } from './services/latency-metric.service';
 import { OperationService } from './services/operation.service';
 import { CatOperationEntity } from './entities/cat-operation.entity';
-import { StorageEntityServiceFactory } from './factory/storage-entity-service.factory';
 import { StorageEntityController } from './controllers/v2/storage-entity.controller';
 import { StorageEntityService } from './services/storage-entity.service';
 import { StorageEntityEntity } from './entities/storage-entity.entity';
@@ -104,7 +103,6 @@ import { MultiValueMetricCollectorService } from './services/collect/multi-value
     ExternalTypeService,
     LatencyMetricService,
     OperationService,
-    StorageEntityServiceFactory,
     StorageEntityService,
     MetricCollectorService,
     MetricRepositoryFactory,

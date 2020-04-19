@@ -1,12 +1,11 @@
 import { EntityRepository, TreeRepository } from 'typeorm';
 import { StorageEntityEntity } from '../entities/storage-entity.entity';
-import { KeyPart, StorageEntityKey } from '../controllers/metric.controller';
 import { ComponentStatus } from '../enums/component.status';
 import { StorageEntityType } from '../dto/owner.dto';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import { LatencyEntity } from '../entities/latency.entity';
-import { ArgumentError } from '../services/errors/argument.error';
-import { ErrorCodeConst } from '../../errors/error-code.enum';
+import { StorageEntityNotFoundError } from '../services/errors/storage-entity-not-found.error';
+import { KeyPart, StorageEntityKey } from '../utils/storage-entity-key.utils';
 
 @EntityRepository(StorageEntityEntity)
 export class StorageEntityRepository extends TreeRepository<StorageEntityEntity> {
@@ -28,15 +27,15 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
 
   private async findOrCreate(keyParts: KeyPart[], parentEntity: StorageEntityEntity, createIfNotExists = false): Promise<StorageEntityEntity> {
     const searchKey = keyParts.pop();
-    let storageEntity = await this.findOneByName(searchKey.name, searchKey.type);
+    const parentToSearch = parentEntity.idType === StorageEntityType.DATA_CENTER ? null : parentEntity;
+    let storageEntity = await this.findOneByName(searchKey.name, searchKey.type, parentToSearch);
     if (storageEntity === undefined && createIfNotExists === true) {
       storageEntity = this.create(
         { name: searchKey.name, idType: searchKey.type, idCatComponentStatus: ComponentStatus.ACTIVE, parent: parentEntity },
       );
       await this.save(storageEntity);
     } else if (storageEntity === undefined && createIfNotExists === false) {
-      throw new ArgumentError(
-        ErrorCodeConst.ENTITY_NOT_FOUND, `Cannot find storage entity ${StorageEntityType[searchKey.type]} with name ${searchKey.name}`);
+      throw new StorageEntityNotFoundError(`Cannot find storage entity ${StorageEntityType[searchKey.type]} with name ${searchKey.name}`);
     }
     if (!isEmpty(keyParts)) {
       return this.findOrCreate(keyParts, storageEntity, createIfNotExists);
@@ -45,9 +44,15 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
     return storageEntity;
   }
 
-  private async findOneByName(entityName: string, type?: StorageEntityType): Promise<StorageEntityEntity> {
-    // TODO never looking for the StorageEntity within correct subtree but looking in global.
-    return await this.findOne({ name: entityName, idType: type }, { relations: ['parent'] });
+  private async findOneByName(entityName: string, type: StorageEntityType, paramParent: StorageEntityEntity = null): Promise<StorageEntityEntity> {
+    const query = this.createQueryBuilder('storageEntity')
+      .leftJoinAndSelect('storageEntity.parent', 'parent')
+      .where('storageEntity.name = :name', { name: entityName })
+      .andWhere('storageEntity.idType = :type', { type });
+    if (paramParent !== null) {
+      query.andWhere('storageEntity.parent = :parent', { parent: paramParent.id });
+    }
+    return await query.getOne();
   }
 
   private static getKeyParts(key: StorageEntityKey): KeyPart[] {

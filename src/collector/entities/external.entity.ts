@@ -1,6 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { CatExternalTypeEntity } from './cat-external-type.entity';
-import { HostGroupEntity } from './host-group.entity';
+import { StorageEntityEntity } from './storage-entity.entity';
 
 @Entity('externals')
 export class ExternalEntity {
@@ -8,13 +7,12 @@ export class ExternalEntity {
   @PrimaryGeneratedColumn({ name: 'id_external', type: 'integer' })
   idExternal: number;
 
-  @ManyToOne(() => CatExternalTypeEntity, { eager: true })
-  @JoinColumn({ name: 'id_cat_external_type' })
-  externalTypeEntity: CatExternalTypeEntity;
+  @Column( {name: 'id_cat_external_type'})
+  idType: number;
 
-  @ManyToOne(() => HostGroupEntity, hostGroup => hostGroup.externals)
-  @JoinColumn({ name: 'id_host_group' })
-  hostGroup: HostGroupEntity;
+  @ManyToOne(() => StorageEntityEntity, storageEntity => storageEntity.externals)
+  @JoinColumn({ name: 'id_storage_entity' })
+  storageEntity: StorageEntityEntity;
 
   @Column({ name: 'value' })
   value: string;
