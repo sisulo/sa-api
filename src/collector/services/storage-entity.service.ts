@@ -7,8 +7,8 @@ import { StorageEntityAlreadyExistsError } from './errors/storage-entity-already
 import { StorageEntityRepository } from '../repositories/storage-entity.repository';
 import { StorageEntityEntity } from '../entities/storage-entity.entity';
 import { ComponentStatus } from '../enums/component.status';
-import { StorageEntityKey } from '../controllers/metric.controller';
 import { ChangeStatusRequestDto } from '../dto/change-status-request.dto';
+import { StorageEntityKey } from '../utils/storage-entity-key.utils';
 
 @Injectable()
 export class StorageEntityService {
@@ -57,6 +57,14 @@ export class StorageEntityService {
 
   public async updateStatus(key: StorageEntityKey, requestDto: ChangeStatusRequestDto): Promise<StorageEntityEntity> {
     const storageEntity = await this.storageEntityRepository.fetchByStorageEntityKey(key);
+    const storageEntityTree = await this.storageEntityRepository.findDescendantsTree(storageEntity);
+    return this.updateStatusRecursively(storageEntityTree, requestDto);
+  }
+
+  public async updateStatusRecursively(storageEntity: StorageEntityEntity, requestDto: ChangeStatusRequestDto): Promise<StorageEntityEntity> {
+    if (storageEntity.children.length > 0) {
+      storageEntity.children = await Promise.all(storageEntity.children.map(async child => await this.updateStatusRecursively(child, requestDto)));
+    }
     storageEntity.idCatComponentStatus = requestDto.status;
     return await this.storageEntityRepository.save(storageEntity);
   }

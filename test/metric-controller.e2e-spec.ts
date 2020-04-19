@@ -5,6 +5,10 @@ import { ComponentStatus } from '../src/collector/enums/component.status';
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
+import { ValidateResponseUtils } from '../src/tests/validate-response.utils';
+import { FallbackErrorFilter } from '../src/errors/filters/fallback-exception.filter';
+import { HttpExceptionFilter } from '../src/errors/filters/http-exception.filter';
+import { SaApiExceptionFilter } from '../src/errors/filters/sa-api-exception.filter';
 
 describe('Collector', () => {
   let app;
@@ -46,8 +50,8 @@ describe('Collector', () => {
     value: METRIC_VALUE,
     date: DATE,
   };
-  const validateResponse = (response, expected) => {
-    expect(response.body).toEqual(expected);
+  const changeStatusPayload = {
+    status: ComponentStatus[ComponentStatus.INACTIVE],
   };
 
   beforeAll(async () => {
@@ -56,6 +60,7 @@ describe('Collector', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalFilters(new FallbackErrorFilter(), new HttpExceptionFilter(), new SaApiExceptionFilter());
     await app.init();
   });
 
@@ -82,8 +87,9 @@ describe('Collector', () => {
       .post(`/api/v1/systems/${SYSTEM_NAME}/pools/${POOL_NAME}/metrics`)
       .send(poolMetricPayload)
       .expect(HttpStatus.CREATED)
-      .then((responses) => validateResponse(responses, expected));
+      .then((response) => ValidateResponseUtils.validateResponse(response, expected));
   });
+
   it('Update pool metric (POST)', () => {
     poolMetricPayload.date = DATE_2;
     const expected = expect.objectContaining({
@@ -109,7 +115,7 @@ describe('Collector', () => {
       .send(poolMetricPayload)
       .expect(HttpStatus.CREATED)
       .then(async (response) => {
-        validateResponse(response, expected);
+        ValidateResponseUtils.validateResponse(response, expected);
         poolMetricPayload.value = 555;
         await request(app.getHttpServer())
           .post(`/api/v1/systems/${SYSTEM_NAME}/pools/${POOL_NAME}/metrics`)
@@ -121,26 +127,7 @@ describe('Collector', () => {
           });
       });
   });
-  it('Update system status (POST)', () => {
-    const expected = {
-      storageEntity: expect.objectContaining({
-          name: SYSTEM_NAME_2,
-          status: ComponentStatus[ComponentStatus.INACTIVE],
-          type: StorageEntityType[StorageEntityType.SYSTEM],
-        },
-      ),
-      externals: [],
-    };
-    return request(app.getHttpServer())
-      .put(`/api/v1/systems/${SYSTEM_NAME_2}/status`)
-      .send({
-        status: ComponentStatus[ComponentStatus.INACTIVE],
-      })
-      .expect(HttpStatus.OK)
-      .then((response) =>
-        validateResponse(response, expected),
-      );
-  });
+
   it('Create host group metric (POST)', () => {
     const expected = expect.objectContaining({
         idMetric: expect.any(Number),
@@ -165,11 +152,32 @@ describe('Collector', () => {
       .post(`/api/v1/systems/${SYSTEM_NAME}/host-groups/${HOST_GROUP_NAME}/metrics`)
       .send(hostGroupMetricPayload)
       .expect(HttpStatus.CREATED)
-      .then((response) => validateResponse(response, expected));
+      .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
   });
+
+  it('Create system metric (POST)', () => {
+    const expected = expect.objectContaining({
+      idMetric: expect.any(Number),
+      date: DATE,
+      value: METRIC_VALUE,
+      peak: 5,
+      metricType: MetricType[MetricType.WORKLOAD],
+      owner: expect.objectContaining({
+        id: expect.any(Number),
+        name: SYSTEM_NAME,
+        type: StorageEntityType[StorageEntityType.SYSTEM],
+        status: ComponentStatus[ComponentStatus.ACTIVE],
+      }),
+    });
+    return request(app.getHttpServer())
+      .post(`/api/v1/systems/${SYSTEM_NAME}/metrics`)
+      .send(systemMetricPayload)
+      .expect(HttpStatus.CREATED)
+      .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
+  });
+
   it('Create adapter metric (POST)', () => {
     const expected = expect.objectContaining({
-      // Todo delete ID generated from comparision
       idMetric: expect.any(Number),
       date: DATE,
       value: METRIC_VALUE,
@@ -190,30 +198,10 @@ describe('Collector', () => {
     return request(app.getHttpServer())
       .post(`/api/v1/systems/${SYSTEM_NAME}/chas/${ADAPTER_NAME}/metrics`)
       .send(adapterMetricPayload)
-      .expect(201)
-      .then((response) => validateResponse(response, expected));
+      .expect(HttpStatus.CREATED)
+      .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
   });
-  it('Create system metric (POST)', () => {
-    const expected = expect.objectContaining({
-      // Todo delete ID generated from comparision
-      idMetric: expect.any(Number),
-      date: DATE,
-      value: METRIC_VALUE,
-      peak: 5,
-      metricType: MetricType[MetricType.WORKLOAD],
-      owner: expect.objectContaining({
-        id: expect.any(Number),
-        name: SYSTEM_NAME,
-        type: StorageEntityType[StorageEntityType.SYSTEM],
-        status: ComponentStatus[ComponentStatus.ACTIVE],
-      }),
-    });
-    return request(app.getHttpServer())
-      .post(`/api/v1/systems/${SYSTEM_NAME}/metrics`)
-      .send(systemMetricPayload)
-      .expect(201)
-      .then((response) => validateResponse(response, expected));
-  });
+
   it('Create port metric (POST)', () => {
     const expected = expect.objectContaining({
       idMetric: expect.any(Number),
@@ -242,150 +230,129 @@ describe('Collector', () => {
     return request(app.getHttpServer())
       .post(`/api/v1/systems/${SYSTEM_NAME}/chas/${encodeURIComponent(ADAPTER_NAME)}/ports/${encodeURIComponent(PORT_NAME)}/metrics`)
       .send(portMetricPayload)
-      .expect(201)
-      .then((response) => validateResponse(response, expected));
+      .expect(HttpStatus.CREATED)
+      .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
   });
-  //
-  // it('Update system status (POST)', () => {
-  //   return request(app.getHttpServer())
-  //     .put('/api/v1/systems/XP7_G11_58417/status')
-  //     .send({
-  //       status: 'INACTIVE',
-  //     })
-  //     .expect(200)
-  //     .expect(
-  //       {
-  //         // Todo delete ID generated from comparision
-  //         storageEntity: {
-  //           id: 1,
-  //           name: 'XP7_G11_58417',
-  //           status: 'INACTIVE',
-  //           type: 'SYSTEM',
-  //         },
-  //         externals: [],
-  //       },
-  //     );
-  // });
-  //
-  // it('Update pool status (POST)', () => {
-  //   return request(app.getHttpServer())
-  //     .put('/api/v1/systems/XP7_G11_58417/pools/Pool123/status')
-  //     .send({
-  //       status: 'INACTIVE',
-  //     })
-  //     .expect(200)
-  //     .expect(
-  //       {
-  //         // Todo delete ID generated from comparision
-  //         storageEntity: {
-  //           id: 79,
-  //           name: 'Pool123',
-  //           status: 'INACTIVE',
-  //           type: 'POOL',
-  //           parent: {
-  //             id: 1,
-  //             name: 'XP7_G11_58417',
-  //             type: 'SYSTEM',
-  //             status: 'INACTIVE',
-  //           },
-  //         },
-  //         externals: [],
-  //       },
-  //     );
-  // });
-  // it('Update host group status (POST)', () => {
-  //   return request(app.getHttpServer())
-  //     .put('/api/v1/systems/XP7_G11_58417/host-groups/czchoct007/status')
-  //     .send({
-  //       status: 'INACTIVE',
-  //     })
-  //     .expect(200)
-  //     .expect(
-  //       {
-  //         // Todo delete ID generated from comparision
-  //         storageEntity: {
-  //           id: 1,
-  //           name: 'czchoct007',
-  //           status: 'INACTIVE',
-  //           type: 'HOST_GROUP',
-  //           parent: {
-  //             id: 1,
-  //             name: 'XP7_G11_58417',
-  //             type: 'SYSTEM',
-  //             status: 'INACTIVE',
-  //           },
-  //         },
-  //         externals: [],
-  //       },
-  //     );
-  // });
-  // it('Update adapter status (POST)', () => {
-  //   return request(app.getHttpServer())
-  //     .put('/api/v1/systems/XP7_G11_58417/chas/Cha123/status')
-  //     .send({
-  //       status: 'INACTIVE',
-  //     })
-  //     .expect(200)
-  //     .expect(
-  //       {
-  //         // Todo delete ID generated from comparision
-  //         storageEntity: {
-  //           id: 115,
-  //           name: 'Cha123',
-  //           status: 'INACTIVE',
-  //           type: 'ADAPTER',
-  //           parent: {
-  //             id: 1,
-  //             name: 'XP7_G11_58417',
-  //             type: 'SYSTEM',
-  //             status: 'INACTIVE',
-  //           },
-  //         },
-  //         externals: [],
-  //       },
-  //     );
-  // });
-  // it('Update adapter status when not exists(PUT)', () => {
-  //   return request(app.getHttpServer())
-  //     .put('/api/v1/systems/XP7_G11_58417/chas/ChaXXX/status')
-  //     .send({
-  //       status: 'INACTIVE',
-  //     })
-  //     .expect(404);
-  // });
-  // it('Update port status (POST)', () => {
-  //   return request(app.getHttpServer())
-  //     .put('/api/v1/systems/XP7_G11_58417/chas/CHA-1PC%2CCHA-33PC/ports/1D%2C2D/status')
-  //     .send({
-  //       status: 'INACTIVE',
-  //     })
-  //     .expect(200)
-  //     .expect(
-  //       {
-  //         // Todo delete ID generated from comparision
-  //         storageEntity: {
-  //           id: 1,
-  //           name: '1D,2D',
-  //           type: 'PORT',
-  //           status: 'INACTIVE',
-  //           parent: {
-  //             id: 116,
-  //             name: 'CHA-1PC,CHA-33PC',
-  //             status: 'ACTIVE',
-  //             type: 'ADAPTER',
-  //             parent: {
-  //               id: 1,
-  //               name: 'XP7_G11_58417',
-  //               type: 'SYSTEM',
-  //               status: 'INACTIVE',
-  //             },
-  //           },
-  //         },
-  //         externals: [],
-  //       },
-  //     );
-  // });
-  // afterAll(async () => {
-  //   await app.close();
-  // });
+
+  it('Update pool status (POST)', () => {
+    const expected = {
+      storageEntity: expect.objectContaining({
+        id: expect.any(Number),
+        name: POOL_NAME,
+        status: ComponentStatus[ComponentStatus.INACTIVE],
+        type: StorageEntityType[StorageEntityType.POOL],
+        parent: expect.objectContaining({
+          id: expect.any(Number),
+          name: SYSTEM_NAME,
+          type: StorageEntityType[StorageEntityType.SYSTEM],
+          status: ComponentStatus[ComponentStatus.ACTIVE],
+        }),
+      }),
+      externals: [],
+    };
+    return request(app.getHttpServer())
+      .put(`/api/v1/systems/${SYSTEM_NAME}/pools/${POOL_NAME}/status`)
+      .send(changeStatusPayload)
+      .expect(HttpStatus.OK)
+      .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
+  });
+
+  it('Update host group status (POST)', () => {
+    const expected = {
+      storageEntity: expect.objectContaining({
+        id: expect.any(Number),
+        name: HOST_GROUP_NAME,
+        status: ComponentStatus[ComponentStatus.INACTIVE],
+        type: StorageEntityType[StorageEntityType.HOST_GROUP],
+        parent: expect.objectContaining({
+          id: expect.any(Number),
+          name: SYSTEM_NAME,
+          type: StorageEntityType[StorageEntityType.SYSTEM],
+          status: ComponentStatus[ComponentStatus.ACTIVE],
+        }),
+      }),
+      externals: [],
+    };
+    return request(app.getHttpServer())
+      .put(`/api/v1/systems/${SYSTEM_NAME}/host-groups/${HOST_GROUP_NAME}/status`)
+      .send(changeStatusPayload)
+      .expect(HttpStatus.OK)
+      .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
+  });
+
+  it('Update port status (PUT)', () => {
+    const expected = {
+      storageEntity: expect.objectContaining({
+        id: expect.any(Number),
+        name: PORT_NAME,
+        type: StorageEntityType[StorageEntityType.PORT],
+        status: ComponentStatus[ComponentStatus.INACTIVE],
+        parent: expect.objectContaining({
+          id: expect.any(Number),
+          name: ADAPTER_NAME,
+          status: ComponentStatus[ComponentStatus.ACTIVE],
+          type: StorageEntityType[StorageEntityType.ADAPTER],
+          parent: expect.objectContaining({
+            id: expect.any(Number),
+            name: SYSTEM_NAME,
+            type: StorageEntityType[StorageEntityType.SYSTEM],
+            status: ComponentStatus[ComponentStatus.ACTIVE],
+          }),
+        }),
+      }),
+      externals: [],
+    };
+    return request(app.getHttpServer())
+      .put(`/api/v1/systems/${SYSTEM_NAME}/chas/${encodeURIComponent(ADAPTER_NAME)}/ports/${encodeURIComponent(PORT_NAME)}/status`)
+      .send(changeStatusPayload)
+      .expect(HttpStatus.OK)
+      .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
+  });
+
+  it('Update adapter status (POST)', () => {
+    const expected = {
+      storageEntity: expect.objectContaining({
+        id: expect.any(Number),
+        name: ADAPTER_NAME,
+        status: ComponentStatus[ComponentStatus.INACTIVE],
+        type: StorageEntityType[StorageEntityType.ADAPTER],
+        parent: expect.objectContaining({
+          id: expect.any(Number),
+          name: SYSTEM_NAME,
+          type: StorageEntityType[StorageEntityType.SYSTEM],
+          status: ComponentStatus[ComponentStatus.ACTIVE],
+        }),
+      }),
+      externals: [],
+    };
+    return request(app.getHttpServer())
+      .put(`/api/v1/systems/${SYSTEM_NAME}/chas/${encodeURIComponent(ADAPTER_NAME)}/status`)
+      .send(changeStatusPayload)
+      .expect(HttpStatus.OK)
+      .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
+  });
+
+  it('Update adapter status when not exists(PUT)', () => {
+    return request(app.getHttpServer())
+      .put(`/api/v1/systems/${SYSTEM_NAME}/chas/ChaXXX/status`)
+      .send(changeStatusPayload)
+      .expect(HttpStatus.NOT_FOUND);
+  });
+
+  it('Update system status (PUT)', () => {
+    const expected = {
+      storageEntity: expect.objectContaining({
+          name: SYSTEM_NAME_2,
+          status: ComponentStatus[ComponentStatus.INACTIVE],
+          type: StorageEntityType[StorageEntityType.SYSTEM],
+        },
+      ),
+      externals: [],
+    };
+    return request(app.getHttpServer())
+      .put(`/api/v1/systems/${SYSTEM_NAME_2}/status`)
+      .send(changeStatusPayload)
+      .expect(HttpStatus.OK)
+      .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
+  });
 });

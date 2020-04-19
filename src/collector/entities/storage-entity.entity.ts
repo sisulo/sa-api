@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from 'typeorm';
+import { ExternalEntity } from './external.entity';
 
 @Entity('storage_entities')
 @Tree('closure-table')
@@ -23,4 +24,7 @@ export class StorageEntityEntity {
 
   @TreeParent()
   parent: StorageEntityEntity;
+
+  @OneToMany(() => ExternalEntity, external => external.storageEntity)
+  externals: ExternalEntity[];
 }

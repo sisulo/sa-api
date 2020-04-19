@@ -4,6 +4,6 @@ import { HttpStatus } from '@nestjs/common';
 
 export class StorageEntityNotFoundError extends SaApiException {
   constructor(msg: string) {
-    super(ErrorCodeConst.ENTITY_NOT_FOUND, msg, HttpStatus.BAD_REQUEST);
+    super(ErrorCodeConst.ENTITY_NOT_FOUND, msg, HttpStatus.NOT_FOUND);
   }
 }

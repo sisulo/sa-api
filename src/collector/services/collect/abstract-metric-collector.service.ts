@@ -1,4 +1,4 @@
-import { StorageEntityKey } from '../../controllers/metric.controller';
+
 import { MetricRequestDto } from '../../dto/metric-request.dto';
 import { AbstractMetricEntity } from '../../entities/abstract-metric.entity';
 import { StorageEntityRepository } from '../../repositories/storage-entity.repository';
@@ -7,6 +7,7 @@ import { StorageEntityEntity } from '../../entities/storage-entity.entity';
 import { Repository } from 'typeorm';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import { LatencyRequestDto } from '../../dto/latency-request.dto';
+import { StorageEntityKey } from '../../utils/storage-entity-key.utils';
 
 export interface MetricCollectorCommand {
   repository: Repository<any>;
