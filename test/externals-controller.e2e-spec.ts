@@ -40,7 +40,8 @@ describe('Externals Controller', () => {
   afterAll(async () => {
     await app.close();
   });
-  it('Inserting two externals', () => {
+
+  it('Inserting externals, also with update', async () => {
     const expected = expect.objectContaining({
       externals: [
         {
@@ -58,16 +59,32 @@ describe('Externals Controller', () => {
         type: StorageEntityType[StorageEntityType.HOST_GROUP],
       }),
     });
-    return request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post(`/api/v2/storage-entities`)
       .send({ name: HOST_GROUP_NAME, type: StorageEntityType[StorageEntityType.HOST_GROUP], parentId: 14 })
       .expect(HttpStatus.CREATED)
-      .then(() => {
-        request(app.getHttpServer())
+      .then(async () => {
+        return await request(app.getHttpServer())
           .put(`/api/v1/systems/${SYSTEM_NAME}/host-groups/${HOST_GROUP_NAME}/externals`)
           .send(payload)
-          .expect(HttpStatus.OK)
-          .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
+          .then(async (responses) => {
+            ValidateResponseUtils.validateResponse(responses, expected);
+            const modifiedPayload = payload;
+            modifiedPayload.data = [{ type: ExternalType[ExternalType.TIER], value: 'T5' }];
+            await request(app.getHttpServer())
+              .put(`/api/v1/systems/${SYSTEM_NAME}/host-groups/${HOST_GROUP_NAME}/externals`)
+              .send(modifiedPayload)
+              .then(updateResponse =>
+                expect(updateResponse.body.externals.length).toEqual(1),
+              );
+          });
       });
+  });
+
+  it('Host Group not found', () => {
+    return request(app.getHttpServer())
+      .put(`/api/v1/systems/${SYSTEM_NAME}/host-groups/Wrong-hostGroup/externals`)
+      .send(payload)
+      .expect(HttpStatus.NOT_FOUND);
   });
 });

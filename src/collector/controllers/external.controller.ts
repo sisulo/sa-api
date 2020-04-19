@@ -5,6 +5,7 @@ import { StorageEntityTransformer } from '../transformers/storage-entity.transfo
 import { StorageEntityResponseDto } from '../dto/storage-entity-response.dto';
 import { CollectorType } from '../factory/collector-type.enum';
 import { StorageEntityKeyUtils } from '../utils/storage-entity-key.utils';
+import { ExternalRequestPipe } from '../dto/pipes/external-request.pipe';
 
 @Controller('api/v1/systems/')
 export class ExternalController {
@@ -15,7 +16,7 @@ export class ExternalController {
   public async setExternals(@Param('systemName') systemName,
                             @Param('componentName') componentName,
                             @Param('subComponent') type: CollectorType,
-                            @Body() dto: ExternalRequestDto): Promise<StorageEntityResponseDto> {
+                            @Body(new ExternalRequestPipe()) dto: ExternalRequestDto): Promise<StorageEntityResponseDto> {
     const key = StorageEntityKeyUtils.createComponentKey(systemName, componentName, null, StorageEntityKeyUtils.of(type));
     const storageEntity = await this.externalService.putExternals(key, dto);
     return StorageEntityTransformer.transform(storageEntity);

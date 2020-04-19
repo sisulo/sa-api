@@ -21,14 +21,15 @@ export class ExternalService {
     if (storageEntity === undefined) {
       throw new StorageEntityNotFound(`Storage entity not found in ${key}`);
     }
-    if (storageEntity.externals !== undefined && storageEntity.externals.length > 0) {
-      await this.externalRepository.delete(storageEntity.externals.map(external => external.idExternal));
+    const externals = await storageEntity.externals;
+    if (externals !== undefined && externals.length > 0) {
+      await this.externalRepository.delete(externals.map(external => external.idExternal));
     }
-    storageEntity.externals = await Promise.all(dto.data.map(external => ExternalService.createExternal(external)));
-    return this.storageEntityRepository.save(storageEntity);
+    storageEntity.externals = Promise.resolve(dto.data.map(external => ExternalService.createExternal(external)));
+    return await this.storageEntityRepository.save(storageEntity);
   }
 
-  private static async createExternal(external: ExternalDto) {
+  private static createExternal(external: ExternalDto) {
     const entity = new ExternalEntity();
     entity.idType = external.type;
     entity.value = external.value;

@@ -26,5 +26,5 @@ export class StorageEntityEntity {
   parent: StorageEntityEntity;
 
   @OneToMany(() => ExternalEntity, external => external.storageEntity)
-  externals: ExternalEntity[];
+  externals: Promise<ExternalEntity[]>;
 }

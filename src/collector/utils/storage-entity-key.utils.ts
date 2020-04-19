@@ -17,7 +17,7 @@ export interface StorageEntityKey {
 export class StorageEntityKeyUtils {
   public static createComponentKey(systemName, subComponentName, portName, paramType: StorageEntityType): StorageEntityKey {
     let componentKey: StorageEntityKey;
-    if (portName !== undefined) {
+    if (portName !== undefined && portName !== null) {
       componentKey = {
         datacenter: { name: 'CZ_Chodov', type: StorageEntityType.DATA_CENTER },
         grandParent: { name: systemName, type: StorageEntityType.SYSTEM },

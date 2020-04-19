@@ -18,9 +18,7 @@ import { DataCenterService } from './services/data-center.service';
 import { MetricTypeService } from './services/metric-type.service';
 import { CapacityStatisticsService } from './services/capacity-statistics.service';
 import { MetricController } from './controllers/metric.controller';
-import { HostGroupMetricService } from './services/host-group-metric.service';
 import { HostGroupMetricEntity } from './entities/host-group-metric.entity';
-import { HostGroupService } from './services/host-group.service';
 import { HostGroupEntity } from './entities/host-group.entity';
 import { SystemMetricReadEntity } from './entities/system-metric-read.entity';
 import { PoolMetricReadEntity } from './entities/pool-metric-read.entity';
@@ -46,7 +44,6 @@ import { StorageEntityEntity } from './entities/storage-entity.entity';
 import { StorageEntityRepository } from './repositories/storage-entity.repository';
 import { MetricCollectorService } from './services/collect/metric-collector.service';
 import { MetricRepositoryFactory } from './factory/metric-repository.factory';
-import { HostGroupRepository } from './repositories/host-group.repository';
 import { MultiValueMetricCollectorService } from './services/collect/multi-value-metric-collector.service';
 
 @Module({
@@ -78,7 +75,6 @@ import { MultiValueMetricCollectorService } from './services/collect/multi-value
          * Custom repositories
          */
         StorageEntityRepository,
-        HostGroupRepository,
       ],
     ),
 
@@ -90,8 +86,6 @@ import { MultiValueMetricCollectorService } from './services/collect/multi-value
     SystemService,
     ChaMetricService,
     ChaService,
-    HostGroupMetricService,
-    HostGroupService,
     DataCenterService,
     MetricTypeService,
     CapacityStatisticsService,

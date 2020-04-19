@@ -10,6 +10,7 @@ import { DatacenterCapacityListDto } from '../models/dtos/datacenter-capacity-li
 import { SystemMetricType } from '../models/metrics/SystemMetricType';
 import { ExternalEntity } from '../../collector/entities/external.entity';
 import { ComponentExternal } from '../models/ComponentExternal';
+import { ExternalType } from '../../collector/enums/external-type.enum';
 
 export class HostGroupMetricTransformer {
   // TODO CapacityStatisticsDto should be named as Composite stats not as type of metrics
@@ -80,7 +81,7 @@ export class HostGroupMetricTransformer {
 
   private static createExternal(external: ExternalEntity) {
     const responseDto = new ComponentExternal();
-    responseDto.type = SystemMetricType[external.externalTypeEntity.name];
+    responseDto.type = SystemMetricType[ExternalType[external.idType]];
     responseDto.value = external.value;
     return responseDto;
   }

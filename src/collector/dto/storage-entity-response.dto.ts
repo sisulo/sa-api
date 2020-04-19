@@ -1,7 +1,7 @@
 import { Owner } from './owner.dto';
-import { ExternalDto } from './external.dto';
+import { ExternalResponseDto } from './external-response.dto';
 
 export class StorageEntityResponseDto {
   storageEntity: Owner;
-  externals: ExternalDto[];
+  externals: ExternalResponseDto[];
 }

@@ -23,7 +23,7 @@ export class HostGroupEntity implements StorageEntityInterface {
   @OneToMany(() => HostGroupMetricReadEntity, metric => metric.owner)
   metrics: HostGroupMetricReadEntity[];
 
-  @OneToMany(() => ExternalEntity, external => external.hostGroup, {
+  @OneToMany(() => ExternalEntity, external => external.storageEntity, {
     cascade: true,
     eager: true,
   })
