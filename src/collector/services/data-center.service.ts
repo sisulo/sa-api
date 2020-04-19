@@ -6,6 +6,8 @@ import { MetricType } from '../enums/metric-type.enum';
 import { PeriodType } from '../enums/period-type.enum';
 import { Region } from '../../statistics/models/dtos/region.enum';
 import { ComponentStatus } from '../enums/component.status';
+import { StorageEntityRepository } from '../repositories/storage-entity.repository';
+import { StorageEntityEntity } from '../entities/storage-entity.entity';
 
 export enum MetricGroup {
   PERFORMANCE = 1,
@@ -23,6 +25,7 @@ export class DataCenterService {
   constructor(
     @InjectRepository(DataCenterEntity)
     private readonly dataCenterRepository: Repository<DataCenterEntity>,
+    private storageEntityRepository: StorageEntityRepository,
   ) {
     this.regionDataCenters.push({ type: Region.EUROPE, dataCenterIds: [1, 2] });
     this.regionDataCenters.push({ type: Region.ASIA, dataCenterIds: [3, 4] });
@@ -116,11 +119,8 @@ export class DataCenterService {
     return this.findById(idDataCenterParam);
   }
 
-  getAllDataCenters(): Promise<DataCenterEntity[]> {
-    return this.dataCenterRepository.createQueryBuilder('datacenter')
-      .innerJoinAndSelect('datacenter.systems', 'system')
-      .where('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE })
-      .getMany();
+  async getAllDataCenters(): Promise<StorageEntityEntity[]> {
+    return await this.storageEntityRepository.findDataCenters();
   }
 
   private loadMetrics(metricGroup: MetricGroup, idDataCenterParam: number, period: PeriodType) {

@@ -3,7 +3,8 @@ import { DataCenterStatisticsService } from '../services/data-center-statistics.
 import { DataCenterService, MetricGroup } from '../../collector/services/data-center.service';
 import { StatisticParams } from './params/statistic.params';
 import { StatisticQueryParams } from './params/statistics.query-params';
-import { InfrastructureTransformer } from '../transformers/infrastructure.transformer';
+import { StorageEntityTransformer } from '../../collector/transformers/storage-entity.transformer';
+import { StorageEntityResponseDto } from '../../collector/dto/storage-entity-response.dto';
 
 @Controller('api/v1/datacenters/')
 export class DataCenterStatisticsController {
@@ -12,9 +13,9 @@ export class DataCenterStatisticsController {
   }
 
   @Get('/')
-  async infrastructureMap() {
+  async infrastructureMap(): Promise<StorageEntityResponseDto[]> {
     const entities = await this.dataCenterService.getAllDataCenters();
-    return InfrastructureTransformer.transform(entities);
+    return StorageEntityTransformer.transformAll(entities, true);
   }
 
   @Get('performance')

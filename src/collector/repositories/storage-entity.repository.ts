@@ -59,6 +59,9 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
     return [key.child, key.parent, key.grandParent].filter(value => value !== null);
   }
 
+  public async findDataCenters(): Promise<StorageEntityEntity[]> {
+    return await this.findTrees();
+  }
   public async availableSystems(): Promise<StorageEntityEntity[]> {
     return await this.createQueryBuilder('storageEntity')
       .innerJoinAndSelect('storageEntity.children', 'pools')

@@ -8,9 +8,14 @@ import { ExternalResponseDto } from '../dto/external-response.dto';
 import { ExternalType } from '../enums/external-type.enum';
 
 export class StorageEntityTransformer {
-  public static async transform(storageEntity: StorageEntityEntity) {
+
+  public static async transformAll(storageEntities: StorageEntityEntity[], reverse= false): Promise<StorageEntityResponseDto[]> {
+    return await Promise.all(storageEntities.map(item => StorageEntityTransformer.transform(item, reverse)));
+  }
+
+  public static async transform(storageEntity: StorageEntityEntity, reverse = false): Promise<StorageEntityResponseDto> {
     const dto = new StorageEntityResponseDto();
-    dto.storageEntity = MetricTransformer.transformFromOwner(storageEntity);
+    dto.storageEntity = MetricTransformer.transformFromOwner(storageEntity, reverse);
     const externals = await storageEntity.externals;
     if (!isEmpty(externals)) {
       dto.externals = externals.map(externalEntity => this.transformExternal(externalEntity));
