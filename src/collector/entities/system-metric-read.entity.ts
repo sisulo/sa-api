@@ -1,14 +1,11 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { SystemEntity } from './system.entity';
-import { CatMetricTypeEntity } from './cat-metric-type.entity';
-import { MetricEntityInterface } from './metric-entity.interface';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { StorageEntityEntity } from './storage-entity.entity';
 
 // TODO move to statistics
 // TODO Make a view_metric_active for all "Read" Entity
 @Entity('view_system_metrics')
-export class SystemMetricReadEntity implements MetricEntityInterface {
-  @PrimaryGeneratedColumn({ name: 'id_system_metric', type: 'integer' })
+export class SystemMetricReadEntity {
+  @PrimaryColumn()
   id: number;
 
   @Column({ name: 'value' })
@@ -27,7 +24,5 @@ export class SystemMetricReadEntity implements MetricEntityInterface {
   @Column({ name: 'id_cat_metric_type', type: 'integer' })
   idType: number;
 
-  @ManyToOne(() => CatMetricTypeEntity, { eager: true })
-  @JoinColumn({ name: 'id_cat_metric_type' })
-  metricTypeEntity: CatMetricTypeEntity;
+  metrics: any[];
 }

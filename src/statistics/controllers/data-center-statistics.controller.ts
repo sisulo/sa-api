@@ -5,6 +5,7 @@ import { StatisticParams } from './params/statistic.params';
 import { StatisticQueryParams } from './params/statistics.query-params';
 import { StorageEntityTransformer } from '../../collector/transformers/storage-entity.transformer';
 import { StorageEntityResponseDto } from '../../collector/dto/storage-entity-response.dto';
+import { MetricType } from '../../collector/enums/metric-type.enum';
 
 @Controller('api/v1/datacenters/')
 export class DataCenterStatisticsController {
@@ -20,17 +21,18 @@ export class DataCenterStatisticsController {
 
   @Get('performance')
   performanceStatisticsAll(@Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.PERFORMANCE, null, queryParams.period);
+    return this.dataCenterService.getPerformanceMetrics([MetricType.WORKLOAD], []);
   }
 
   @Get(':idDataCenter/performance')
   performanceStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.PERFORMANCE, params.idDataCenter, queryParams.period);
+    return this.dataCenterService.getPerformanceMetrics([MetricType.WORKLOAD], []);
   }
 
   @Get('capacity')
   capacityStatisticsAll(@Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.CAPACITY, null);
+    return this.dataCenterService.getPoolMetrics([MetricType.PHYSICAL_CAPACITY], []);
+    // return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.CAPACITY, null);
   }
 
   @Get(':idDataCenter/capacity')
@@ -40,12 +42,12 @@ export class DataCenterStatisticsController {
 
   @Get('adapters')
   channelAdaptersStatisticsAll(@Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.ADAPTERS, null, queryParams.period);
+    return this.dataCenterService.getChannelAdapterMetrics([MetricType.IMBALANCE_EVENTS, MetricType.PORT_IMBALANCE_EVENTS], []);
   }
 
   @Get(':idDataCenter/adapters')
   channelAdaptersStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.ADAPTERS, params.idDataCenter, queryParams.period);
+    // return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.ADAPTERS, params.idDataCenter, queryParams.period);
   }
 
   @Get('sla')
@@ -60,7 +62,7 @@ export class DataCenterStatisticsController {
 
   @Get('host-groups')
   hostGroupStatisticsAll(@Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.HOST_GROUPS, null);
+    return this.dataCenterService.getHostGroupMetrics([MetricType.NET_TOTAL], []);
   }
 
   @Get(':idDataCenter/host-groups')

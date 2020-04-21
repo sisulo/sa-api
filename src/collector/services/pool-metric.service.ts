@@ -45,16 +45,7 @@ export class PoolMetricService extends CommonMetricService<PoolMetricEntity, Poo
 
   public async getAlerts(): Promise<PoolMetricEntity[]> {
     const types = await this.metricTypeService.findByMetricTypes([MetricType.SLA_EVENTS, MetricType.PHYSICAL_USED_PERC]);
-    return await this.metricReadRepository.createQueryBuilder('metric')
-      .innerJoinAndSelect('metric.metricTypeEntity', 'type')
-      .innerJoinAndSelect('type.threshold', 'threshold')
-      .innerJoinAndSelect('metric.owner', 'pool')
-      .innerJoinAndSelect('pool.parent', 'system')
-      .where('metric.value >= COALESCE(threshold.min_value, -2147483648)')
-      .andWhere('metric.value < COALESCE(threshold.max_value, 2147483647)')
-      .andWhere('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE })
-      .andWhere('metric.metricTypeEntity IN (:...type)', { type: types.map(type => type.id) })
-      .getMany();
+    return [];
   }
 
   // TODO duplicated in owner-metric.service
@@ -79,7 +70,8 @@ export class PoolMetricService extends CommonMetricService<PoolMetricEntity, Poo
       MetricType.CHANGE_MONTH]);
     const result = [];
     for (const type of types) {
-      const entities = await this.metricReadRepository.find({ metricTypeEntity: type });
+      const entities = [];
+      // const entities = await this.metricReadRepository.find({ metricTypeEntity: type });
       result.push(PoolMetricService.aggregateMetric(entities));
     }
     return result;
@@ -88,7 +80,7 @@ export class PoolMetricService extends CommonMetricService<PoolMetricEntity, Poo
   private static aggregateMetric(metrics: PoolMetricReadEntity[]): MetricEntityInterface {
     const data = metrics;
     const result = new SystemMetricReadEntity();
-    result.metricTypeEntity = data[0].metricTypeEntity;
+    // result.metricTypeEntity = data[0].metricTypeEntity;
     result.value = data.reduce(
       (accumulator, currentValue) => accumulator + currentValue.value, 0,
     );

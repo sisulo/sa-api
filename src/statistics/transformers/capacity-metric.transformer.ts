@@ -54,9 +54,9 @@ export class CapacityMetricTransformer {
     poolDetails.id = pool.id;
     poolDetails.name = pool.name;
     if (pool.metrics != null) {
-      poolDetails.metrics = pool.metrics.map(
-        metric => CapacityMetricTransformer.createSystemMetric(metric),
-      );
+      // poolDetails.metrics = pool.metrics.map(
+      //   metric => CapacityMetricTransformer.createSystemMetric(metric),
+      // );
     } else {
       poolDetails.metrics = [];
     }

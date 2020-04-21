@@ -286,3 +286,118 @@ DROP TABLE datacenters;
 -- SELECT currval()
 
 --SELECT * FROM storage_entities_closure WHERE id_descendant = 227
+
+drop view IF EXISTS view_pool_metrics;
+create view view_pool_metrics as
+SELECT
+ outer_sm.id_metric as id,
+ outer_sm.id_cat_metric_type,
+ outer_sm.value,
+ outer_sm.id_storage_entity,
+ outer_sm.date,
+ outer_sm.created_at
+FROM storage_entities datacenters
+JOIN storage_entities systems on systems."parentId" = datacenters.id AND systems.id_cat_storage_entity_type = 2
+JOIN storage_entities pools on pools."parentId" = systems.id AND pools.id_cat_storage_entity_type = 3
+LEFT JOIN pool_metrics outer_sm on outer_sm.id_storage_entity = pools.id and outer_sm.id_metric = (
+	SELECT inner_sm.id_metric
+	FROM pool_metrics as inner_sm
+	WHERE outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type
+		AND outer_sm.id_storage_entity = inner_sm.id_storage_entity
+	ORDER BY date DESC
+	LIMIT 1
+)
+WHERE "datacenters".id_cat_storage_entity_type = 1;
+
+drop view IF EXISTS view_system_metrics;
+create view view_system_metrics as
+select
+     outer_sm.id_metric AS id,
+     outer_sm.id_cat_metric_type,
+     outer_sm.value,
+     outer_sm.peak,
+     outer_sm.id_storage_entity,
+     outer_sm.date,
+     outer_sm.created_at
+from storage_entities datacenters
+join storage_entities systems on systems."parentId" = datacenters.id AND systems.id_cat_storage_entity_type = 2
+left join system_metrics outer_sm on outer_sm.id_storage_entity = systems.id and outer_sm.id_metric = (
+	select inner_sm.id_metric
+	from system_metrics as inner_sm
+	where outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type and outer_sm.id_storage_entity = inner_sm.id_storage_entity
+	order by date desc
+	LIMIT 1
+)
+WHERE datacenters.id_cat_storage_entity_type = 1
+
+CREATE VIEW view_port_metrics as
+SELECT
+   outer_sm.id_metric AS id,
+   outer_sm.id_cat_metric_type,
+   outer_sm.value,
+   outer_sm.id_storage_entity,
+   outer_sm.date,
+   outer_sm.created_at
+FROM
+   storage_entities datacenters
+   JOIN
+      storage_entities systems
+      ON systems."parentId" = datacenters.id AND systems.id_cat_storage_entity_type = 2
+   JOIN
+      storage_entities chas
+      ON systems.id = chas."parentId" AND chas.id_cat_storage_entity_type = 4
+   JOIN
+      storage_entities ports
+      ON chas.id = ports."parentId" AND ports.id_cat_storage_entity_type = 5
+   LEFT JOIN
+      port_metrics outer_sm
+      ON outer_sm.id_storage_entity = ports.id
+      AND outer_sm.id_metric IN
+      (
+         SELECT
+            inner_sm.id_metric
+         FROM
+            port_metrics as inner_sm
+         WHERE
+            outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type
+            and outer_sm.id_storage_entity = inner_sm.id_storage_entity
+         ORDER BY
+            date DESC LIMIT 1
+      )
+	  WHERE datacenters.id_cat_storage_entity_type = 1
+;
+
+drop view IF EXISTS view_cha_metrics;
+create view view_cha_metrics as
+select
+   outer_sm.id_metric AS id,
+   outer_sm.id_cat_metric_type,
+   outer_sm.value,
+   outer_sm.id_storage_entity,
+   outer_sm.date,
+   outer_sm.created_at
+from
+   storage_entities datacenters
+   join
+      storage_entities systems
+      on systems."parentId" = datacenters.id AND systems.id_cat_storage_entity_type = 2
+   join
+      storage_entities chas
+      on systems.id = chas."parentId" AND chas.id_cat_storage_entity_type = 4
+   left join
+      cha_metrics outer_sm ON
+      outer_sm.id_storage_entity = chas.id
+      and outer_sm.id_metric in
+      (
+         select
+            inner_sm.id_metric
+         from
+            cha_metrics as inner_sm
+         where
+            outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type
+            and outer_sm.id_storage_entity = inner_sm.id_storage_entity
+         order by
+            inner_sm.date desc limit 1
+      )
+	  WHERE datacenters.id_cat_storage_entity_type = 1
+;
