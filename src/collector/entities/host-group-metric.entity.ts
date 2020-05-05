@@ -1,5 +1,4 @@
-import { Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { HostGroupEntity } from './host-group.entity';
+import { Entity } from 'typeorm';
 import { AbstractMetricEntity } from './abstract-metric.entity';
 
 @Entity('host_group_metrics')

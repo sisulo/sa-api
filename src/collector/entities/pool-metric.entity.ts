@@ -1,5 +1,4 @@
-import { Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { PoolEntity } from './pool.entity';
+import { Entity } from 'typeorm';
 import { MetricEntityInterface } from './metric-entity.interface';
 import { AbstractMetricEntity } from './abstract-metric.entity';
 

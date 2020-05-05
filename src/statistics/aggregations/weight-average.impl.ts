@@ -24,6 +24,6 @@ export class WeightedAverageImpl extends AggregationAlgorithmAbstract {
       },
     );
     const aggValueResult = aggValueTotal / weightValueTotal;
-    return { value: aggValueResult, metricTypeEntity: null, id: null };
+    return { value: aggValueResult, metricTypeEntity: null, id: null, date: null };
   }
 }

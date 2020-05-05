@@ -328,7 +328,7 @@ left join system_metrics outer_sm on outer_sm.id_storage_entity = systems.id and
 	order by date desc
 	LIMIT 1
 )
-WHERE datacenters.id_cat_storage_entity_type = 1
+WHERE datacenters.id_cat_storage_entity_type = 1;
 
 CREATE VIEW view_port_metrics as
 SELECT

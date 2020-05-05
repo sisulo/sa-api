@@ -1,6 +1,5 @@
 import { Controller, Get, Logger, Query } from '@nestjs/common';
 import { CapacityStatisticsService } from '../../collector/services/capacity-statistics.service';
-import { GlobalCapacityTransformer } from '../transformers/global-capacity-transformer';
 import { DataCenterStatisticsService } from '../services/data-center-statistics.service';
 import { GraphDataService, ServiceType } from '../services/graph-data.service';
 import { MetricType } from '../../collector/enums/metric-type.enum';
@@ -12,10 +11,10 @@ import { InfraStatisticsTransformer } from '../transformers/infra-statistics.tra
 import { PoolAggregatedMetricService } from '../services/pool-aggregated-metric.service';
 import { SystemAggregatedMetricService } from '../services/system-aggregated-metric.service';
 import { RegionMetricInterface } from '../services/aggregated-metric.service';
+import { StorageEntityMetricTransformer } from '../transformers/storage-entity-metric.transformer';
 
 @Controller('api/v1/infrastructure')
 export class InfrastructureStatisticsController {
-  private readonly logger = new Logger(InfrastructureStatisticsController.name);
 
   constructor(private capacityStatisticsService: CapacityStatisticsService,
               private dataCenterService: DataCenterStatisticsService,
@@ -25,13 +24,13 @@ export class InfrastructureStatisticsController {
   }
 
   @Get('/capacity')
-  public getInfrastructureCapacity() {
-    return GlobalCapacityTransformer.transform(this.capacityStatisticsService.getCapacityStatistics());
+  public async getInfrastructureCapacity() {
+    return StorageEntityMetricTransformer.transform(await this.capacityStatisticsService.getCapacityStatistics());
   }
 
   @Get('/host-group-capacity')
-  public getHostGroupCapacity() {
-    return GlobalCapacityTransformer.transformHostGroups(this.capacityStatisticsService.getHostGroupCapacityStatistics());
+  public async getHostGroupCapacity() {
+    return StorageEntityMetricTransformer.transform(await this.capacityStatisticsService.getHostGroupCapacityStatistics());
   }
 
   @Get('alerts')

@@ -2,8 +2,8 @@ import { AggregatedMetricService } from './aggregated-metric.service';
 import { Injectable } from '@nestjs/common';
 import { DataCenterService } from '../../collector/services/data-center.service';
 import { MetricTypeService } from '../../collector/services/metric-type.service';
-import { DataCenterEntity } from '../../collector/entities/data-center.entity';
 import { MetricType } from '../../collector/enums/metric-type.enum';
+import { StorageEntityEntity } from '../../collector/entities/storage-entity.entity';
 
 @Injectable()
 export class PoolAggregatedMetricService extends AggregatedMetricService {
@@ -12,11 +12,11 @@ export class PoolAggregatedMetricService extends AggregatedMetricService {
     super(dcService, typeService);
   }
 
-  fetchMetricsOnly(entities: DataCenterEntity[]): any[] {
+  fetchMetricsOnly(entities: StorageEntityEntity[]): any[] {
     const result = [];
     entities.forEach(dataCenter =>
-      dataCenter.systems.forEach(system =>
-        system.pools.forEach(pool =>
+      dataCenter.children.forEach(system =>
+        system.children.forEach(pool =>
           result.push(pool.metrics),
         ),
       ),
@@ -24,7 +24,7 @@ export class PoolAggregatedMetricService extends AggregatedMetricService {
     return result;
   }
 
-  getData(types: MetricType[], dataCenterIds: number[]) {
+  getData(types: MetricType[], dataCenterIds: number[]): Promise<StorageEntityEntity[]> {
     return this.dcService.getPoolMetrics(types, dataCenterIds);
   }
 }

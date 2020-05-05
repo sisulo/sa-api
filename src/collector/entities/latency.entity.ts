@@ -1,6 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { PoolEntity } from './pool.entity';
-import { CatOperationEntity } from './cat-operation.entity';
+import { Column, Entity } from 'typeorm';
 import { AbstractMetricEntity } from './abstract-metric.entity';
 
 @Entity('block_size_latency')

@@ -1,18 +1,14 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { PerformanceMetricTransformer } from '../transformers/performance-metric.transformer';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataCenterService, MetricGroup } from '../../collector/services/data-center.service';
-import { DataCenterEntity } from '../../collector/entities/data-center.entity';
-import { AdapterMetricTransformer } from '../transformers/adapter-metric.transformer';
-import { CapacityMetricTransformer } from '../transformers/capacity-metric.transformer';
-import { HostGroupMetricTransformer } from '../transformers/host-group-metric.transformer';
-import { DatacenterCapacityListDto } from '../models/dtos/datacenter-capacity-list.dto';
-import { DatacenterPerfListDto } from '../models/dtos/datacenter-perf-list.dto';
+import { StorageEntityMetricTransformer } from '../transformers/storage-entity-metric.transformer';
 import { ChaMetricService } from '../../collector/services/cha-metric.service';
 import { PoolMetricService } from '../../collector/services/pool-metric.service';
 import { MetricEntityInterface } from '../../collector/entities/metric-entity.interface';
 import { SystemMetricService } from '../../collector/services/system-metric.service';
 import { PeriodType } from '../../collector/enums/period-type.enum';
 import { PortMetricService } from '../../collector/services/port-metric.service';
+import { StorageEntityEntity } from '../../collector/entities/storage-entity.entity';
+import { StorageEntityMetricDto } from '../models/dtos/storage-entity-metric.dto';
 
 @Injectable()
 export class DataCenterStatisticsService {
@@ -23,33 +19,17 @@ export class DataCenterStatisticsService {
               private systemMetricService: SystemMetricService) {
   }
 
-  private static transform(metricGroup: MetricGroup, entity: DataCenterEntity[]) {
-    switch (metricGroup) {
-      case MetricGroup.CAPACITY:
-      case MetricGroup.SLA:
-        return CapacityMetricTransformer.transform(entity);
-      case MetricGroup.ADAPTERS:
-        return AdapterMetricTransformer.transform(entity);
-      case MetricGroup.PERFORMANCE:
-        return PerformanceMetricTransformer.transform(entity);
-      case MetricGroup.HOST_GROUPS:
-        return HostGroupMetricTransformer.transform(entity);
-      default:
-        throw new BadRequestException(`Cannot transform DataCenterEntity for metricGroup(${metricGroup})`);
-    }
-  }
-
-  async getMetricByIdDataCenter(metricGroup: MetricGroup, idDataCenter: number, period?: PeriodType)
-    : Promise<DatacenterCapacityListDto | DatacenterPerfListDto> {
+  async getMetricByIdDataCenter(metricGroup: MetricGroup, idDataCenter: number = null, period?: PeriodType)
+    : Promise<StorageEntityMetricDto[]> {
     const dataCenterEntity = await this.getEntities(metricGroup, idDataCenter, period);
     if (dataCenterEntity !== undefined) {
-      return DataCenterStatisticsService.transform(metricGroup, dataCenterEntity);
+      return StorageEntityMetricTransformer.transform(dataCenterEntity);
     } else {
       throw new NotFoundException(`No data found DataCenter(${idDataCenter})`);
     }
   }
 
-  async getEntities(metricGroup: MetricGroup, idDataCenter: number, period: PeriodType): Promise<DataCenterEntity[]> {
+  async getEntities(metricGroup: MetricGroup, idDataCenter: number, period: PeriodType): Promise<StorageEntityEntity[]> {
     return await this.dataCenterService.getMetricsByGroup(metricGroup, idDataCenter, period);
   }
 

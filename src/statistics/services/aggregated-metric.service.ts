@@ -2,10 +2,10 @@ import { DataCenterService } from '../../collector/services/data-center.service'
 import { MetricType } from '../../collector/enums/metric-type.enum';
 import { WeightedAverageImpl } from '../aggregations/weight-average.impl';
 import { SumImpl } from '../aggregations/sum.impl';
-import { DataCenterEntity } from '../../collector/entities/data-center.entity';
 import { MetricTypeService } from '../../collector/services/metric-type.service';
 import { Region } from '../models/dtos/region.enum';
 import { MetricEntityInterface } from '../../collector/entities/metric-entity.interface';
+import { StorageEntityEntity } from '../../collector/entities/storage-entity.entity';
 
 export interface RegionMetricInterface {
   region: Region;
@@ -43,7 +43,7 @@ export abstract class AggregatedMetricService {
 
   abstract getData(types: MetricType[], dataCenterIds: number[]);
 
-  abstract fetchMetricsOnly(entities: DataCenterEntity[]): any[];
+  abstract fetchMetricsOnly(entities: StorageEntityEntity[]): any[];
 
   public async fetchAggregatedMetricsGrouped(types: MetricType[], regions: Region[]): Promise<RegionMetricInterface[]> {
     return await Promise.all(regions.map(async group => {

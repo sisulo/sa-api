@@ -7,10 +7,7 @@ import { SystemEntity } from './entities/system.entity';
 import { PoolMetricEntity } from './entities/pool-metric.entity';
 import { PoolMetricService } from './services/pool-metric.service';
 import { PoolEntity } from './entities/pool.entity';
-import { SystemService } from './services/system.service';
-import { PoolService } from './services/pool.service';
 import { ChaMetricService } from './services/cha-metric.service';
-import { ChaService } from './services/cha.service';
 import { ChaMetricEntity } from './entities/cha-metric.entity';
 import { ChaEntity } from './entities/cha.entity';
 import { DataCenterEntity } from './entities/data-center.entity';
@@ -27,7 +24,6 @@ import { PortMetricService } from './services/port-metric.service';
 import { PortMetricEntity } from './entities/port-metric.entity';
 import { PortEntity } from './entities/port.entity';
 import { PortMetricReadEntity } from './entities/port-metric-read.entity';
-import { PortService } from './services/port.service';
 import { CatExternalTypeEntity } from './entities/cat-external-type.entity';
 import { ExternalEntity } from './entities/external.entity';
 import { ExternalService } from './services/external.service';
@@ -81,16 +77,12 @@ import { MultiValueMetricCollectorService } from './services/collect/multi-value
   ],
   providers: [
     PoolMetricService,
-    PoolService,
     SystemMetricService,
-    SystemService,
     ChaMetricService,
-    ChaService,
     DataCenterService,
     MetricTypeService,
     CapacityStatisticsService,
     PortMetricService,
-    PortService,
     LatencyMetricTransformer,
     DataCenterService,
     ExternalService,
@@ -116,7 +108,6 @@ import { MultiValueMetricCollectorService } from './services/collect/multi-value
     DataCenterService,
     MetricTypeService,
     LatencyMetricService,
-    SystemService,
     StorageEntityService,
   ],
 })

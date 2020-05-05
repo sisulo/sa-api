@@ -17,7 +17,7 @@ export class SumImpl extends AggregationAlgorithmAbstract {
         }
       },
     );
-    return { value: aggValueTotal, metricTypeEntity: null, id: null };
+    return { value: aggValueTotal, metricTypeEntity: null, id: null, date: null };
   }
 
 }

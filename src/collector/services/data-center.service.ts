@@ -38,8 +38,8 @@ export class DataCenterService {
     this.regionDataCenters.push({ type: Region.AMERICA, dataCenterIds: [5, 6] });
   }
 
-  async findById(idDataCenter: number): Promise<DataCenterEntity[]> {
-    return await this.dataCenterRepository.find({ where: { id: idDataCenter } });
+  async findById(idDataCenter: number): Promise<StorageEntityEntity[]> {
+    return await this.storageEntityRepository.find({ where: { id: idDataCenter } });
   }
 
   getDataCenterIdByRegion(region: Region) {
@@ -50,7 +50,7 @@ export class DataCenterService {
     return [];
   }
 
-  async getMetricsByGroup(metricGroup: MetricGroup, idDataCenterParam: number, period: PeriodType): Promise<DataCenterEntity[]> {
+  async getMetricsByGroup(metricGroup: MetricGroup, idDataCenterParam: number, period: PeriodType): Promise<StorageEntityEntity[]> {
     const dcDao = await this.loadMetrics(metricGroup, idDataCenterParam, period);
     return dcDao || await this.getEmptyDatacenter(idDataCenterParam);
   }
@@ -58,8 +58,9 @@ export class DataCenterService {
   async getPerformanceMetrics(metricTypes: MetricType[], idDataCenterParam: number[]): Promise<StorageEntityEntity[]> {
 
     const query = this.storageEntityRepository.createQueryBuilder('datacenter')
-      .leftJoinAndSelect('datacenter.children', 'system', 'system.parent = datacenter.id AND system.idType=:systemType', { systemType: StorageEntityType.SYSTEM })
+      .leftJoinAndSelect('datacenter.children', 'system', 'system.idType=:systemType', { systemType: StorageEntityType.SYSTEM })
       .leftJoinAndMapMany('system.metrics', SystemMetricReadEntity, 'metrics', 'metrics.owner = system.id AND metrics.idType IN (:...metrics)', { metrics: metricTypes })
+      .leftJoinAndSelect('metrics.metricTypeEntity', 'typeEntity')
       .andWhere('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE });
     if (idDataCenterParam.length > 0) {
       query.andWhere('datacenter.id IN (:...idDatacenter)', { idDatacenter: idDataCenterParam });
@@ -72,26 +73,28 @@ export class DataCenterService {
 
     const query = this.storageEntityRepository.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.children', 'system', 'system.parent = datacenter.id AND system.idType=:systemType', { systemType: StorageEntityType.SYSTEM })
-      .leftJoinAndSelect('system.children', 'pool', 'pool.parent = system.id AND pool.idType=:poolType', { poolType: StorageEntityType.POOL })
+      .leftJoinAndSelect('system.children', 'pool', 'pool.idType=:poolType', { poolType: StorageEntityType.POOL })
       .leftJoinAndMapMany('pool.metrics', PoolMetricReadEntity, 'metrics', 'metrics.owner = pool.id AND metrics.idType IN (:...metrics)', { metrics: metricTypes })
+      .leftJoinAndSelect('metrics.metricTypeEntity', 'typeEntity')
       .where('pool.idCatComponentStatus = :idStatus', { idStatus: ComponentStatus.ACTIVE })
       .andWhere('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE })
       .andWhere('datacenter.idType = :dataCenterType', { dataCenterType: StorageEntityType.DATA_CENTER });
     if (idDataCenterParam.length > 0) {
       query.andWhere('datacenter.id IN (:...idDatacenter)', { idDatacenter: idDataCenterParam });
     }
-    const vo = await query.getMany();
-    return vo;
+    return await query.getMany();
   }
 
   getChannelAdapterMetrics(metricTypes: MetricType[], idDataCenterParam: number[]): Promise<StorageEntityEntity[]> {
 
     const query = this.storageEntityRepository.createQueryBuilder('datacenter')
       .innerJoinAndSelect('datacenter.children', 'system', 'system.parent = datacenter.id AND system.idType=:systemType', { systemType: StorageEntityType.SYSTEM })
-      .innerJoinAndSelect('system.children', 'adapter', 'adapter.parent = system.id AND adapter.idType=:adapterType', {adapterType: StorageEntityType.ADAPTER})
-      .innerJoinAndSelect('adapter.children', 'port', 'port.parent = adapter.id AND port.idType=:portType', {portType: StorageEntityType.PORT})
+      .innerJoinAndSelect('system.children', 'adapter', 'adapter.idType=:adapterType', {adapterType: StorageEntityType.ADAPTER})
+      .innerJoinAndSelect('adapter.children', 'port', 'port.idType=:portType', {portType: StorageEntityType.PORT})
       .leftJoinAndMapMany('port.metrics', PortMetricReadEntity, 'port_metrics', 'port_metrics.owner = port.id AND port_metrics.idType IN (:...portMetrics)', { portMetrics: metricTypes })
+      .leftJoinAndSelect('port_metrics.metricTypeEntity', 'portTypeEntity')
       .leftJoinAndMapMany('adapter.metrics', ChaMetricReadEntity, 'adapter_metrics', 'adapter_metrics.owner = adapter.id AND adapter_metrics.idType IN (:...metrics)', { metrics: metricTypes })
+      .leftJoinAndSelect('adapter_metrics.metricTypeEntity', 'adapterTypeEntity')
       .where('adapter.idCatComponentStatus = :idStatus', { idStatus: ComponentStatus.ACTIVE })
       .andWhere('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE })
       .andWhere('port.idCatComponentStatus = :idPortStatus', { idPortStatus: ComponentStatus.ACTIVE });
@@ -104,9 +107,10 @@ export class DataCenterService {
   getHostGroupMetrics(metricTypes: MetricType[], idDataCenterParam: number[]): Promise<StorageEntityEntity[]> {
 
     const query = this.storageEntityRepository.createQueryBuilder('datacenter')
-      .innerJoinAndSelect('datacenter.children', 'system', 'system.parent = datacenter.id AND system.idType=:systemType', { systemType: StorageEntityType.SYSTEM })
-      .leftJoinAndSelect('system.children', 'hostGroup', 'hostGroup.parent = system.id AND hostGroup.idType=:hostGroupType', {hostGroupType: StorageEntityType.HOST_GROUP})
+      .innerJoinAndSelect('datacenter.children', 'system', 'system.idType=:systemType', { systemType: StorageEntityType.SYSTEM })
+      .leftJoinAndSelect('system.children', 'hostGroup', 'hostGroup.idType=:hostGroupType', {hostGroupType: StorageEntityType.HOST_GROUP})
       .leftJoinAndMapMany('hostGroup.metrics', HostGroupMetricReadEntity,  'metrics', 'metrics.owner = hostGroup.id AND metrics.idType IN (:...metrics)', { metrics: metricTypes })
+      .leftJoinAndSelect('metrics.metricTypeEntity', 'typeEntity')
       .leftJoinAndSelect('hostGroup.externals', 'external')
       .where('hostGroup.idCatComponentStatus = :idStatus', { idStatus: ComponentStatus.ACTIVE })
       .andWhere('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE });
@@ -117,7 +121,7 @@ export class DataCenterService {
     return query.getMany();
   }
 
-  getEmptyDatacenter(idDataCenterParam: number): Promise<DataCenterEntity[]> {
+  getEmptyDatacenter(idDataCenterParam: number): Promise<StorageEntityEntity[]> {
     return this.findById(idDataCenterParam);
   }
 
@@ -125,23 +129,23 @@ export class DataCenterService {
     return await this.storageEntityRepository.findDataCenters();
   }
 
-  private loadMetrics(metricGroup: MetricGroup, idDataCenterParam: number, period: PeriodType) {
+  private loadMetrics(metricGroup: MetricGroup, idDataCenterParam: number, period: PeriodType): Promise<StorageEntityEntity[]> {
     const types: MetricType[] = DataCenterService.resolveMetricTypes(metricGroup, period);
     let dataCenterIds = [];
-    if (idDataCenterParam != null) {
+    if (idDataCenterParam !== null && idDataCenterParam !== undefined) {
       dataCenterIds = [idDataCenterParam];
     }
     switch (metricGroup) {
-      // case MetricGroup.PERFORMANCE:
-      //   return this.getPerformanceMetrics(types, dataCenterIds);
-      // case MetricGroup.CAPACITY:
-      //   return this.getPoolMetrics(types, dataCenterIds);
-      // case MetricGroup.ADAPTERS:
-      //   return this.getChannelAdapterMetrics(types, idDataCenterParam);
-      // case MetricGroup.SLA:
-      //   return this.getPoolMetrics(types, dataCenterIds);
+      case MetricGroup.PERFORMANCE:
+        return this.getPerformanceMetrics(types, dataCenterIds);
+      case MetricGroup.CAPACITY:
+        return this.getPoolMetrics(types, dataCenterIds);
+      case MetricGroup.ADAPTERS:
+        return this.getChannelAdapterMetrics(types, dataCenterIds);
+      case MetricGroup.SLA:
+        return this.getPoolMetrics(types, dataCenterIds);
       case MetricGroup.HOST_GROUPS:
-        return this.getHostGroupMetrics(types, idDataCenterParam);
+        return this.getHostGroupMetrics(types, dataCenterIds);
     }
   }
 

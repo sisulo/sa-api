@@ -1,9 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { CatMetricTypeEntity } from './cat-metric-type.entity';
 import { StorageEntityEntity } from './storage-entity.entity';
+import { MetricEntityInterface } from './metric-entity.interface';
 
 @Entity('view_cha_metrics')
-export class ChaMetricReadEntity {
+export class ChaMetricReadEntity implements MetricEntityInterface {
 
   @PrimaryColumn()
   id: number;
@@ -20,6 +21,10 @@ export class ChaMetricReadEntity {
   @ManyToOne(() => StorageEntityEntity, storageEntity => storageEntity.id, { eager: true })
   @JoinColumn({ name: 'id_storage_entity' })
   owner: StorageEntityEntity;
+
+  @ManyToOne(() => CatMetricTypeEntity, { eager: true })
+  @JoinColumn({ name: 'id_cat_metric_type' })
+  metricTypeEntity: CatMetricTypeEntity;
 
   metrics: any[];
 }

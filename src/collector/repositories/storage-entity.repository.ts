@@ -12,7 +12,7 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
 
   public async fetchByStorageEntityKey(key: StorageEntityKey): Promise<StorageEntityEntity> {
     const keyParts = StorageEntityRepository.getKeyParts(key);
-    // TODO never looking for different datacenter
+    // TODO never looking for different dataCenter
     const dataCenterEntity = await this.findOneByName(key.datacenter.name, key.datacenter.type);
 
     return await this.findOrCreate(keyParts, dataCenterEntity, false);

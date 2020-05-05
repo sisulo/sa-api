@@ -31,7 +31,7 @@ export class InfraStatisticsTransformer {
     this.initDto(dto);
     const metrics = await alertsInput;
     const perfMetrics = metricsInput;
-    // const capacityMetrics = await capacityMetricInput;
+
     metrics.forEach(
       metric => {
         const alert = InfraStatisticsTransformer.findAlert(metric.metricTypeEntity.id, dto);

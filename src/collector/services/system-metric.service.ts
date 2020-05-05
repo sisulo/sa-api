@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SystemMetricEntity } from '../entities/system-metric.entity';
-import { SystemService } from './system.service';
 import { MetricTypeService } from './metric-type.service';
 import { MetricType } from '../enums/metric-type.enum';
 import { SystemMetricReadEntity } from '../entities/system-metric-read.entity';
@@ -17,7 +16,6 @@ export class SystemMetricService {
     private readonly metricRepository: Repository<SystemMetricEntity>,
     @InjectRepository(SystemMetricReadEntity)
     private readonly metricReadRepository: Repository<SystemMetricReadEntity>,
-    private readonly systemService: SystemService,
     private readonly metricTypeService: MetricTypeService,
   ) {
   }
@@ -46,6 +44,7 @@ export class SystemMetricService {
       .innerJoinAndSelect('metric.metricTypeEntity', 'type')
       .innerJoinAndSelect('type.threshold', 'threshold')
       .innerJoinAndSelect('metric.owner', 'system')
+      .innerJoinAndSelect('system.parent', 'datacenter')
       .where('metric.value >= COALESCE(threshold.min_value, -2147483648)')
       .andWhere('metric.value < COALESCE(threshold.max_value, 2147483647)')
       .andWhere('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE })

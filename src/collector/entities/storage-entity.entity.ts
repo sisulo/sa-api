@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from 'typeorm';
 import { ExternalEntity } from './external.entity';
+import { MetricEntityInterface } from './metric-entity.interface';
 
 @Entity('storage_entities')
 @Tree('closure-table')
@@ -28,5 +29,5 @@ export class StorageEntityEntity {
   @OneToMany(() => ExternalEntity, external => external.storageEntity)
   externals: Promise<ExternalEntity[]>;
 
-  metrics: any[];
+  metrics: MetricEntityInterface[];
 }
