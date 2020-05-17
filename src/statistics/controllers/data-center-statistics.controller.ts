@@ -5,6 +5,10 @@ import { StatisticParams } from './params/statistic.params';
 import { StatisticQueryParams } from './params/statistics.query-params';
 import { StorageEntityTransformer } from '../../collector/transformers/storage-entity.transformer';
 import { StorageEntityResponseDto } from '../../collector/dto/storage-entity-response.dto';
+import { StorageEntityMetricTransformer } from '../transformers/storage-entity-metric.transformer';
+import { StorageEntityFilterVo } from '../services/vos/storage-entity-filter.vo';
+import { MetricFilterUtils } from '../utils/metric-filter.utils';
+import { OrderByUtils } from '../utils/vo/order-by.utils';
 
 @Controller('api/v1/datacenters/')
 export class DataCenterStatisticsController {
@@ -66,5 +70,17 @@ export class DataCenterStatisticsController {
   @Get(':idDataCenter/host-groups')
   hostGroupStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
     return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.HOST_GROUPS, params.idDataCenter);
+  }
+
+  @Get('pools')
+  async getPools(@Query() queryParams: StatisticQueryParams) {
+    const filter = new StorageEntityFilterVo();
+    filter.metricFilter = MetricFilterUtils.parseMetricFilter(queryParams.metricFilter);
+    filter.serialNumbers = queryParams.serialNumber || [];
+    filter.tiers = queryParams.tierFilter || [];
+    filter.orderBy = OrderByUtils.parseOrderBy(queryParams.orderBy);
+
+    const filteredResult = await this.dataCenterService.getPoolMetricsByFilter(filter, queryParams.output);
+    return StorageEntityMetricTransformer.transform(filteredResult);
   }
 }
