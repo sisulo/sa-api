@@ -10,6 +10,6 @@ export class StatisticQueryParams {
   metricFilter: string[];
   orderBy: string[];
   serialNumber: string[];
-  tierFilter: string[];
+  tier: string[];
   output: OutputType = OutputType.FLAT;
 }
