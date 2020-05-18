@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { DataCenterEntity } from '../entities/data-center.entity';
 import { MetricType } from '../enums/metric-type.enum';
 import { PeriodType } from '../enums/period-type.enum';
 import { Region } from '../../statistics/models/dtos/region.enum';
@@ -35,8 +34,6 @@ export class DataCenterService {
   private readonly regionDataCenters = [];
 
   constructor(
-    @InjectRepository(DataCenterEntity)
-    private readonly dataCenterRepository: Repository<DataCenterEntity>,
     private storageEntityRepository: StorageEntityRepository,
   ) {
     this.regionDataCenters.push({ type: Region.EUROPE, dataCenterIds: [1, 2] });

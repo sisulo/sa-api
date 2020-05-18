@@ -3,26 +3,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SystemMetricEntity } from './entities/system-metric.entity';
 import { SystemMetricService } from './services/system-metric.service';
 import { CatMetricTypeEntity } from './entities/cat-metric-type.entity';
-import { SystemEntity } from './entities/system.entity';
 import { PoolMetricEntity } from './entities/pool-metric.entity';
 import { PoolMetricService } from './services/pool-metric.service';
-import { PoolEntity } from './entities/pool.entity';
 import { ChaMetricService } from './services/cha-metric.service';
 import { ChaMetricEntity } from './entities/cha-metric.entity';
-import { ChaEntity } from './entities/cha.entity';
-import { DataCenterEntity } from './entities/data-center.entity';
 import { DataCenterService } from './services/data-center.service';
 import { MetricTypeService } from './services/metric-type.service';
 import { CapacityStatisticsService } from './services/capacity-statistics.service';
 import { MetricController } from './controllers/metric.controller';
 import { HostGroupMetricEntity } from './entities/host-group-metric.entity';
-import { HostGroupEntity } from './entities/host-group.entity';
 import { SystemMetricReadEntity } from './entities/system-metric-read.entity';
 import { PoolMetricReadEntity } from './entities/pool-metric-read.entity';
 import { ChaMetricReadEntity } from './entities/cha-metric-read.entity';
 import { PortMetricService } from './services/port-metric.service';
 import { PortMetricEntity } from './entities/port-metric.entity';
-import { PortEntity } from './entities/port.entity';
 import { PortMetricReadEntity } from './entities/port-metric-read.entity';
 import { CatExternalTypeEntity } from './entities/cat-external-type.entity';
 import { ExternalEntity } from './entities/external.entity';
@@ -49,17 +43,11 @@ import { MultiValueMetricCollectorService } from './services/collect/multi-value
         SystemMetricEntity,
         SystemMetricReadEntity,
         CatMetricTypeEntity,
-        SystemEntity,
         PoolMetricEntity,
         PoolMetricReadEntity,
-        PoolEntity,
         ChaMetricEntity,
         ChaMetricReadEntity,
-        ChaEntity,
-        DataCenterEntity,
         HostGroupMetricEntity,
-        HostGroupEntity,
-        PortEntity,
         PortMetricEntity,
         PortMetricReadEntity,
         CatExternalTypeEntity,

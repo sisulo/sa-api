@@ -401,3 +401,20 @@ from
       )
 	  WHERE datacenters.id_cat_storage_entity_type = 1
 ;
+CREATE OR REPLACE VIEW public.view_host_group_metrics
+ AS
+ SELECT outer_sm.id_metric AS id,
+    outer_sm.id_cat_metric_type,
+    outer_sm.value,
+    outer_sm.id_storage_entity,
+    outer_sm.date,
+    outer_sm.created_at
+   FROM storage_entities datacenters
+     JOIN storage_entities systems ON systems."parentId" = datacenters.id
+     JOIN storage_entities host_groups ON systems.id = host_groups."parentId"
+     LEFT JOIN host_group_metrics outer_sm ON outer_sm.id_storage_entity = host_groups.id AND outer_sm.id_metric = (( SELECT inner_sm.id_metric
+           FROM host_group_metrics inner_sm
+          WHERE outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type AND outer_sm.id_storage_entity = inner_sm.id_storage_entity
+          ORDER BY inner_sm.date DESC
+         LIMIT 1))
+ WHERE datacenters.id_cat_storage_entity_type = 1;
