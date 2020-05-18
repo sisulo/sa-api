@@ -24,12 +24,12 @@ export class DataCenterStatisticsController {
 
   @Get('performance')
   performanceStatisticsAll(@Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.PERFORMANCE);
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.PERFORMANCE, null, queryParams.period);
   }
 
   @Get(':idDataCenter/performance')
   performanceStatistics(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.PERFORMANCE, params.idDataCenter);
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.PERFORMANCE, params.idDataCenter, queryParams.period);
   }
 
   @Get('capacity')
