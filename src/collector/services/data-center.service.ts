@@ -34,19 +34,28 @@ export class DataCenterService {
   constructor(
     private storageEntityRepository: StorageEntityRepository,
   ) {
-    this.regionDataCenters.push({ type: Region.EUROPE, dataCenterIds: [1, 2] });
-    this.regionDataCenters.push({ type: Region.ASIA, dataCenterIds: [3, 4] });
-    this.regionDataCenters.push({ type: Region.AMERICA, dataCenterIds: [5, 6] });
+    this.regionDataCenters.push({ type: Region.EUROPE, datacenterName: ['CZ_Chodov', 'CZ_Sitel'] });
+    this.regionDataCenters.push({ type: Region.ASIA, datacenterName: ['MY_AIMS', 'MY_Cyberjaya'] });
+    this.regionDataCenters.push({ type: Region.AMERICA, datacenterName: ['US_Ashburn', 'US_Mechanicsburg'] });
   }
 
   async findById(idDataCenter: number): Promise<StorageEntityEntity[]> {
     return await this.storageEntityRepository.find({ where: { id: idDataCenter } });
   }
 
-  getDataCenterIdByRegion(region: Region) {
+  async findByName(dcName: string): Promise<StorageEntityEntity> {
+    return await this.storageEntityRepository.findOne({ where: { name: dcName } });
+  }
+
+  async getDataCenterIdByRegion(region: Region): Promise<number[]> {
     const foundItem = this.regionDataCenters.find(regionMapItem => regionMapItem.type === region);
     if (foundItem != null) {
-      return foundItem.dataCenterIds;
+      return await Promise.all(foundItem.datacenterName.map(async dataCenterName => {
+        const dc = await this.findByName(dataCenterName);
+        if (dc !== undefined) {
+          return dc.id;
+        }
+      }));
     }
     return [];
   }

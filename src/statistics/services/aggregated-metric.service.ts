@@ -47,7 +47,7 @@ export abstract class AggregatedMetricService {
 
   public async fetchAggregatedMetricsGrouped(types: MetricType[], regions: Region[]): Promise<RegionMetricInterface[]> {
     return await Promise.all(regions.map(async group => {
-      return { region: group, metrics: await this.fetchAndAggregateMetrics(types, this.dataCenterMetricService.getDataCenterIdByRegion(group)) };
+      return { region: group, metrics: await this.fetchAndAggregateMetrics(types, await this.dataCenterMetricService.getDataCenterIdByRegion(group)) };
     }));
   }
 
