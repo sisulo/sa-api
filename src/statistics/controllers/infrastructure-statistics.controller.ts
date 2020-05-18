@@ -1,4 +1,4 @@
-import { Controller, Get, Logger, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { CapacityStatisticsService } from '../../collector/services/capacity-statistics.service';
 import { DataCenterStatisticsService } from '../services/data-center-statistics.service';
 import { GraphDataService, ServiceType } from '../services/graph-data.service';

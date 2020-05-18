@@ -1,6 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { MetricType } from '../enums/metric-type.enum';
 import { PeriodType } from '../enums/period-type.enum';
 import { Region } from '../../statistics/models/dtos/region.enum';
