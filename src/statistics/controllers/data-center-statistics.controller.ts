@@ -78,7 +78,7 @@ export class DataCenterStatisticsController {
     filter.metricFilter = MetricFilterUtils.parseMetricFilter(queryParams.metricFilter);
     filter.serialNumbers = queryParams.serialNumber || [];
     filter.tiers = queryParams.tier || [];
-    filter.orderBy = OrderByUtils.parseOrderBy(queryParams.orderBy);
+    filter.orderBy = OrderByUtils.parseOrderBy(queryParams.orderBy || []);
 
     const filteredResult = await this.dataCenterService.getPoolMetricsByFilter(filter, queryParams.output);
     return StorageEntityMetricTransformer.transform(filteredResult);
