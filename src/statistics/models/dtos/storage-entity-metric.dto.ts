@@ -1,4 +1,5 @@
 import { SystemMetric } from '../metrics/SystemMetric';
+import { ExternalResponseDto } from '../../../collector/dto/external-response.dto';
 
 export class StorageEntityMetricDto {
   id: number;
@@ -8,4 +9,5 @@ export class StorageEntityMetricDto {
   serialNumber: string;
   children: StorageEntityMetricDto[];
   metrics: SystemMetric[];
+  externals: ExternalResponseDto[];
 }

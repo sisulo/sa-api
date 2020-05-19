@@ -7,6 +7,7 @@ import { MetricType } from '../enums/metric-type.enum';
 import { PoolMetricReadEntity } from '../entities/pool-metric-read.entity';
 import { MetricEntityInterface } from '../entities/metric-entity.interface';
 import { SystemMetricReadEntity } from '../entities/system-metric-read.entity';
+import { ComponentStatus } from '../enums/component.status';
 
 @Injectable()
 export class PoolMetricService {
@@ -21,7 +22,18 @@ export class PoolMetricService {
   }
 
   public async getAlerts(): Promise<PoolMetricEntity[]> {
-    return [];
+    const types = [MetricType.SLA_EVENTS, MetricType.PHYSICAL_USED_PERC];
+    return await this.metricReadRepository.createQueryBuilder('metric')
+      .innerJoinAndSelect('metric.metricTypeEntity', 'type')
+      .innerJoinAndSelect('type.threshold', 'threshold')
+      .innerJoinAndSelect('metric.owner', 'pool')
+      .innerJoinAndSelect('pool.parent', 'system')
+      .innerJoinAndSelect('system.parent', 'datacenter')
+      .where('metric.value >= COALESCE(threshold.min_value, -2147483648)')
+      .andWhere('metric.value < COALESCE(threshold.max_value, 2147483647)')
+      .andWhere('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE })
+      .andWhere('metric.metricTypeEntity IN (:...type)', { type: types.map(type => type) })
+      .getMany();
   }
 
   // TODO duplicated in owner-metric.service

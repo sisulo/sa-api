@@ -34,12 +34,12 @@ export class SystemMetricService {
 
   // TODO this could be as generic parametrized
   public async getAlerts() {
-    const types = await this.metricTypeService.findByMetricTypes([
+    const types = [
       MetricType.CPU_PERC,
       MetricType.HDD_PERC,
       MetricType.RESPONSE,
       MetricType.WRITE_PENDING_PERC,
-    ]);
+    ];
     return await this.metricReadRepository.createQueryBuilder('metric')
       .innerJoinAndSelect('metric.metricTypeEntity', 'type')
       .innerJoinAndSelect('type.threshold', 'threshold')
@@ -48,7 +48,7 @@ export class SystemMetricService {
       .where('metric.value >= COALESCE(threshold.min_value, -2147483648)')
       .andWhere('metric.value < COALESCE(threshold.max_value, 2147483647)')
       .andWhere('system.idCatComponentStatus = :idSystemStatus', { idSystemStatus: ComponentStatus.ACTIVE })
-      .andWhere('metric.metricTypeEntity IN (:...type)', { type: types.map(type => type.id) })
+      .andWhere('metric.metricTypeEntity IN (:...type)', { type: types.map(type => type) })
       .getMany();
   }
 

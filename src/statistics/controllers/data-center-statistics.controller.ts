@@ -75,7 +75,7 @@ export class DataCenterStatisticsController {
   @Get('pools')
   async getPools(@Query() queryParams: StatisticQueryParams) {
     const filter = new StorageEntityFilterVo();
-    filter.metricFilter = MetricFilterUtils.parseMetricFilter(queryParams.metricFilter);
+    filter.metricFilter = MetricFilterUtils.parseMetricFilter(queryParams.metricFilter || []);
     filter.serialNumbers = queryParams.serialNumber || [];
     filter.tiers = queryParams.tier || [];
     filter.orderBy = OrderByUtils.parseOrderBy(queryParams.orderBy || []);

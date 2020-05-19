@@ -8,13 +8,14 @@ import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import { ComponentStatus } from '../../collector/enums/component.status';
 import { MetricEntityInterface } from '../../collector/entities/metric-entity.interface';
 import { SystemMetricReadEntity } from '../../collector/entities/system-metric-read.entity';
+import { StorageEntityTransformer } from '../../collector/transformers/storage-entity.transformer';
 
 export class StorageEntityMetricTransformer {
   private static excludedMetric = [MetricType.CHANGE_DAY, MetricType.CHANGE_WEEK, MetricType.CHANGE_MONTH];
 
-  public static transform(dataCenterPromise: StorageEntityEntity[]): StorageEntityMetricDto[] {
-    return dataCenterPromise.map(
-      storageEntity => {
+  public static async transform(dataCenterPromise: StorageEntityEntity[]): Promise<StorageEntityMetricDto[]> {
+    return Promise.all(dataCenterPromise.map(
+      async storageEntity => {
         const dto = new StorageEntityMetricDto();
         dto.id = storageEntity.id;
         dto.name = storageEntity.name;
@@ -23,7 +24,7 @@ export class StorageEntityMetricTransformer {
         dto.serialNumber = storageEntity.serialNumber;
         if (storageEntity.children !== undefined && !isEmpty(storageEntity.children)) {
 
-          dto.children = StorageEntityMetricTransformer.transform(storageEntity.children);
+          dto.children = await StorageEntityMetricTransformer.transform(storageEntity.children);
         } else {
           dto.children = [];
         }
@@ -32,9 +33,15 @@ export class StorageEntityMetricTransformer {
         } else {
           dto.metrics = [];
         }
+        const externals = await storageEntity.externals;
+        if (externals !== undefined && !isEmpty(externals)) {
+          dto.externals = externals.map(externalEntity => StorageEntityTransformer.transformExternal(externalEntity));
+        } else {
+          dto.externals = [];
+        }
         return dto;
       },
-    );
+    ));
   }
 
   private static createSystemMetric(metric: MetricEntityInterface): SystemMetric {

@@ -25,7 +25,7 @@ export class StorageEntityTransformer {
     return dto;
   }
 
-  private static transformExternal(external: ExternalEntity): ExternalResponseDto {
+  public static transformExternal(external: ExternalEntity): ExternalResponseDto {
     const dto = new ExternalResponseDto();
     dto.value = external.value;
     if (external.idType === null) {
