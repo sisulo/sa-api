@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS storage_entities_closure
     PRIMARY KEY(id_ancestor, id_descendant)
 );
 
-SELECT setval('storage_entities_id_seq', 1);
+SELECT setval('storage_entities_id_seq', 1000);
 
 ALTER TABLE system_metrics
     DROP CONSTRAINT IF EXISTS system_metrics_id_system_fkey;
