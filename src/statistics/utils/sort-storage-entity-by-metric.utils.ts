@@ -51,7 +51,24 @@ export class SortStorageEntityByMetricUtils {
     return this.compare(a, b, orderBy.slice(1), getMetric);
   }
 
-  private static getMetricValue(storageEntity: StorageEntityEntity, type: MetricType) {
+  private static getMetricValue(storageEntity: StorageEntityEntity, type: MetricType | string) {
+    if (type === 'NAME') {
+      return storageEntity.name;
+    }
+    if (type === 'REFERENCE_ID') {
+      if (storageEntity.parent !== undefined) {
+
+        return storageEntity.parent.serialNumber;
+      }
+      return null;
+    }
+    if (type === 'TIER') {
+      if (!isEmpty(storageEntity)) {
+
+        return storageEntity.externals[0].value;
+      }
+      return null;
+    }
     const foundMetric = storageEntity.metrics.find(metric => metric.metricTypeEntity.id === type);
     if (foundMetric === undefined) {
       return null;

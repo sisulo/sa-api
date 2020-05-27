@@ -9,7 +9,7 @@ export class StatisticQueryParams {
   period: PeriodType;
   metricFilter: string[];
   orderBy: string[];
-  serialNumber: string[];
+  referenceId: string[];
   tier: string[];
   output: OutputType = OutputType.FLAT;
 }

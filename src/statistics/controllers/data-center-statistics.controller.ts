@@ -2,7 +2,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { DataCenterStatisticsService } from '../services/data-center-statistics.service';
 import { DataCenterService, MetricGroup } from '../../collector/services/data-center.service';
 import { StatisticParams } from './params/statistic.params';
-import { StatisticQueryParams } from './params/statistics.query-params';
+import { OutputType, StatisticQueryParams } from './params/statistics.query-params';
 import { StorageEntityTransformer } from '../../collector/transformers/storage-entity.transformer';
 import { StorageEntityResponseDto } from '../../collector/dto/storage-entity-response.dto';
 import { StorageEntityMetricTransformer } from '../transformers/storage-entity-metric.transformer';
@@ -76,11 +76,17 @@ export class DataCenterStatisticsController {
   async getPools(@Query() queryParams: StatisticQueryParams) {
     const filter = new StorageEntityFilterVo();
     filter.metricFilter = MetricFilterUtils.parseMetricFilter(queryParams.metricFilter || []);
-    filter.serialNumbers = queryParams.serialNumber || [];
+    filter.referenceIds = queryParams.referenceId || [];
     filter.tiers = queryParams.tier || [];
     filter.orderBy = OrderByUtils.parseOrderBy(queryParams.orderBy || []);
 
     const filteredResult = await this.dataCenterService.getPoolMetricsByFilter(filter, queryParams.output);
-    return StorageEntityMetricTransformer.transform(filteredResult);
+    return this.isFlatOutput(queryParams) ?
+      StorageEntityMetricTransformer.transformFlat(filteredResult)
+      : StorageEntityMetricTransformer.transform(filteredResult);
+  }
+
+  isFlatOutput(queryParams: StatisticQueryParams) {
+    return queryParams.output === undefined || queryParams.output === OutputType.FLAT;
   }
 }

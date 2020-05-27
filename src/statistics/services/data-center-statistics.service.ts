@@ -8,7 +8,7 @@ import { SystemMetricService } from '../../collector/services/system-metric.serv
 import { PeriodType } from '../../collector/enums/period-type.enum';
 import { PortMetricService } from '../../collector/services/port-metric.service';
 import { StorageEntityEntity } from '../../collector/entities/storage-entity.entity';
-import { StorageEntityMetricDto } from '../models/dtos/storage-entity-metric.dto';
+import { StorageMetricEntityHierarchyDto } from '../models/dtos/storage-metric-entity-hierarchy.dto';
 
 @Injectable()
 export class DataCenterStatisticsService {
@@ -20,7 +20,7 @@ export class DataCenterStatisticsService {
   }
 
   async getMetricByIdDataCenter(metricGroup: MetricGroup, idDataCenter: number = null, period?: PeriodType)
-    : Promise<StorageEntityMetricDto[]> {
+    : Promise<StorageMetricEntityHierarchyDto[]> {
     const dataCenterEntity = await this.getEntities(metricGroup, idDataCenter, period);
     if (dataCenterEntity !== undefined) {
       return StorageEntityMetricTransformer.transform(dataCenterEntity);

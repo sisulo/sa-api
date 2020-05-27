@@ -3,7 +3,7 @@ import { OrderByVo } from '../../utils/vo/order-by.vo';
 
 export class StorageEntityFilterVo {
   metricFilter: FilterVo[];
-  serialNumbers: string[];
+  referenceIds: string[];
   tiers: string[];
   orderBy: OrderByVo[];
 }

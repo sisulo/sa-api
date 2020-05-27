@@ -376,7 +376,12 @@ export class DataCenterService {
           'pool.idType=:poolType',
           { poolType: StorageEntityType.POOL });
     } else {
-      query = await this.storageEntityRepository.createQueryBuilder('pool');
+      query = this.storageEntityRepository.createQueryBuilder('pool')
+        .innerJoinAndSelect(
+          'pool.parent',
+          'system',
+          'system.id = pool.parent AND system.idType=:systemType AND system.idCatComponentStatus = :systemStatus',
+          {systemType: StorageEntityType.SYSTEM, systemStatus: ComponentStatus.ACTIVE});
     }
     const result = await query.leftJoinAndMapMany(
       'pool.metrics',
@@ -390,8 +395,8 @@ export class DataCenterService {
         'metrics.metricTypeEntity',
         'typeEntity')
       .andWhere(
-        'pool.id IN (:...ids)',
-        { ids: poolIds })
+        'pool.id IN (:...ids) AND pool.idCatComponentStatus = :poolStatus',
+        { ids: poolIds, poolStatus: ComponentStatus.ACTIVE })
       .getMany();
     let sortedResult: StorageEntityEntity[];
     if (!isEmpty(orderBy)) {
@@ -409,19 +414,25 @@ export class DataCenterService {
       .distinctOn(['pool.id'])
       .andWhere('pool.idType=:poolType', { poolType: StorageEntityType.POOL })
       .orderBy('pool.id');
-    if (!isEmpty(filter.serialNumbers)) {
-      query.andWhere('pool.serialNumber IN (:...serialNumbers)', { serialNumbers: filter.serialNumbers });
+    if (!isEmpty(filter.referenceIds)) {
+      query.innerJoin('pool.parent', 'system');
+      query.andWhere('system.serialNumber IN (:...serialNumbers)', { serialNumbers: filter.referenceIds });
     }
     if (!isEmpty(filter.tiers)) {
       query.innerJoinAndSelect('pool.externals', 'external');
       query.andWhere('external.idType = :idType AND external.value IN (:...values)', { idType: ExternalType.TIER, values: filter.tiers });
     }
     if (!isEmpty(filter.metricFilter)) {
-      query.innerJoinAndMapMany('pool.metrics', PoolMetricReadEntity, 'metrics', 'metrics.owner = pool.id');
-      query.leftJoin('metrics.metricTypeEntity', 'typeEntity');
       filter.metricFilter.forEach(
         filterItem => {
-          query.andWhere(`(metrics.idType = ${filterItem.type} AND metrics.value ${filterItem.operator} ${filterItem.value})`);
+          query.innerJoinAndMapMany(
+            `pool.metrics_${filterItem.type}`,
+            PoolMetricReadEntity,
+            `metrics_${filterItem.type}`,
+            `metrics_${filterItem.type}.owner = pool.id`);
+          query.andWhere(
+            `(metrics_${filterItem.type}.idType = ${filterItem.type}
+            AND metrics_${filterItem.type}.value ${filterItem.operator} ${filterItem.value})`);
         },
       );
     }
