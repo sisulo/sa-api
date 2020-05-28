@@ -1,7 +1,7 @@
 import { StorageEntityEntity } from '../../collector/entities/storage-entity.entity';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
-import { MetricType } from '../../collector/enums/metric-type.enum';
 import { OrderByVo } from './vo/order-by.vo';
+import { ExternalType } from '../../collector/enums/external-type.enum';
 
 export enum OrderByDirection {
   ASC = 'ASC',
@@ -28,22 +28,20 @@ export class SortStorageEntityByMetricUtils {
     return metrics.sort((a, b) => this.compare(a, b, orderBy, (storageEntity, type) => this.getMetricValue(storageEntity, type)));
   }
 
-  private static compare(a: StorageEntityEntity, b: StorageEntityEntity, orderBy: OrderByVo[], getMetric: (storageEntity, type) => number) {
+  private static compare(a: StorageEntityEntity, b: StorageEntityEntity, orderBy: OrderByVo[], getMetric: (storageEntity: StorageEntityEntity, type: OrderByVo) => number | string) {
     const orderByValue = orderBy[0];
     let aValue;
     let bValue;
     if (orderByValue.direction === OrderByDirection.ASC) {
-      aValue = getMetric(a, orderByValue.type);
-      bValue = getMetric(b, orderByValue.type);
+      aValue = getMetric(a, orderByValue);
+      bValue = getMetric(b, orderByValue);
     } else {
-      aValue = getMetric(b, orderByValue.type);
-      bValue = getMetric(a, orderByValue.type);
+      aValue = getMetric(b, orderByValue);
+      bValue = getMetric(a, orderByValue);
     }
-    if (aValue > bValue) {
-      return 1;
-    }
-    if (aValue < bValue) {
-      return -1;
+    const compare = this.compareValues(aValue, bValue);
+    if (compare !== 0) {
+      return compare;
     }
     if (orderBy.length === 1) {
       return 0;
@@ -51,7 +49,8 @@ export class SortStorageEntityByMetricUtils {
     return this.compare(a, b, orderBy.slice(1), getMetric);
   }
 
-  private static getMetricValue(storageEntity: StorageEntityEntity, type: MetricType | string) {
+  private static getMetricValue(storageEntity: StorageEntityEntity, orderByVo: OrderByVo) {
+    const type = orderByVo.type;
     if (type === 'NAME') {
       return storageEntity.name;
     }
@@ -63,9 +62,11 @@ export class SortStorageEntityByMetricUtils {
       return null;
     }
     if (type === 'TIER') {
-      if (!isEmpty(storageEntity)) {
-
-        return storageEntity.externals[0].value;
+      if (!isEmpty(storageEntity.externals)) {
+        const sortedExternals = storageEntity.externals
+          .filter(ext => ext.idType === ExternalType.TIER)
+          .sort((a, b) => orderByVo.direction === OrderByDirection.ASC ? this.compareValues(a.value, b.value) : this.compareValues(b.value, a.value));
+        return sortedExternals.length > 0 ? sortedExternals[0].value : null;
       }
       return null;
     }
@@ -80,13 +81,32 @@ export class SortStorageEntityByMetricUtils {
     return storageEntities.sort((a, b) => this.compare(a, b, orderBy, (storageEntity, type) => this.getMetricValueFromParent(storageEntity, type)));
   }
 
-  private static getMetricValueFromParent(storageEntity: StorageEntityEntity, type: MetricType) {
+  private static getMetricValueFromParent(storageEntity: StorageEntityEntity, orderBy: OrderByVo) {
     if (!isEmpty(storageEntity.children)) {
-      return this.getMetricValueFromParent(storageEntity.children[0], type);
+      return this.getMetricValueFromParent(storageEntity.children[0], orderBy);
     }
     if (!isEmpty(storageEntity.metrics)) {
-      return this.getMetricValue(storageEntity, type);
+      return this.getMetricValue(storageEntity, orderBy);
     }
     return null;
+  }
+
+  private static compareValues(aValue, bValue) {
+    if (aValue === null && bValue === null) {
+      return 0;
+    }
+    if (aValue === null && bValue !== null) {
+      return -1;
+    }
+    if (aValue !== null && bValue === null) {
+      return 1;
+    }
+    if (aValue > bValue) {
+      return 1;
+    }
+    if (aValue < bValue) {
+      return -1;
+    }
+    return 0;
   }
 }

@@ -14,10 +14,9 @@ import { StorageMetricEntityFlatDto } from '../models/dtos/storage-metric-entity
 export class StorageEntityMetricTransformer {
   private static excludedMetric = [MetricType.CHANGE_DAY, MetricType.CHANGE_WEEK, MetricType.CHANGE_MONTH];
 
-  public static async transformFlat(storageEntities: StorageEntityEntity[]): Promise<StorageMetricEntityFlatDto[]> {
-    return Promise.all(
-      storageEntities.map(
-        async storageEntity => {
+  public static transformFlat(storageEntities: StorageEntityEntity[]): StorageMetricEntityFlatDto[] {
+    return storageEntities.map(
+        storageEntity => {
           const dto = new StorageMetricEntityFlatDto();
           this.transformStorageEntityBase(dto, storageEntity);
           if (storageEntity.parent !== undefined) {
@@ -25,29 +24,28 @@ export class StorageEntityMetricTransformer {
             dto.parent = this.transformStorageEntityBase(new StorageMetricEntityFlatDto(), storageEntity.parent) as StorageMetricEntityFlatDto;
           }
           this.transformMetrics(storageEntity, dto);
-          await this.transformExternals(storageEntity, dto);
+          this.transformExternals(storageEntity, dto);
           return dto;
         },
-      ),
-    );
+      );
   }
 
-  public static async transform(dataCenterPromise: StorageEntityEntity[]): Promise<StorageMetricEntityHierarchyDto[]> {
-    return Promise.all(dataCenterPromise.map(
-      async storageEntity => {
+  public static transform(dataCenterPromise: StorageEntityEntity[]): StorageMetricEntityHierarchyDto[] {
+    return dataCenterPromise.map(
+      storageEntity => {
         const dto = new StorageMetricEntityHierarchyDto();
         this.transformStorageEntityBase(dto, storageEntity);
         if (storageEntity.children !== undefined && !isEmpty(storageEntity.children)) {
 
-          dto.children = await StorageEntityMetricTransformer.transform(storageEntity.children);
+          dto.children = StorageEntityMetricTransformer.transform(storageEntity.children);
         } else {
           dto.children = [];
         }
         this.transformMetrics(storageEntity, dto);
-        // await this.transformExternals(storageEntity, dto);
+        this.transformExternals(storageEntity, dto);
         return dto;
       },
-    ));
+    );
   }
 
   private static transformStorageEntityBase(dto: StorageEntityMetricDto, storageEntity: StorageEntityEntity) {
@@ -59,8 +57,8 @@ export class StorageEntityMetricTransformer {
     return dto;
   }
 
-  private static async transformExternals(storageEntity: StorageEntityEntity, dto: StorageEntityMetricDto) {
-    const externals = await storageEntity.externals;
+  private static transformExternals(storageEntity: StorageEntityEntity, dto: StorageEntityMetricDto) {
+    const externals = storageEntity.externals;
     if (externals !== undefined && !isEmpty(externals)) {
       dto.externals = externals.map(externalEntity => StorageEntityTransformer.transformExternal(externalEntity));
     } else {

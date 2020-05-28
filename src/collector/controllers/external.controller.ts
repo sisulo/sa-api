@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Put } from '@nestjs/common';
+import { Body, Controller, Param, Put, UseInterceptors } from '@nestjs/common';
 import { ExternalService } from '../services/external.service';
 import { ExternalRequestDto } from '../dto/external-request.dto';
 import { StorageEntityTransformer } from '../transformers/storage-entity.transformer';
@@ -6,8 +6,10 @@ import { StorageEntityResponseDto } from '../dto/storage-entity-response.dto';
 import { CollectorType } from '../factory/collector-type.enum';
 import { StorageEntityKeyUtils } from '../utils/storage-entity-key.utils';
 import { ExternalRequestPipe } from '../dto/pipes/external-request.pipe';
+import { LoggingInterceptor } from '../../logging.interceptor';
 
 @Controller('api/v1/systems/')
+@UseInterceptors(LoggingInterceptor)
 export class ExternalController {
   constructor(private externalService: ExternalService) {
   }

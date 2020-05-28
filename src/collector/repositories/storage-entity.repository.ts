@@ -47,6 +47,7 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
   private async findOneByName(entityName: string, type: StorageEntityType, paramParent: StorageEntityEntity = null): Promise<StorageEntityEntity> {
     const query = this.createQueryBuilder('storageEntity')
       .leftJoinAndSelect('storageEntity.parent', 'parent')
+      .leftJoinAndSelect('storageEntity.externals', 'externals')
       .where('storageEntity.name = :name', { name: entityName })
       .andWhere('storageEntity.idType = :type', { type });
     if (paramParent !== null) {

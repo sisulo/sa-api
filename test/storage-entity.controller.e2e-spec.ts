@@ -22,33 +22,33 @@ describe('Storage Entity', () => {
   const systemPayload = {
     name: SYSTEM_NAME,
     type: StorageEntityType[StorageEntityType.SYSTEM],
-    parentId: 2,
+    parentId: 1002,
     serialNumber: SYSTEM_SERIAL_NAME,
   };
 
   const poolPayload = {
     name: POOL_NAME,
     type: StorageEntityType[StorageEntityType.POOL],
-    parentId: 3,
+    parentId: 1003,
     serialNumber: POOL_SERIAL_NAME,
   };
 
   const channelAdapterPayload = {
     name: CHA_NAME,
     type: StorageEntityType[StorageEntityType.ADAPTER],
-    parentId: 3,
+    parentId: 1003,
   };
 
   const hostGroupPayload = {
     name: HOST_GROUP_NAME,
     type: StorageEntityType[StorageEntityType.HOST_GROUP],
-    parentId: 3,
+    parentId: 1003,
   };
 
   const portPayload = {
     name: PORT_NAME,
     type: StorageEntityType[StorageEntityType.PORT],
-    parentId: 8,
+    parentId: 1008,
   };
   // TODO make this section global for all tests
   let app;

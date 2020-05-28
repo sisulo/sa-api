@@ -61,7 +61,7 @@ describe('Externals Controller', () => {
     });
     await request(app.getHttpServer())
       .post(`/api/v2/storage-entities`)
-      .send({ name: HOST_GROUP_NAME, type: StorageEntityType[StorageEntityType.HOST_GROUP], parentId: 14 })
+      .send({ name: HOST_GROUP_NAME, type: StorageEntityType[StorageEntityType.HOST_GROUP], parentId: 1013 })
       .expect(HttpStatus.CREATED)
       .then(async () => {
         return await request(app.getHttpServer())

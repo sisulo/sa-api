@@ -27,7 +27,7 @@ export class OrderByUtils {
     let metricType = MetricType[parts[0].toUpperCase()];
     if (metricType === undefined) {
       if (OrderByUtils.isSpecial(parts[0])) {
-        metricType = parts[0];
+        metricType = parts[0].toUpperCase();
       } else {
         throw new MetricFilterError(`Unknown metric type or special field for ordering: '${parts[0]}`);
       }
