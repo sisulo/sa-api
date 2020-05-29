@@ -8,6 +8,7 @@ import { PoolAggregatedMetricService } from './services/pool-aggregated-metric.s
 import { SystemAggregatedMetricService } from './services/system-aggregated-metric.service';
 import { LatencyController } from './controllers/latency/latency.controller';
 import { LatencyBlockSizeService } from './services/latency-block-size.service';
+import { MaterializeViewRefresh } from './workers/MaterializeViewRefresh';
 
 @Module({
   controllers: [
@@ -21,6 +22,7 @@ import { LatencyBlockSizeService } from './services/latency-block-size.service';
     PoolAggregatedMetricService,
     SystemAggregatedMetricService,
     LatencyBlockSizeService,
+    MaterializeViewRefresh,
   ],
   imports: [
     CollectorModule,

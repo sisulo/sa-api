@@ -13,10 +13,10 @@ export class StorageEntityTransformer {
     return await Promise.all(storageEntities.map(item => StorageEntityTransformer.transform(item, reverse)));
   }
 
-  public static async transform(storageEntity: StorageEntityEntity, reverse = false): Promise<StorageEntityResponseDto> {
+  public static transform(storageEntity: StorageEntityEntity, reverse = false): StorageEntityResponseDto {
     const dto = new StorageEntityResponseDto();
     dto.storageEntity = MetricTransformer.transformFromOwner(storageEntity, reverse);
-    const externals = await storageEntity.externals;
+    const externals = storageEntity.externals;
     if (!isEmpty(externals)) {
       dto.externals = externals.map(externalEntity => this.transformExternal(externalEntity));
     } else {

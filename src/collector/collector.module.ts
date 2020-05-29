@@ -61,7 +61,6 @@ import { MultiValueMetricCollectorService } from './services/collect/multi-value
         StorageEntityRepository,
       ],
     ),
-
   ],
   providers: [
     PoolMetricService,

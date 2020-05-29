@@ -1,113 +1,90 @@
-drop view IF EXISTS view_weighted_average_capacity;
-CREATE VIEW view_weighted_average_capacity AS
-SELECT cmt.id_cat_metric_type, value FROM (
-SELECT unnest(array["PHYSICAL_CAPACITY", "AVAILABLE_CAPACITY", "PHYSICAL_SUBS_PERC",
-       "LOGICAL_USED_PERC", "PHYSICAL_USED_PERC", "COMPRESSION_RATIO",
-       "CHANGE_DAY", "CHANGE_WEEK", "CHANGE_MONTH", "PHYSICAL_USED",
-       "PHYSICAL_FREE", "LOGICAL_CAPACITY", "LOGICAL_USED", "LOGICAL_FREE",
-       "NET_TOTAL", "NET_USED", "PHY_USED_BEF_SAVING", "DEDUP_RATIO", "TOTAL_SAVING_EFFECT",
-       "LOGICAL_SUBS_PERC", "NET_SUBS_PERC", "NET_USED_PERC"]) as value,
-       unnest(array['PHYSICAL_CAPACITY', 'AVAILABLE_CAPACITY', 'PHYSICAL_SUBS_PERC',
-       'LOGICAL_USED_PERC', 'PHYSICAL_USED_PERC', 'COMPRESSION_RATIO',
-       'CHANGE_DAY', 'CHANGE_WEEK', 'CHANGE_MONTH', 'PHYSICAL_USED',
-       'PHYSICAL_FREE', 'LOGICAL_CAPACITY', 'LOGICAL_USED', 'LOGICAL_FREE',
-       'NET_TOTAL', 'NET_USED', 'PHY_USED_BEF_SAVING', 'DEDUP_RATIO', 'TOTAL_SAVING_EFFECT',
-       'LOGICAL_SUBS_PERC', 'NET_SUBS_PERC', 'NET_USED_PERC']) as key
-FROM (
-SELECT  "PHYSICAL_CAPACITY" ,
-	"AVAILABLE_CAPACITY",
-	"WEIGHTED_PHYSICAL_SUBS_PERC" / "PHYSICAL_CAPACITY" AS "PHYSICAL_SUBS_PERC",
-	"WEIGHTED_LOGICAL_USED_PERC" / "PHYSICAL_CAPACITY" AS "LOGICAL_USED_PERC",
-	"WEIGHTED_PHYSICAL_USED_PERC" / "PHYSICAL_CAPACITY" AS "PHYSICAL_USED_PERC",
-	"COMPRESSION_RATIO" / "COMPRESSION_RATIO_COUNT" AS "COMPRESSION_RATIO",
-	"WEIGHTED_CHANGE_DAY" AS "CHANGE_DAY",
-	"WEIGHTED_CHANGE_WEEK" AS "CHANGE_WEEK",
-	"WEIGHTED_CHANGE_MONTH" AS "CHANGE_MONTH",
-	"PHYSICAL_USED" AS "PHYSICAL_USED",
-	"PHYSICAL_FREE" AS "PHYSICAL_FREE",
-	"LOGICAL_CAPACITY" AS "LOGICAL_CAPACITY",
-	"LOGICAL_USED" AS "LOGICAL_USED",
-	"LOGICAL_FREE" AS "LOGICAL_FREE",
-	"NET_TOTAL" AS "NET_TOTAL",
-	"NET_USED" AS "NET_USED",
-	"PHY_USED_BEF_SAVING" AS "PHY_USED_BEF_SAVING",
-	"DEDUP_RATIO" / "DEDUP_RATIO_COUNT" AS "DEDUP_RATIO",
-	"TOTAL_SAVING_EFFECT" / "TOTAL_SAVING_EFFECT_COUNT" AS "TOTAL_SAVING_EFFECT",
-	"WEIGHTED_LOGICAL_SUBS_PERC" / "PHYSICAL_CAPACITY" AS "LOGICAL_SUBS_PERC",
-	"WEIGHTED_NET_SUBS_PERC" / "PHYSICAL_CAPACITY" AS "NET_SUBS_PERC",
-	"WEIGHTED_NET_USED_PERC" / "PHYSICAL_CAPACITY" AS "NET_USED_PERC"
+DROP VIEW view_cha_metrics;
+DROP VIEW view_port_metrics;
+DROP VIEW view_pool_metrics;
+DROP VIEW view_system_metrics;
+DROP VIEW view_host_group_metrics;
+CREATE MATERIALIZED VIEW view_cha_metrics AS
+SELECT outer_sm.id_metric AS id,
+       outer_sm.id_cat_metric_type,
+       outer_sm.value,
+       outer_sm.id_storage_entity,
+       outer_sm.date,
+       outer_sm.created_at
+FROM storage_entities chas
+         LEFT JOIN cha_metrics outer_sm
+                   ON outer_sm.id_storage_entity = chas.id AND outer_sm.id_metric = ((SELECT inner_sm.id_metric
+                                                                                      FROM cha_metrics inner_sm
+                                                                                      WHERE outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type
+                                                                                        AND outer_sm.id_storage_entity = inner_sm.id_storage_entity
+                                                                                      ORDER BY inner_sm.date DESC
+                                                                                      LIMIT 1))
+WHERE chas.id_cat_storage_entity_type = 4;
 
-FROM (
-	SELECT
-		SUM("PHYSICAL_CAPACITY") AS "PHYSICAL_CAPACITY",
-		SUM("AVAILABLE_CAPACITY") AS "AVAILABLE_CAPACITY",
-		SUM("PHYSICAL_SUBS_PERC" * "PHYSICAL_CAPACITY") AS "WEIGHTED_PHYSICAL_SUBS_PERC",
-		SUM("LOGICAL_USED_PERC" * "PHYSICAL_CAPACITY") AS "WEIGHTED_LOGICAL_USED_PERC",
-		SUM("PHYSICAL_USED_PERC" * "PHYSICAL_CAPACITY") AS "WEIGHTED_PHYSICAL_USED_PERC",
-		SUM("COMPRESSION_RATIO") AS "COMPRESSION_RATIO",
-		SUM("CHANGE_DAY") AS "WEIGHTED_CHANGE_DAY",
-		SUM("CHANGE_WEEK") AS "WEIGHTED_CHANGE_WEEK",
-		SUM("CHANGE_MONTH") AS "WEIGHTED_CHANGE_MONTH",
-		SUM("PHYSICAL_USED") AS "PHYSICAL_USED",
-		SUM("PHYSICAL_FREE") AS "PHYSICAL_FREE",
-		SUM("LOGICAL_CAPACITY") AS "LOGICAL_CAPACITY",
-		SUM("LOGICAL_USED") AS "LOGICAL_USED",
-		SUM("LOGICAL_FREE") AS "LOGICAL_FREE",
-		SUM("NET_TOTAL") AS "NET_TOTAL",
-		SUM("NET_USED") AS "NET_USED",
-		SUM("NET_FREE") AS "NET_FREE",
-		SUM("PHY_USED_BEF_SAVING") AS "PHY_USED_BEF_SAVING",
-		SUM("DEDUP_RATIO") AS "DEDUP_RATIO",
-		SUM("TOTAL_SAVING_EFFECT") AS "TOTAL_SAVING_EFFECT",
-		SUM("LOGICAL_SUBS_PERC" * "PHYSICAL_CAPACITY") AS "WEIGHTED_LOGICAL_SUBS_PERC",
-		SUM("NET_SUBS_PERC" * "PHYSICAL_CAPACITY") AS "WEIGHTED_NET_SUBS_PERC",
-		SUM("NET_USED_PERC" * "PHYSICAL_CAPACITY") AS "WEIGHTED_NET_USED_PERC",
-		COUNT("DEDUP_RATIO") AS "DEDUP_RATIO_COUNT",
-		COUNT("TOTAL_SAVING_EFFECT") AS "TOTAL_SAVING_EFFECT_COUNT",
-		COUNT("COMPRESSION_RATIO") AS "COMPRESSION_RATIO_COUNT"
+CREATE MATERIALIZED VIEW view_port_metrics AS
+SELECT outer_sm.id_metric AS id,
+       outer_sm.id_cat_metric_type,
+       outer_sm.value,
+       outer_sm.id_storage_entity,
+       outer_sm.date,
+       outer_sm.created_at
+FROM storage_entities ports
+         LEFT JOIN port_metrics outer_sm
+                   ON outer_sm.id_storage_entity = ports.id AND (outer_sm.id_metric = (SELECT inner_sm.id_metric
+                                                                                        FROM port_metrics inner_sm
+                                                                                        WHERE outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type
+                                                                                          AND outer_sm.id_storage_entity = inner_sm.id_storage_entity
+                                                                                        ORDER BY inner_sm.date DESC
+                                                                                        LIMIT 1))
+WHERE ports.id_cat_storage_entity_type = 5;
 
-	FROM (
-		SELECT *
-		FROM crosstab(
-			'SELECT id_pool,
-				id_cat_metric_type,
-				value
-			 FROM view_pool_metrics
-			 WHERE id_cat_metric_type IN (1, 2, 3, 4, 5, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30, 31, 32, 38, 39, 40) OR (id_cat_metric_type IN (6, 33, 34) AND value <> 0)
-			 ORDER BY id_pool, id_cat_metric_type',
-			 'SELECT DISTINCT id_cat_metric_type
-			 FROM cat_metric_type
-			 WHERE id_cat_metric_type IN (1, 2, 3, 4, 5, 6, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30, 31, 32, 33, 34, 38, 39, 40)
-			 ORDER BY 1')
-		AS ct(
-			id_pool NUMERIC,
-			"PHYSICAL_CAPACITY" NUMERIC,
-			"PHYSICAL_SUBS_PERC" NUMERIC,
-			"AVAILABLE_CAPACITY" NUMERIC,
-			"LOGICAL_USED_PERC" NUMERIC,
-			"PHYSICAL_USED_PERC" NUMERIC,
-			"COMPRESSION_RATIO" NUMERIC,
-			"CHANGE_DAY" NUMERIC,
-			"CHANGE_WEEK" NUMERIC,
-			"CHANGE_MONTH" NUMERIC,
-			"PHYSICAL_USED" NUMERIC,
-			"PHYSICAL_FREE" NUMERIC,
-			"LOGICAL_CAPACITY" NUMERIC,
-			"LOGICAL_USED" NUMERIC,
-			"LOGICAL_FREE" NUMERIC,
-			"NET_TOTAL" NUMERIC,
-			"NET_USED" NUMERIC,
-			"NET_FREE" NUMERIC,
-			"PHY_USED_BEF_SAVING" NUMERIC,
-			"DEDUP_RATIO" NUMERIC,
-			"TOTAL_SAVING_EFFECT" NUMERIC,
-			"LOGICAL_SUBS_PERC" NUMERIC,
-			"NET_SUBS_PERC" NUMERIC,
-			"NET_USED_PERC" NUMERIC
+CREATE MATERIALIZED VIEW view_host_group_metrics(id, id_cat_metric_type, value, id_storage_entity, date, created_at) AS
+SELECT outer_sm.id_metric AS id,
+       outer_sm.id_cat_metric_type,
+       outer_sm.value,
+       outer_sm.id_storage_entity,
+       outer_sm.date,
+       outer_sm.created_at
+FROM storage_entities host_groups
+         LEFT JOIN host_group_metrics outer_sm
+                   ON outer_sm.id_storage_entity = host_groups.id AND outer_sm.id_metric = (SELECT inner_sm.id_metric
+                                                                                             FROM host_group_metrics inner_sm
+                                                                                             WHERE outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type
+                                                                                               AND outer_sm.id_storage_entity = inner_sm.id_storage_entity
+                                                                                             ORDER BY inner_sm.date DESC
+                                                                                             LIMIT 1)
+WHERE host_groups.id_cat_storage_entity_type = 6;
 
-		)
-	) pivot
-) totals
-) metrics
-) result
-JOIN cat_metric_type cmt ON result.key = cmt.name
+CREATE MATERIALIZED VIEW view_pool_metrics(id, id_cat_metric_type, value, id_storage_entity, date, created_at) AS
+SELECT outer_sm.id_metric AS id,
+       outer_sm.id_cat_metric_type,
+       outer_sm.value,
+       outer_sm.id_storage_entity,
+       outer_sm.date,
+       outer_sm.created_at
+FROM storage_entities pools
+         LEFT JOIN pool_metrics outer_sm
+                   ON outer_sm.id_storage_entity = pools.id AND outer_sm.id_metric = (SELECT inner_sm.id_metric
+                                                                                      FROM pool_metrics inner_sm
+                                                                                      WHERE outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type
+                                                                                        AND outer_sm.id_storage_entity = inner_sm.id_storage_entity
+                                                                                      ORDER BY inner_sm.date DESC
+                                                                                      LIMIT 1)
+WHERE pools.id_cat_storage_entity_type = 3;
+
+CREATE MATERIALIZED VIEW view_system_metrics (id, id_cat_metric_type, value, peak, id_storage_entity, date, created_at) AS
+SELECT outer_sm.id_metric AS id,
+       outer_sm.id_cat_metric_type,
+       outer_sm.value,
+       outer_sm.peak,
+       outer_sm.id_storage_entity,
+       outer_sm.date,
+       outer_sm.created_at
+FROM storage_entities systems
+         LEFT JOIN system_metrics outer_sm
+                   ON outer_sm.id_storage_entity = systems.id AND outer_sm.id_metric = ((SELECT inner_sm.id_metric
+                                                                                         FROM system_metrics inner_sm
+                                                                                         WHERE outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type
+                                                                                           AND outer_sm.id_storage_entity = inner_sm.id_storage_entity
+                                                                                         ORDER BY inner_sm.date DESC
+                                                                                         LIMIT 1))
+WHERE systems.id_cat_storage_entity_type = 2;
