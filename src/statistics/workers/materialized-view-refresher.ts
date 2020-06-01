@@ -11,6 +11,6 @@ export class MaterializedViewRefresher {
 
   @Cron('0 0 */2 * * *')
   public async refreshMaterializedViews() {
-    this.adminService.refreshMaterializedViews();
+    await this.adminService.refreshMaterializedViews();
   }
 }
