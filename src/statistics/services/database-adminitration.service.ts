@@ -1,12 +1,10 @@
-import { Cron, Interval } from '@nestjs/schedule';
-import { Injectable, Logger } from '@nestjs/common';
 import { getConnection } from 'typeorm';
+import { Logger } from '@nestjs/common';
 
-@Injectable()
-export class MaterializeViewRefresh {
-  private readonly logger = new Logger(MaterializeViewRefresh.name);
+export class DatabaseAdminitrationService {
 
-  @Cron('0 0 */2 * * *')
+  private readonly logger = new Logger(DatabaseAdminitrationService.name);
+
   public async refreshMaterializedViews() {
     this.logger.log('Materialized views is refreshing');
     await getConnection().createQueryRunner().query(`

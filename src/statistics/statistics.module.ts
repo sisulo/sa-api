@@ -8,13 +8,16 @@ import { PoolAggregatedMetricService } from './services/pool-aggregated-metric.s
 import { SystemAggregatedMetricService } from './services/system-aggregated-metric.service';
 import { LatencyController } from './controllers/latency/latency.controller';
 import { LatencyBlockSizeService } from './services/latency-block-size.service';
-import { MaterializeViewRefresh } from './workers/MaterializeViewRefresh';
+import { MaterializedViewRefresher } from './workers/materialized-view-refresher';
+import { DatabaseAdminitrationService } from './services/database-adminitration.service';
+import { AdminController } from './controllers/admin.controller';
 
 @Module({
   controllers: [
     DataCenterStatisticsController,
     InfrastructureStatisticsController,
     LatencyController,
+    AdminController
   ],
   providers: [
     DataCenterStatisticsService,
@@ -22,7 +25,8 @@ import { MaterializeViewRefresh } from './workers/MaterializeViewRefresh';
     PoolAggregatedMetricService,
     SystemAggregatedMetricService,
     LatencyBlockSizeService,
-    MaterializeViewRefresh,
+    MaterializedViewRefresher,
+    DatabaseAdminitrationService,
   ],
   imports: [
     CollectorModule,
