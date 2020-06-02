@@ -43,8 +43,8 @@ export class DataCenterStatisticsController {
   }
 
   @Get('adapters')
-  channelAdaptersStatisticsAll(@Query() queryParams: StatisticQueryParams) {
-    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.ADAPTERS);
+  channelAdaptersStatisticsAll(@Param() params: StatisticParams, @Query() queryParams: StatisticQueryParams) {
+    return this.dataCenterStatisticsService.getMetricByIdDataCenter(MetricGroup.ADAPTERS, null, queryParams.period);
   }
 
   @Get(':idDataCenter/adapters')
