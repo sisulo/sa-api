@@ -1,8 +1,3 @@
-DROP VIEW view_cha_metrics;
-DROP VIEW view_port_metrics;
-DROP VIEW view_pool_metrics;
-DROP VIEW view_system_metrics;
-DROP VIEW view_host_group_metrics;
 CREATE MATERIALIZED VIEW view_cha_metrics AS
 SELECT outer_sm.id_metric AS id,
        outer_sm.id_cat_metric_type,
@@ -16,6 +11,7 @@ FROM storage_entities chas
                                                                                       FROM cha_metrics inner_sm
                                                                                       WHERE outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type
                                                                                         AND outer_sm.id_storage_entity = inner_sm.id_storage_entity
+                                                                                        AND inner_sm.value IS NOT NULL
                                                                                       ORDER BY inner_sm.date DESC
                                                                                       LIMIT 1))
 WHERE chas.id_cat_storage_entity_type = 4;
@@ -33,6 +29,7 @@ FROM storage_entities ports
                                                                                         FROM port_metrics inner_sm
                                                                                         WHERE outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type
                                                                                           AND outer_sm.id_storage_entity = inner_sm.id_storage_entity
+                                                                                          AND inner_sm.value IS NOT NULL
                                                                                         ORDER BY inner_sm.date DESC
                                                                                         LIMIT 1))
 WHERE ports.id_cat_storage_entity_type = 5;
@@ -50,6 +47,7 @@ FROM storage_entities host_groups
                                                                                              FROM host_group_metrics inner_sm
                                                                                              WHERE outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type
                                                                                                AND outer_sm.id_storage_entity = inner_sm.id_storage_entity
+                                                                                               AND inner_sm.value IS NOT NULL
                                                                                              ORDER BY inner_sm.date DESC
                                                                                              LIMIT 1)
 WHERE host_groups.id_cat_storage_entity_type = 6;
@@ -67,6 +65,7 @@ FROM storage_entities pools
                                                                                       FROM pool_metrics inner_sm
                                                                                       WHERE outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type
                                                                                         AND outer_sm.id_storage_entity = inner_sm.id_storage_entity
+                                                                                        AND inner_sm.value IS NOT NULL
                                                                                       ORDER BY inner_sm.date DESC
                                                                                       LIMIT 1)
 WHERE pools.id_cat_storage_entity_type = 3;
@@ -85,6 +84,7 @@ FROM storage_entities systems
                                                                                          FROM system_metrics inner_sm
                                                                                          WHERE outer_sm.id_cat_metric_type = inner_sm.id_cat_metric_type
                                                                                            AND outer_sm.id_storage_entity = inner_sm.id_storage_entity
+                                                                                           AND inner_sm.value IS NOT NULL
                                                                                          ORDER BY inner_sm.date DESC
                                                                                          LIMIT 1))
 WHERE systems.id_cat_storage_entity_type = 2;
