@@ -7,13 +7,19 @@ export class DatabaseAdminitrationService {
 
   public async refreshMaterializedViews() {
     this.logger.log('Materialized views is refreshing');
-    await getConnection().createQueryRunner().query(`
+    const connection = getConnection();
+
+    connection.createQueryRunner().query(`
     REFRESH MATERIALIZED VIEW view_system_metrics;
     REFRESH MATERIALIZED VIEW view_pool_metrics;
     REFRESH MATERIALIZED VIEW view_host_group_metrics;
     REFRESH MATERIALIZED VIEW view_cha_metrics;
     REFRESH MATERIALIZED VIEW view_port_metrics;
-    `);
-    this.logger.log('Materialized views refreshed');
+    `).then(
+      () => this.logger.log('Materialized views refreshed'),
+    ).finally(
+      () => connection.close(),
+    );
+
   }
 }
