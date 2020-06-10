@@ -1,4 +1,4 @@
-import { getConnection } from 'typeorm';
+import { getManager } from 'typeorm';
 import { Logger } from '@nestjs/common';
 
 export class DatabaseAdminitrationService {
@@ -7,9 +7,9 @@ export class DatabaseAdminitrationService {
 
   public async refreshMaterializedViews() {
     this.logger.log('Materialized views is refreshing');
-    const connection = getConnection();
+    const connection = getManager();
 
-    connection.createQueryRunner().query(`
+    connection.query(`
     REFRESH MATERIALIZED VIEW view_system_metrics;
     REFRESH MATERIALIZED VIEW view_pool_metrics;
     REFRESH MATERIALIZED VIEW view_host_group_metrics;
@@ -17,8 +17,6 @@ export class DatabaseAdminitrationService {
     REFRESH MATERIALIZED VIEW view_port_metrics;
     `).then(
       () => this.logger.log('Materialized views refreshed'),
-    ).finally(
-      () => connection.close(),
     );
 
   }
