@@ -10,7 +10,7 @@ import { StorageEntityFilterVo } from '../services/vos/storage-entity-filter.vo'
 import { MetricFilterUtils } from '../utils/metric-filter.utils';
 import { OrderByUtils } from '../utils/vo/order-by.utils';
 
-@Controller('api/v1/datacenters/')
+@Controller('api/v1/datacenters')
 export class DataCenterStatisticsController {
   constructor(private dataCenterStatisticsService: DataCenterStatisticsService,
               private dataCenterService: DataCenterService) {

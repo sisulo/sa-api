@@ -72,6 +72,15 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
       .innerJoinAndSelect('storageEntity.children', 'pools')
       .innerJoin(LatencyEntity, 'metric', 'pools.id = metric.owner')
       .andWhere('storageEntity.idType = :type', { type: StorageEntityType.SYSTEM })
+      .andWhere('storageEntity.idCatComponentStatus = :status', {status: ComponentStatus.ACTIVE})
+      .getMany();
+  }
+  public async getAllSystems(): Promise<StorageEntityEntity[]> {
+    return await this.createQueryBuilder('datacenter')
+      .innerJoinAndSelect('datacenter.children', 'system')
+      .leftJoinAndSelect('system.detail', 'detail')
+      .andWhere('system.idType = :type', { type: StorageEntityType.SYSTEM })
+      .andWhere('system.idCatComponentStatus = :status', {status: ComponentStatus.ACTIVE})
       .getMany();
   }
 }

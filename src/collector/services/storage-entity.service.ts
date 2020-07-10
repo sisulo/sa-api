@@ -9,12 +9,15 @@ import { StorageEntityEntity } from '../entities/storage-entity.entity';
 import { ComponentStatus } from '../enums/component.status';
 import { ChangeStatusRequestDto } from '../dto/change-status-request.dto';
 import { StorageEntityKey } from '../utils/storage-entity-key.utils';
+import { SystemDetailsService } from './system-details.service';
+import { StorageEntityDetailRequestDto } from '../dto/storage-entity-base-request.dto';
 
 @Injectable()
 export class StorageEntityService {
 
   constructor(
     private storageEntityRepository: StorageEntityRepository,
+    private systemDetailsService: SystemDetailsService,
   ) {
   }
 
@@ -55,6 +58,10 @@ export class StorageEntityService {
     return this.storageEntityRepository.availableSystems();
   }
 
+  public getAllSystems() {
+    return this.storageEntityRepository.getAllSystems();
+  }
+
   public async updateStatus(key: StorageEntityKey, requestDto: ChangeStatusRequestDto): Promise<StorageEntityEntity> {
     const storageEntity = await this.storageEntityRepository.fetchByStorageEntityKey(key);
     const storageEntityTree = await this.storageEntityRepository.findDescendantsTree(storageEntity);
@@ -67,5 +74,19 @@ export class StorageEntityService {
     }
     storageEntity.idCatComponentStatus = requestDto.status;
     return await this.storageEntityRepository.save(storageEntity);
+  }
+
+  async update(id: number, request: StorageEntityDetailRequestDto) {
+    const entity = await this.storageEntityRepository.findOne(id);
+
+    if (entity === undefined) {
+      throw new ArgumentError(ErrorCodeConst.ENTITY_NOT_FOUND, `Database entity with id \'${id}\' was not found`);
+    }
+
+    entity.name = request.name;
+    entity.serialNumber = request.serialNumber;
+    entity.detail = await this.systemDetailsService.upsert(id, request);
+    return await this.storageEntityRepository.save(entity);
+
   }
 }

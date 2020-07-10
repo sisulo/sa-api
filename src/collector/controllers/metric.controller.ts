@@ -23,7 +23,7 @@ export interface ComponentKey {
 }
 
 @UseInterceptors(LoggingInterceptor)
-@Controller('api/v1/')
+@Controller('api/v1')
 export class MetricController {
   constructor(private singleValueCollector: MetricCollectorService,
               private multiValueCollector: MultiValueMetricCollectorService,

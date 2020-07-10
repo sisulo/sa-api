@@ -8,7 +8,7 @@ import { StorageEntityKeyUtils } from '../utils/storage-entity-key.utils';
 import { ExternalRequestPipe } from '../dto/pipes/external-request.pipe';
 import { LoggingInterceptor } from '../../logging.interceptor';
 
-@Controller('api/v1/systems/')
+@Controller('api/v1/systems')
 @UseInterceptors(LoggingInterceptor)
 export class ExternalController {
   constructor(private externalService: ExternalService) {

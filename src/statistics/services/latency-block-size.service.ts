@@ -6,6 +6,7 @@ import { SystemPool } from '../models/SystemPool';
 import { LatencyFilter } from '../controllers/latency/latency.controller';
 import { StorageEntityService } from '../../collector/services/storage-entity.service';
 import { MetricTransformer } from '../../collector/transformers/metric.transformer';
+import { StorageEntityTransformer } from '../../collector/transformers/storage-entity.transformer';
 
 export interface OperationData {
   values: ThreeDimensionValue[];
@@ -58,6 +59,6 @@ export class LatencyBlockSizeService {
   public async getMetaData(): Promise<LatencyMetadata> {
     const datesValues = await this.service.availableDates();
     const poolsValues = await this.storageEntityService.availableSystems();
-    return { dates: datesValues, systems: poolsValues.map(system => MetricTransformer.transformFromOwner(system, true)) };
+    return { dates: datesValues, systems: poolsValues.map(system => StorageEntityTransformer.transformFromOwner(system, true)) };
   }
 }

@@ -35,6 +35,8 @@ import { StorageEntityRepository } from './repositories/storage-entity.repositor
 import { MetricCollectorService } from './services/collect/metric-collector.service';
 import { MetricRepositoryFactory } from './factory/metric-repository.factory';
 import { MultiValueMetricCollectorService } from './services/collect/multi-value-metric-collector.service';
+import { SystemDetailsService } from './services/system-details.service';
+import { SystemDetailEntity } from './entities/system-detail.entity';
 
 @Module({
   imports: [
@@ -55,6 +57,7 @@ import { MultiValueMetricCollectorService } from './services/collect/multi-value
         LatencyEntity,
         CatOperationEntity,
         StorageEntityEntity,
+        SystemDetailEntity,
         /**
          * Custom repositories
          */
@@ -80,6 +83,7 @@ import { MultiValueMetricCollectorService } from './services/collect/multi-value
     MetricCollectorService,
     MetricRepositoryFactory,
     MultiValueMetricCollectorService,
+    SystemDetailsService,
   ],
   controllers: [
     MetricController,

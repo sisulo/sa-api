@@ -4,6 +4,7 @@ import { MetricTransformer } from './metric.transformer';
 import { MetricType } from '../enums/metric-type.enum';
 import { LatencyRequestDto } from '../dto/latency-request.dto';
 import { OperationType } from '../enums/operation-type.enum';
+import { StorageEntityTransformer } from './storage-entity.transformer';
 
 export class LatencyMetricTransformer {
 
@@ -11,7 +12,7 @@ export class LatencyMetricTransformer {
     const response = new LatencyResponseDto();
     const metric = metrics[0];
     response.metricType = MetricType[metric.idType];
-    response.owner = MetricTransformer.transformFromOwner(metric.owner);
+    response.owner = StorageEntityTransformer.transformFromOwner(metric.owner);
     response.date = metric.date;
     response.operation = OperationType[metric.idOperation];
 
