@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { StorageEntityResponseDto } from '../../dto/storage-entity-response.dto';
 import { StorageEntityService } from '../../services/storage-entity.service';
 import { StorageEntityRequestDto } from '../../dto/storage-entity-request.dto';
@@ -21,6 +21,7 @@ export class StorageEntityController {
   }
 
   @Post()
+  @UsePipes(new ValidationPipe({ transform: true }))
   @ApiCreatedResponse({
     description: 'Storage entity created',
     type: StorageEntityResponseDto,
