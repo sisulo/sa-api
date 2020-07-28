@@ -22,15 +22,20 @@ export class StorageEntityService {
   }
 
   async create(requestEntity: StorageEntityRequestDto): Promise<StorageEntityEntity> {
-    const parent = await this.storageEntityRepository.findOne(requestEntity.parentId);
+    let parent;
+    if (requestEntity.type !== StorageEntityType.DATA_CENTER) {
 
-    if (parent === undefined) {
-      throw new ArgumentError(ErrorCodeConst.ENTITY_NOT_FOUND, `Database entity with id \'${requestEntity.parentId}\' was not found`);
-    }
+      parent = await this.storageEntityRepository.findOne(requestEntity.parentId);
+      if (parent === undefined) {
+        throw new ArgumentError(ErrorCodeConst.ENTITY_NOT_FOUND, `Database entity with id \'${requestEntity.parentId}\' was not found`);
+      }
 
-    if (await this.isAlreadyExists(requestEntity, parent)) {
-      throw new StorageEntityAlreadyExistsError(`Storage Entity \'${StorageEntityType[requestEntity.type]}\' with name \'${requestEntity.name}\'
+      if (await this.isAlreadyExists(requestEntity, parent)) {
+        throw new StorageEntityAlreadyExistsError(`Storage Entity \'${StorageEntityType[requestEntity.type]}\' with name \'${requestEntity.name}\'
       under parent \'${requestEntity.parentId}\' already exists.`);
+      }
+    } else {
+      parent = null;
     }
 
     const entity = this.createEntity(requestEntity, parent);

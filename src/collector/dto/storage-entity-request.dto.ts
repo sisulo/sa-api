@@ -19,6 +19,6 @@ export class StorageEntityRequestDto {
   type: StorageEntityType;
 
   @ApiProperty()
-  @IsNotEmpty({ message: 'Parent ID cannot be empty' })
+  // @IsNotEmpty({ message: 'Parent ID cannot be empty' })
   parentId: number;
 }

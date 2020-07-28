@@ -24,7 +24,7 @@ export class Owner {
   @ApiProperty({ type: Owner })
   parent: Owner;
   @ApiProperty({ type: Owner })
-  children: Owner;
+  children: Owner[] = [];
   @ApiProperty()
   detail: StorageEntityDetailResponseDto;
 }

@@ -77,10 +77,10 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
   }
   public async getAllSystems(): Promise<StorageEntityEntity[]> {
     return await this.createQueryBuilder('datacenter')
-      .innerJoinAndSelect('datacenter.children', 'system')
+      .leftJoinAndSelect('datacenter.children', 'system', 'system.idType = :type', { type: StorageEntityType.SYSTEM })
       .leftJoinAndSelect('system.detail', 'detail')
-      .andWhere('system.idType = :type', { type: StorageEntityType.SYSTEM })
-      .andWhere('system.idCatComponentStatus = :status', {status: ComponentStatus.ACTIVE})
+      .andWhere('datacenter.idType = :dcType', {dcType: StorageEntityType.DATA_CENTER})
+      // .andWhere('system.idCatComponentStatus = :status', {status: ComponentStatus.ACTIVE})
       .getMany();
   }
 }
