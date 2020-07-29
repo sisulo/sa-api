@@ -24,7 +24,7 @@ import { StatisticsModule } from './statistics/statistics.module';
         dropSchema: configService.getDropSchema(),
         migrationsRun: true,
         migrationsTableName: 'migration_schema',
-        migrations: ['dist/migration/*.js'],
+        migrations: [configService.getMigrationsPattern()],
         logging: configService.getDbLogging(),
       } as PostgresConnectionOptions),
       inject: [ConfigService],

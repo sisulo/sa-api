@@ -63,6 +63,9 @@ describe('Collector', () => {
     app.useGlobalFilters(new FallbackErrorFilter(), new HttpExceptionFilter(), new SaApiExceptionFilter());
     await app.init();
   });
+  afterAll(async () => {
+    await app.close();
+  });
 
   it('Create pool metric (POST)', () => {
     const expected = expect.objectContaining({

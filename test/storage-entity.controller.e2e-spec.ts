@@ -18,37 +18,52 @@ describe('Storage Entity', () => {
   const PORT_NAME = 'Port_1';
   const SYSTEM_SERIAL_NAME = 'Sys-123-abf';
   const POOL_SERIAL_NAME = 'Pool-XYZ-1';
+  const DC_NAME = 'CZ_Sitel';
+  const DC_CZ_CHODOV = 1;
+  const SYSTEM_XP7_G11_58417 = 2;
+  const ADAPTER_CHA_1 = 5;
 
+  const dcPayload = {
+    name: DC_NAME,
+    type: StorageEntityType[StorageEntityType.DATA_CENTER],
+    parentId: null,
+  };
   const systemPayload = {
     name: SYSTEM_NAME,
     type: StorageEntityType[StorageEntityType.SYSTEM],
-    parentId: 1002,
+    parentId: DC_CZ_CHODOV,
+    serialNumber: SYSTEM_SERIAL_NAME,
+  };
+  const systemPayloadWrong = {
+    name: SYSTEM_NAME + '_wrong',
+    type: StorageEntityType[StorageEntityType.SYSTEM],
+    parentId: null,
     serialNumber: SYSTEM_SERIAL_NAME,
   };
 
   const poolPayload = {
     name: POOL_NAME,
     type: StorageEntityType[StorageEntityType.POOL],
-    parentId: 1003,
+    parentId: SYSTEM_XP7_G11_58417,
     serialNumber: POOL_SERIAL_NAME,
   };
 
   const channelAdapterPayload = {
     name: CHA_NAME,
     type: StorageEntityType[StorageEntityType.ADAPTER],
-    parentId: 1003,
+    parentId: SYSTEM_XP7_G11_58417,
   };
 
   const hostGroupPayload = {
     name: HOST_GROUP_NAME,
     type: StorageEntityType[StorageEntityType.HOST_GROUP],
-    parentId: 1003,
+    parentId: SYSTEM_XP7_G11_58417,
   };
 
   const portPayload = {
     name: PORT_NAME,
     type: StorageEntityType[StorageEntityType.PORT],
-    parentId: 1008,
+    parentId: ADAPTER_CHA_1,
   };
   // TODO make this section global for all tests
   let app;
@@ -82,6 +97,16 @@ describe('Storage Entity', () => {
         .send(systemPayload)
         .expect(HttpStatus.CREATED)
         .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
+    },
+  );
+  it('Saving system storage entity data without parentId', () => {
+      return request(app.getHttpServer())
+        .post('/api/v2/storage-entities')
+        .send(systemPayloadWrong)
+        .expect(HttpStatus.BAD_REQUEST)
+        .then((responses) => {
+          expect(responses.body.code).toEqual(ErrorCodeConst.BAD_INPUT.code);
+        });
     },
   );
   it('Saving same storage entity - CONFLICT', () => {
@@ -182,6 +207,24 @@ describe('Storage Entity', () => {
       return request(app.getHttpServer())
         .post('/api/v2/storage-entities')
         .send(portPayload)
+        .expect(HttpStatus.CREATED)
+        .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
+    },
+  );
+
+  it('Saving datacenter', () => {
+      const expected = expect.objectContaining({
+        externals: [],
+        storageEntity: expect.objectContaining({
+          id: expect.any(Number),
+          name: DC_NAME,
+          type: StorageEntityType[StorageEntityType.DATA_CENTER],
+        }),
+      });
+
+      return request(app.getHttpServer())
+        .post('/api/v2/storage-entities')
+        .send(dcPayload)
         .expect(HttpStatus.CREATED)
         .then((responses) => ValidateResponseUtils.validateResponse(responses, expected));
     },

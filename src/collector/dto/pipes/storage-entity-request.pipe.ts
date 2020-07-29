@@ -1,5 +1,7 @@
 import { ArgumentMetadata, HttpException, HttpStatus, Injectable, PipeTransform } from '@nestjs/common';
 import { StorageEntityType } from '../owner.dto';
+import { ErrorCodeConst } from '../../../errors/error-code.enum';
+import { SaApiException } from '../../../errors/sa-api.exception';
 
 @Injectable()
 export class StorageEntityRequestPipe implements PipeTransform {
@@ -17,7 +19,7 @@ export class StorageEntityRequestPipe implements PipeTransform {
       return value;
     }
 
-    const { type } = value;
+    const { type, parentId } = value;
     if (type) {
       const convertedValue = StorageEntityType[type];
       if (convertedValue === undefined) {
@@ -25,7 +27,12 @@ export class StorageEntityRequestPipe implements PipeTransform {
       }
       value.type = convertedValue;
     }
-
+    if (value.type !== StorageEntityType.DATA_CENTER && parentId === null) {
+      throw new SaApiException(
+        ErrorCodeConst.BAD_INPUT,
+        `Storage entity of type \`${type}\' must have \'parentId\' property specified.`,
+        HttpStatus.BAD_REQUEST);
+    }
     return value;
   }
 }

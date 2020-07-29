@@ -30,6 +30,13 @@ export class ConfigService {
     return this.envConfig.db_database;
   }
 
+  getMigrationsPattern(): string {
+    if (this.envConfig.db_migrations === undefined) {
+      return 'dist/migration/*.js';
+    }
+    return this.envConfig.db_migrations;
+  }
+
   getSynchronize(): boolean {
     // TODO how set up NODE_ENV
     if (process.env.NODE_ENV === 'production') {
