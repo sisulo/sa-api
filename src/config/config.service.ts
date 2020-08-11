@@ -32,7 +32,7 @@ export class ConfigService {
 
   getMigrationsPattern(): string {
     if (this.envConfig.db_migrations === undefined) {
-      return 'migration/*.js';
+      return 'dist/migration/*.js';
     }
     return this.envConfig.db_migrations;
   }
