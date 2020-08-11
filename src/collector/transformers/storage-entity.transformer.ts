@@ -92,8 +92,8 @@ export class StorageEntityTransformer {
         return StorageEntityType[StorageEntityType.ADAPTER];
       case StorageEntityType.PORT:
         return StorageEntityType[StorageEntityType.PORT];
-      case StorageEntityType.DATA_CENTER:
-        return StorageEntityType[StorageEntityType.DATA_CENTER];
+      case StorageEntityType.DATACENTER:
+        return StorageEntityType[StorageEntityType.DATACENTER];
       default:
         throw new TransformationError(`Type '${metricOwner.constructor.name}' is not possible to map to StorageEntityType`);
     }

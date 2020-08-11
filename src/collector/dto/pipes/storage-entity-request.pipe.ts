@@ -27,7 +27,7 @@ export class StorageEntityRequestPipe implements PipeTransform {
       }
       value.type = convertedValue;
     }
-    if (value.type !== StorageEntityType.DATA_CENTER && parentId === null) {
+    if (value.type !== StorageEntityType.DATACENTER && parentId === null) {
       throw new SaApiException(
         ErrorCodeConst.BAD_INPUT,
         `Storage entity of type \`${type}\' must have \'parentId\' property specified.`,

@@ -9,7 +9,7 @@ export class InitStorageEntities1564589174190 implements MigrationInterface {
     const manager = queryRunner.manager;
     const dc = new StorageEntityEntity();
     dc.name = 'CZ_Chodov';
-    dc.idType = StorageEntityType.DATA_CENTER;
+    dc.idType = StorageEntityType.DATACENTER;
     await manager.save(dc, { transaction: false });
 
     const system1 = new StorageEntityEntity();

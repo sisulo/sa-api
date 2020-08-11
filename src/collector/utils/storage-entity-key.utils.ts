@@ -19,21 +19,21 @@ export class StorageEntityKeyUtils {
     let componentKey: StorageEntityKey;
     if (portName !== undefined && portName !== null) {
       componentKey = {
-        datacenter: { name: 'CZ_Chodov', type: StorageEntityType.DATA_CENTER },
+        datacenter: { name: 'CZ_Chodov', type: StorageEntityType.DATACENTER },
         grandParent: { name: systemName, type: StorageEntityType.SYSTEM },
         parent: { name: subComponentName, type: StorageEntityType.ADAPTER },
         child: { name: portName, type: paramType },
       };
     } else if (subComponentName !== undefined) {
       componentKey = {
-        datacenter: { name: 'CZ_Chodov', type: StorageEntityType.DATA_CENTER },
+        datacenter: { name: 'CZ_Chodov', type: StorageEntityType.DATACENTER },
         grandParent: null,
         parent: { name: systemName, type: StorageEntityType.SYSTEM },
         child: { name: subComponentName, type: paramType },
       };
     } else {
       componentKey = {
-        datacenter: { name: 'CZ_Chodov', type: StorageEntityType.DATA_CENTER },
+        datacenter: { name: 'CZ_Chodov', type: StorageEntityType.DATACENTER },
         grandParent: null,
         parent: null,
         child: { name: systemName, type: paramType },

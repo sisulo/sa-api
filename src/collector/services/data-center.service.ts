@@ -123,7 +123,7 @@ export class DataCenterService {
         { idSystemStatus: ComponentStatus.ACTIVE })
       .andWhere(
         'datacenter.idType = :dataCenterType',
-        { dataCenterType: StorageEntityType.DATA_CENTER });
+        { dataCenterType: StorageEntityType.DATACENTER });
     if (idDataCenterParam.length > 0) {
       query.andWhere('datacenter.id IN (:...idDatacenter)', { idDatacenter: idDataCenterParam });
     }

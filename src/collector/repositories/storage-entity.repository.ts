@@ -27,7 +27,7 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
 
   private async findOrCreate(keyParts: KeyPart[], parentEntity: StorageEntityEntity, createIfNotExists = false): Promise<StorageEntityEntity> {
     const searchKey = keyParts.pop();
-    const parentToSearch = parentEntity.idType === StorageEntityType.DATA_CENTER ? null : parentEntity;
+    const parentToSearch = parentEntity.idType === StorageEntityType.DATACENTER ? null : parentEntity;
     let storageEntity = await this.findOneByName(searchKey.name, searchKey.type, parentToSearch);
     if (storageEntity === undefined && createIfNotExists === true) {
       storageEntity = this.create(
@@ -63,7 +63,7 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
   public async findDataCenters(): Promise<StorageEntityEntity[]> {
     return await this.createQueryBuilder('datacenter')
       .innerJoinAndSelect('datacenter.children', 'system')
-      .andWhere('datacenter.idType = :idType', {idType: StorageEntityType.DATA_CENTER})
+      .andWhere('datacenter.idType = :idType', {idType: StorageEntityType.DATACENTER})
       .andWhere('system.idCatComponentStatus = :status', {status: ComponentStatus.ACTIVE})
       .getMany();
   }
@@ -79,8 +79,8 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
     return await this.createQueryBuilder('datacenter')
       .leftJoinAndSelect('datacenter.children', 'system', 'system.idType = :type', { type: StorageEntityType.SYSTEM })
       .leftJoinAndSelect('system.detail', 'detail')
-      .andWhere('datacenter.idType = :dcType', {dcType: StorageEntityType.DATA_CENTER})
-      // .andWhere('system.idCatComponentStatus = :status', {status: ComponentStatus.ACTIVE})
+      .andWhere('datacenter.idType = :dcType', {dcType: StorageEntityType.DATACENTER})
+      .andWhere('system.idCatComponentStatus = :status', {status: ComponentStatus.ACTIVE})
       .getMany();
   }
 }

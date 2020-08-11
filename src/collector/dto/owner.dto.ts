@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { StorageEntityDetailResponseDto } from './storage-entity-detail-response.dto';
 
 export enum StorageEntityType {
-  DATA_CENTER = 1,
+  DATACENTER = 1,
   SYSTEM,
   POOL,
   ADAPTER,

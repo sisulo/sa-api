@@ -25,7 +25,7 @@ describe('Storage Entity', () => {
 
   const dcPayload = {
     name: DC_NAME,
-    type: StorageEntityType[StorageEntityType.DATA_CENTER],
+    type: StorageEntityType[StorageEntityType.DATACENTER],
     parentId: null,
   };
   const systemPayload = {
@@ -218,7 +218,7 @@ describe('Storage Entity', () => {
         storageEntity: expect.objectContaining({
           id: expect.any(Number),
           name: DC_NAME,
-          type: StorageEntityType[StorageEntityType.DATA_CENTER],
+          type: StorageEntityType[StorageEntityType.DATACENTER],
         }),
       });
 

@@ -23,7 +23,7 @@ export class StorageEntityService {
 
   async create(requestEntity: StorageEntityRequestDto): Promise<StorageEntityEntity> {
     let parent;
-    if (requestEntity.type !== StorageEntityType.DATA_CENTER) {
+    if (requestEntity.type !== StorageEntityType.DATACENTER) {
 
       parent = await this.storageEntityRepository.findOne(requestEntity.parentId);
       if (parent === undefined) {
