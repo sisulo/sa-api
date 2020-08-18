@@ -18,7 +18,7 @@ export class MultiValueMetricCollectorService extends AbstractMetricCollectorSer
       owner: storageEntity,
       metricTypeEntity: metricRequestDto.metricType,
       date: metricRequestDto.date,
-      operationEntity: metricRequestDto.operation,
+      idOperation: metricRequestDto.operation,
       blockSize: metricValueItem.blockSize,
       latency: metricValueItem.latency,
     };
