@@ -54,6 +54,9 @@ export class StorageEntityMetricTransformer {
     dto.type = StorageEntityType[storageEntity.idType];
     dto.status = ComponentStatus[storageEntity.idCatComponentStatus];
     dto.referenceId = storageEntity.serialNumber;
+    if (storageEntity.detail !== undefined) {
+      dto.detail = StorageEntityTransformer.transformDetail(storageEntity.detail);
+    }
     return dto;
   }
 

@@ -40,6 +40,7 @@ export class StorageEntityTransformer {
     detailDto.rack = detailEntity.rack;
     detailDto.room = detailEntity.room;
     detailDto.prefixReferenceId = detailEntity.prefixReferenceId;
+    detailDto.sortId = detailEntity.sortId;
     return detailDto;
   }
 

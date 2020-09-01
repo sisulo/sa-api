@@ -23,6 +23,7 @@ export class SystemDetailsService {
     entity.rack = request.rack;
     entity.room = request.room;
     entity.prefixReferenceId = request.prefixReferenceId;
+    entity.sortId = request.sortId;
 
     return await this.systemDetailsRepository.save(entity);
   }

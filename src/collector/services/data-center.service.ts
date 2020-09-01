@@ -17,6 +17,7 @@ import { SortStorageEntityByMetricUtils } from '../../statistics/utils/sort-stor
 import { OrderByVo } from '../../statistics/utils/vo/order-by.vo';
 import { StorageEntityFilterVo } from '../../statistics/services/vos/storage-entity-filter.vo';
 import { OutputType } from '../../statistics/controllers/params/statistics.query-params';
+import { SystemDetailEntity } from '../entities/system-detail.entity';
 
 export enum MetricGroup {
   PERFORMANCE = 1,
@@ -81,6 +82,12 @@ export class DataCenterService {
         'metrics.owner = system.id AND metrics.idType IN (:...metrics)',
         { metrics: metricTypes },
       )
+      .leftJoinAndMapOne(
+        'system.detail',
+        SystemDetailEntity,
+        'detail',
+        'detail.id = system.id',
+      )
       .leftJoinAndSelect(
         'metrics.metricTypeEntity',
         'typeEntity')
@@ -102,6 +109,12 @@ export class DataCenterService {
         'system',
         'system.parent = datacenter.id AND system.idType=:systemType',
         { systemType: StorageEntityType.SYSTEM })
+      .leftJoinAndMapOne(
+        'system.detail',
+        SystemDetailEntity,
+        'detail',
+        'detail.id = system.id',
+      )
       .leftJoinAndSelect(
         'system.children',
         'pool',
@@ -138,6 +151,12 @@ export class DataCenterService {
         'system',
         'system.parent = datacenter.id AND system.idType=:systemType',
         { systemType: StorageEntityType.SYSTEM })
+      .leftJoinAndMapOne(
+        'system.detail',
+        SystemDetailEntity,
+        'detail',
+        'detail.id = system.id',
+      )
       .innerJoinAndSelect(
         'system.children',
         'adapter',
@@ -188,6 +207,12 @@ export class DataCenterService {
         'system',
         'system.idType=:systemType',
         { systemType: StorageEntityType.SYSTEM })
+      .leftJoinAndMapOne(
+        'system.detail',
+        SystemDetailEntity,
+        'detail',
+        'detail.id = system.id',
+      )
       .leftJoinAndSelect('system.children',
         'hostGroup',
         'hostGroup.idType=:hostGroupType',

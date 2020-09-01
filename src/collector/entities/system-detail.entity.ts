@@ -16,4 +16,6 @@ export class SystemDetailEntity {
   room: string;
   @Column({ name: 'prefix_reference_id' })
   prefixReferenceId: string;
+  @Column({ name: 'sort_id' })
+  sortId: number;
 }

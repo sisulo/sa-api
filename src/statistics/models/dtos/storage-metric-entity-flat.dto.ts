@@ -1,6 +1,7 @@
 import { StorageEntityMetricDto } from './storage-metric-entity-hierarchy.dto';
 import { ExternalResponseDto } from '../../../collector/dto/external-response.dto';
 import { SystemMetric } from '../metrics/SystemMetric';
+import { StorageEntityDetailResponseDto } from '../../../collector/dto/storage-entity-detail-response.dto';
 
 export class StorageMetricEntityFlatDto implements StorageEntityMetricDto {
 
@@ -11,5 +12,6 @@ export class StorageMetricEntityFlatDto implements StorageEntityMetricDto {
   referenceId: string;
   status: string;
   type: string;
+  detail: StorageEntityDetailResponseDto;
   parent: StorageMetricEntityFlatDto;
 }

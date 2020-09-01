@@ -29,5 +29,9 @@ export class StorageEntityDetailResponseDto {
     { required: false },
   )
   room: string;
+  @ApiProperty(
+    { required: false },
+  )
+  sortId: number;
 
 }
