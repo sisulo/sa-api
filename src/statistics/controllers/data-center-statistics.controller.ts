@@ -19,7 +19,7 @@ export class DataCenterStatisticsController {
   @Get('/')
   async infrastructureMap(): Promise<StorageEntityResponseDto[]> {
     const entities = await this.dataCenterService.getAllDataCenters();
-    return StorageEntityTransformer.transformAll(entities, true);
+    return StorageEntityTransformer.transformAll(entities, true, true);
   }
 
   @Get('performance')

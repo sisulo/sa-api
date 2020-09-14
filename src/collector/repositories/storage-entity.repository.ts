@@ -63,6 +63,7 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
   public async findDataCenters(): Promise<StorageEntityEntity[]> {
     return await this.createQueryBuilder('datacenter')
       .innerJoinAndSelect('datacenter.children', 'system')
+      .innerJoinAndSelect('system.detail', 'detail')
       .andWhere('datacenter.idType = :idType', {idType: StorageEntityType.DATACENTER})
       .andWhere('system.idCatComponentStatus = :status', {status: ComponentStatus.ACTIVE})
       .getMany();

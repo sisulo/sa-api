@@ -75,7 +75,7 @@ export class DataCenterService {
         'system.idType=:systemType',
         { systemType: StorageEntityType.SYSTEM },
       )
-      .leftJoinAndMapMany(
+      .innerJoinAndMapMany(
         'system.metrics',
         SystemMetricReadEntity,
         'metrics',

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { SystemDetailEntity } from '../entities/system-detail.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StorageEntityDetailRequestDto } from '../dto/storage-entity-base-request.dto';
+import { isEmpty } from '@nestjs/common/utils/shared.utils';
 
 @Injectable()
 export class SystemDetailsService {
@@ -23,7 +24,7 @@ export class SystemDetailsService {
     entity.rack = request.rack;
     entity.room = request.room;
     entity.prefixReferenceId = request.prefixReferenceId;
-    entity.sortId = request.sortId;
+    entity.sortId = isEmpty(request.sortId) ? null : request.sortId;
 
     return await this.systemDetailsRepository.save(entity);
   }
