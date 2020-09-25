@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { StorageEntityResponseDto } from '../../dto/storage-entity-response.dto';
 import { StorageEntityService } from '../../services/storage-entity.service';
 import { StorageEntityRequestDto } from '../../dto/storage-entity-request.dto';
 import { StorageEntityTransformer } from '../../transformers/storage-entity.transformer';
 import { StorageEntityRequestPipe } from '../../dto/pipes/storage-entity-request.pipe';
-import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse } from '@nestjs/swagger';
 import { StorageEntityDetailRequestDto } from '../../dto/storage-entity-base-request.dto';
 
 @Controller('api/v2/storage-entities')
@@ -44,5 +44,22 @@ export class StorageEntityController {
   ): Promise<StorageEntityResponseDto> {
     const entity = await this.storageEntityService.update(id, request);
     return StorageEntityTransformer.transform(entity);
+  }
+
+  @Delete(':id')
+  @ApiNoContentResponse()
+  public async delete(
+    @Param('id') id: number,
+  ) {
+    await this.storageEntityService.delete(id);
+  }
+
+  @Put(':id/new-parent/:parent')
+  @ApiNoContentResponse()
+  public async move(
+    @Param('id') id: number,
+    @Param('parent') parentId: number,
+  ) {
+    await this.storageEntityService.move(id, parentId);
   }
 }

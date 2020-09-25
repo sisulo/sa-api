@@ -11,6 +11,7 @@ import { ChangeStatusRequestDto } from '../dto/change-status-request.dto';
 import { StorageEntityKey } from '../utils/storage-entity-key.utils';
 import { SystemDetailsService } from './system-details.service';
 import { StorageEntityDetailRequestDto } from '../dto/storage-entity-base-request.dto';
+import { StorageEntityNotFoundError } from './errors/storage-entity-not-found.error';
 
 @Injectable()
 export class StorageEntityService {
@@ -102,5 +103,52 @@ export class StorageEntityService {
     entity.detail = await this.systemDetailsService.upsert(id, request);
     return await this.storageEntityRepository.save(entity);
 
+  }
+
+  async delete(id: number) {
+    const entity = await this.storageEntityRepository.findOne(id);
+    if (entity === undefined || entity.idCatComponentStatus === ComponentStatus.INACTIVE) {
+      throw new StorageEntityNotFoundError(`Entity(id: ${id}) not found or is INACTIVE.`);
+    }
+    entity.idCatComponentStatus = ComponentStatus.INACTIVE;
+    await this.storageEntityRepository.save(entity);
+    await this.storageEntityRepository.query(
+      'DELETE FROM storage_entities_closure ' +
+      'WHERE id_descendant IN (SELECT id_descendant ' +
+      '                     FROM storage_entities_closure ' +
+      '                     WHERE id_ancestor = ' + id + ');',
+    );
+  }
+
+  async move(id: number, parentId: number) {
+    const entity = await this.storageEntityRepository.findOne(id);
+    if (entity === undefined || entity.idCatComponentStatus === ComponentStatus.INACTIVE) {
+      throw new StorageEntityNotFoundError(`Entity(id: ${id}) not found or is INACTIVE.`);
+    }
+    const parentEntity = await this.storageEntityRepository.findOne(parentId);
+    if (parentEntity === undefined || parentEntity.idCatComponentStatus === ComponentStatus.INACTIVE) {
+      throw new StorageEntityNotFoundError(`Entity(id: ${parentId}) not found or is INACTIVE.`);
+    }
+    this.storageEntityRepository.query(`
+      DELETE FROM storage_entities_closure
+      WHERE id_descendant IN (SELECT id_descendant
+                     FROM storage_entities_closure
+                     WHERE id_ancestor = ${id})
+      AND id_ancestor IN (SELECT id_ancestor
+                     FROM storage_entities_closure
+                     WHERE id_descendant = ${id}
+                     AND id_ancestor != id_descendant);
+    `);
+
+    this.storageEntityRepository.query(`
+INSERT INTO storage_entities_closure (id_ancestor, id_descendant)
+SELECT supertree.id_ancestor, subtree.id_descendant
+FROM storage_entities_closure AS supertree
+CROSS JOIN storage_entities_closure AS subtree
+WHERE supertree.id_descendant = ${parentId}
+AND subtree.id_ancestor = ${id};
+    `);
+    entity.parent = parentEntity;
+    await this.storageEntityRepository.save(entity);
   }
 }
