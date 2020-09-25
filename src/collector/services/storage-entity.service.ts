@@ -14,6 +14,7 @@ import { StorageEntityDetailRequestDto } from '../dto/storage-entity-base-reques
 
 @Injectable()
 export class StorageEntityService {
+  private static CHECK_DUPLICITY_TYPE = [StorageEntityType.DATACENTER, StorageEntityType.SYSTEM, StorageEntityType.POOL];
 
   constructor(
     private storageEntityRepository: StorageEntityRepository,
@@ -31,8 +32,9 @@ export class StorageEntityService {
       }
 
       if (await this.isAlreadyExists(requestEntity, parent)) {
-        throw new StorageEntityAlreadyExistsError(`Storage Entity \'${StorageEntityType[requestEntity.type]}\' with name \'${requestEntity.name}\'
-      under parent \'${requestEntity.parentId}\' already exists.`);
+        throw new StorageEntityAlreadyExistsError(
+          `Storage Entity \'${StorageEntityType[requestEntity.type]}\' `
+          + `with name \'${requestEntity.name}\' already exists.`);
       }
     } else {
       parent = null;
@@ -44,8 +46,15 @@ export class StorageEntityService {
   }
 
   private async isAlreadyExists(requestEntity: StorageEntityRequestDto, parentEntity) {
-    const entity = await this.storageEntityRepository.findOne({ where: { parent: parentEntity, name: requestEntity.name } });
-    return entity !== undefined;
+
+    const entity = await this.storageEntityRepository.findOne({
+      where: { name: requestEntity.name },
+      join: { alias: 'storageEntity', leftJoinAndSelect: { parent: 'storageEntity.parent' } },
+    });
+    if (StorageEntityService.CHECK_DUPLICITY_TYPE.includes(requestEntity.type)) {
+      return entity !== undefined && entity.idType === requestEntity.type;
+    }
+    return entity !== undefined && entity.parent.id === parentEntity.id;
   }
 
   private createEntity(requestEntity: StorageEntityRequestDto, parent: StorageEntityEntity) {
