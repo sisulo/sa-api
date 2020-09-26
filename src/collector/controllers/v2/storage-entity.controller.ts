@@ -71,6 +71,7 @@ export class StorageEntityController {
     @Param('id') id: number,
     @Body(new StorageEntityStatusPipe()) dto: ChangeStatusRequestDto
   ) {
-    await this.storageEntityService.updateStatusById(id, dto);
+    const storageEntity = await this.storageEntityService.updateStatusById(id, dto);
+    return StorageEntityTransformer.transform(storageEntity);
   }
 }
