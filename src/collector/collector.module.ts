@@ -37,6 +37,7 @@ import { MetricRepositoryFactory } from './factory/metric-repository.factory';
 import { MultiValueMetricCollectorService } from './services/collect/multi-value-metric-collector.service';
 import { SystemDetailsService } from './services/system-details.service';
 import { SystemDetailEntity } from './entities/system-detail.entity';
+import { ParityGroupMetricEntity } from './entities/parity-group-metric.entity';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { SystemDetailEntity } from './entities/system-detail.entity';
         CatOperationEntity,
         StorageEntityEntity,
         SystemDetailEntity,
+        ParityGroupMetricEntity,
         /**
          * Custom repositories
          */

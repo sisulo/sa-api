@@ -339,3 +339,12 @@ FROM storage_entities systems
                                                                                          LIMIT 1))
 WHERE systems.id_cat_storage_entity_type = 2;
 
+CREATE TABLE parity_group_metrics (
+    id_metric SERIAL,
+    id_cat_metric_type SMALLINT REFERENCES cat_metric_type (id_cat_metric_type),
+    value DOUBLE PRECISION,
+    peak DOUBLE PRECISION,
+    id_storage_entity INTEGER REFERENCES storage_entities (id),
+    start_time TIMESTAMP,
+    end_time TIMESTAMP
+);

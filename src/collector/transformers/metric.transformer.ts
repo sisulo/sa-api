@@ -11,22 +11,29 @@ import { LatencyEntity } from '../entities/latency.entity';
 import { ComponentStatus } from '../enums/component.status';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import { StorageEntityTransformer } from './storage-entity.transformer';
+import { ParityGroupMetricEntity } from '../entities/parity-group-metric.entity';
 
 export class MetricTransformer {
 
   public static transform(metricEntity: SystemMetricEntity | PoolMetricEntity |
-    ChaMetricEntity | PortMetricEntity | HostGroupMetricEntity | LatencyEntity):
+    ChaMetricEntity | PortMetricEntity | HostGroupMetricEntity | LatencyEntity | ParityGroupMetricEntity):
     MetricResponseDto {
     const dto = new MetricResponseDto();
 
     dto.idMetric = metricEntity.id;
     dto.metricType = MetricTransformer.transformMetricType(metricEntity.idType);
     dto.value = metricEntity.value;
-    dto.date = metricEntity.date;
+
     if (metricEntity instanceof SystemMetricEntity && metricEntity.peak !== undefined) {
       dto.peak = metricEntity.peak;
     }
-
+    if (metricEntity instanceof ParityGroupMetricEntity) {
+      dto.startTime = metricEntity.startTime.getTime();
+      dto.endTime = metricEntity.endTime.getTime();
+      dto.peak = metricEntity.peak;
+    } else {
+      dto.date = metricEntity.date;
+    }
     dto.owner = StorageEntityTransformer.transformFromOwner(metricEntity.owner);
 
     return dto;

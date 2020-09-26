@@ -8,6 +8,7 @@ export enum StorageEntityType {
   ADAPTER,
   PORT,
   HOST_GROUP,
+  PARITY_GROUP
 }
 
 export class Owner {

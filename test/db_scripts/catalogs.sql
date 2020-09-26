@@ -88,3 +88,4 @@ INSERT INTO public.cat_storage_entity_type (id_cat_storage_entity_type, name) VA
 INSERT INTO public.cat_storage_entity_type (id_cat_storage_entity_type, name) VALUES (4, 'ADAPTER');
 INSERT INTO public.cat_storage_entity_type (id_cat_storage_entity_type, name) VALUES (5, 'PORT');
 INSERT INTO public.cat_storage_entity_type (id_cat_storage_entity_type, name) VALUES (6, 'HOST_GROUP');
+INSERT INTO public.cat_storage_entity_type (id_cat_storage_entity_type, name) VALUES (7, 'PARITY_GROUP');

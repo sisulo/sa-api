@@ -6,5 +6,7 @@ export class MetricResponseDto {
   peak: number;
   date: Date;
   metricType: string;
+  startTime: number;
+  endTime: number;
   owner: Owner;
 }

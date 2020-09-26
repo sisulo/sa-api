@@ -15,14 +15,21 @@ export interface StorageEntityKey {
 }
 
 export class StorageEntityKeyUtils {
-  public static createComponentKey(systemName, subComponentName, portName, paramType: StorageEntityType): StorageEntityKey {
+  public static createComponentKey(systemName, subComponentName, subSubName, paramType: StorageEntityType): StorageEntityKey {
     let componentKey: StorageEntityKey;
-    if (portName !== undefined && portName !== null) {
+    if (subSubName !== undefined && subSubName !== null && paramType === StorageEntityType.PORT) {
       componentKey = {
         datacenter: { name: 'CZ_Chodov', type: StorageEntityType.DATACENTER },
         grandParent: { name: systemName, type: StorageEntityType.SYSTEM },
         parent: { name: subComponentName, type: StorageEntityType.ADAPTER },
-        child: { name: portName, type: paramType },
+        child: { name: subSubName, type: paramType },
+      };
+    } else if (subSubName !== undefined && subSubName !== null && paramType === StorageEntityType.PARITY_GROUP) {
+      componentKey = {
+        datacenter: { name: 'CZ_Chodov', type: StorageEntityType.DATACENTER },
+        grandParent: { name: systemName, type: StorageEntityType.SYSTEM },
+        parent: { name: subComponentName, type: StorageEntityType.POOL },
+        child: { name: subSubName, type: paramType },
       };
     } else if (subComponentName !== undefined) {
       componentKey = {
@@ -56,6 +63,8 @@ export class StorageEntityKeyUtils {
         return StorageEntityType.PORT;
       case CollectorType.LATENCY:
         return StorageEntityType.POOL;
+      case CollectorType.PARITY_GROUP:
+        return StorageEntityType.PARITY_GROUP;
       default:
         throw new NotFoundException(`Cannot resolve Storage entity type \'${type}\'`);
     }

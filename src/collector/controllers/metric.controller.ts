@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Put, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Param, Post, Put, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { MetricRequestDto } from '../dto/metric-request.dto';
 import { CollectorType } from '../factory/collector-type.enum';
 import { LoggingInterceptor } from '../../logging.interceptor';
@@ -15,6 +15,7 @@ import { StorageEntityService } from '../services/storage-entity.service';
 import { StorageEntityResponseDto } from '../dto/storage-entity-response.dto';
 import { StorageEntityStatusPipe } from '../dto/pipes/storage-entity-status.pipe';
 import { StorageEntityKeyUtils } from '../utils/storage-entity-key.utils';
+import { ParityGroupMetricRequestDto } from '../dto/parity-group-metric-request.dto';
 
 export interface ComponentKey {
   parentName: string;
@@ -23,6 +24,7 @@ export interface ComponentKey {
 }
 
 @UseInterceptors(LoggingInterceptor)
+@UsePipes(new ValidationPipe({ transform: true }))
 @Controller('api/v1')
 export class MetricController {
   constructor(private singleValueCollector: MetricCollectorService,
@@ -74,5 +76,24 @@ export class MetricController {
     const componentKey = StorageEntityKeyUtils.createComponentKey(systemName, subComponentName, portName, StorageEntityKeyUtils.of(subComponentType));
     const storageEntity = await this.storageEntityService.updateStatus(componentKey, dto);
     return StorageEntityTransformer.transform(storageEntity);
+  }
+
+  @Post([
+    'systems/:systemName/pools/:subComponentName/:subComponent/:portName/utilization-events',
+  ])
+  async inserParityGroupMetric(
+    @Param('systemName') systemName: string,
+    @Param('subComponent') subComponentType: CollectorType,
+    @Param('subComponentName') poolName: string,
+    @Param('portName') portName: string,
+    @Body(new MetricRequestPipe()) dto: ParityGroupMetricRequestDto) {
+    const metricEntity = await this.collectMetric(
+      this.singleValueCollector,
+      systemName,
+      subComponentType,
+      poolName,
+      portName,
+      dto);
+    return MetricTransformer.transform(metricEntity[0]);
   }
 }

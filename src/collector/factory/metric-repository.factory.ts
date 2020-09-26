@@ -10,6 +10,7 @@ import { AbstractMetricEntity } from '../entities/abstract-metric.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MetricType } from '../enums/metric-type.enum';
 import { LatencyEntity } from '../entities/latency.entity';
+import { ParityGroupMetricEntity } from '../entities/parity-group-metric.entity';
 
 @Injectable()
 export class MetricRepositoryFactory {
@@ -26,10 +27,13 @@ export class MetricRepositoryFactory {
     @InjectRepository(PortMetricEntity)
     private portRepository: Repository<PortMetricEntity>,
     @InjectRepository(LatencyEntity)
-    private latencyRepository: Repository<LatencyEntity>) {
+    private latencyRepository: Repository<LatencyEntity>,
+    @InjectRepository(ParityGroupMetricEntity)
+    private parityGroupRepository: Repository<ParityGroupMetricEntity>
+  ) {
   }
 
-  public getByStorageEntityType(type: StorageEntityType, metricType: MetricType): Repository<AbstractMetricEntity> {
+  public getByStorageEntityType(type: StorageEntityType, metricType: MetricType): Repository<AbstractMetricEntity|ParityGroupMetricEntity> {
     switch (type) {
       case StorageEntityType.SYSTEM:
         return this.systemRepository;
@@ -44,6 +48,8 @@ export class MetricRepositoryFactory {
         return this.hostGroupRepository;
       case StorageEntityType.PORT:
         return this.portRepository;
+      case StorageEntityType.PARITY_GROUP:
+        return this.parityGroupRepository;
       default:
         throw new BadRequestException(`Cannot find repository for specified type \'${StorageEntityType[type]}\'`);
     }
