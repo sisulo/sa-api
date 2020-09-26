@@ -81,7 +81,8 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
       .leftJoinAndSelect('datacenter.children', 'system', 'system.idType = :type', { type: StorageEntityType.SYSTEM })
       .leftJoinAndSelect('system.detail', 'detail')
       .andWhere('datacenter.idType = :dcType', {dcType: StorageEntityType.DATACENTER})
-      .andWhere('system.idCatComponentStatus = :status', {status: ComponentStatus.ACTIVE})
+      .andWhere('COALESCE(system.idCatComponentStatus, CAST(1 as smallint)) = :status', {status: ComponentStatus.ACTIVE})
+      .andWhere('datacenter.idCatComponentStatus = :status')
       .getMany();
   }
 }

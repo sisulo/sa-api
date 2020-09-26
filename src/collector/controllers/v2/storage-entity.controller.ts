@@ -6,6 +6,8 @@ import { StorageEntityTransformer } from '../../transformers/storage-entity.tran
 import { StorageEntityRequestPipe } from '../../dto/pipes/storage-entity-request.pipe';
 import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse } from '@nestjs/swagger';
 import { StorageEntityDetailRequestDto } from '../../dto/storage-entity-base-request.dto';
+import { StorageEntityStatusPipe } from '../../dto/pipes/storage-entity-status.pipe';
+import { ChangeStatusRequestDto } from '../../dto/change-status-request.dto';
 
 @Controller('api/v2/storage-entities')
 export class StorageEntityController {
@@ -61,5 +63,14 @@ export class StorageEntityController {
     @Param('parent') parentId: number,
   ) {
     await this.storageEntityService.move(id, parentId);
+  }
+
+  @Put(':id/status')
+  @ApiNoContentResponse()
+  public async changeStatus(
+    @Param('id') id: number,
+    @Body(new StorageEntityStatusPipe()) dto: ChangeStatusRequestDto
+  ) {
+    await this.storageEntityService.updateStatusById(id, dto);
   }
 }

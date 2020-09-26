@@ -11,7 +11,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: new WinstonLoggerService('app') });
   app.enableCors(
     {
-      methods: 'GET, OPTIONS, POST, PUT',
+      methods: 'GET, OPTIONS, POST, PUT, DELETE',
       origin: '*',
       allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
     },

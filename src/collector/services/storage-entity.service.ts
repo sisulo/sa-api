@@ -83,6 +83,12 @@ export class StorageEntityService {
     return this.updateStatusRecursively(storageEntityTree, requestDto);
   }
 
+  public async updateStatusById(id: number, requestDto: ChangeStatusRequestDto): Promise<StorageEntityEntity> {
+    const storageEntity = await this.storageEntityRepository.findOne(id);
+    const storageEntityTree = await this.storageEntityRepository.findDescendantsTree(storageEntity);
+    return this.updateStatusRecursively(storageEntityTree, requestDto);
+  }
+
   public async updateStatusRecursively(storageEntity: StorageEntityEntity, requestDto: ChangeStatusRequestDto): Promise<StorageEntityEntity> {
     if (storageEntity.children.length > 0) {
       storageEntity.children = await Promise.all(storageEntity.children.map(async child => await this.updateStatusRecursively(child, requestDto)));
