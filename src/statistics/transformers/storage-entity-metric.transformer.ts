@@ -10,6 +10,7 @@ import { MetricEntityInterface } from '../../collector/entities/metric-entity.in
 import { SystemMetricReadEntity } from '../../collector/entities/system-metric-read.entity';
 import { StorageEntityTransformer } from '../../collector/transformers/storage-entity.transformer';
 import { StorageMetricEntityFlatDto } from '../models/dtos/storage-metric-entity-flat.dto';
+import { ParityGroupMetricEntity } from '../../collector/entities/parity-group-metric.entity';
 
 export class StorageEntityMetricTransformer {
   private static excludedMetric = [MetricType.CHANGE_DAY, MetricType.CHANGE_WEEK, MetricType.CHANGE_MONTH];
@@ -85,8 +86,12 @@ export class StorageEntityMetricTransformer {
     } else {
       metricDetail.type = metric.metricTypeEntity.name.replace(/(_WEEK)|(_MONTH)$/, '') as SystemMetricType;
     }
-    if (metric instanceof SystemMetricReadEntity) {
+    if (metric instanceof SystemMetricReadEntity || metric instanceof ParityGroupMetricEntity) {
       metricDetail.peak = metric.peak;
+    }
+    if (metric instanceof ParityGroupMetricEntity) {
+      metricDetail.startTime = metric.startTime.getTime();
+      metricDetail.endTime = metric.endTime.getTime();
     }
     metricDetail.unit = metric.metricTypeEntity.unit;
     metricDetail.value = metric.value;

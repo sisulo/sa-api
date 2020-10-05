@@ -33,7 +33,7 @@ export class MetricCollectorService extends AbstractMetricCollectorService {
       metricEntity.startTime = new Date(metricRequest.startTime);
       metricEntity.endTime = new Date(metricRequest.endTime);
       metricEntity.peak = metricRequest.peak
-    } else {
+    } else if(metricEntity instanceof AbstractMetricEntity) {
       metricEntity.date = metricRequest.date;
     }
     return metricEntity;

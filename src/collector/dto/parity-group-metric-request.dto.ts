@@ -1,9 +1,12 @@
-import { MetricRequestDto } from './metric-request.dto';
 import { IsNotEmpty } from 'class-validator';
 
-export class ParityGroupMetricRequestDto extends MetricRequestDto {
+export class ParityGroupMetricRequestDto {
   @IsNotEmpty()
   readonly startTime: number;
   @IsNotEmpty()
   readonly endTime: number;
+
+  readonly value: number;
+
+  readonly peak: number;
 }

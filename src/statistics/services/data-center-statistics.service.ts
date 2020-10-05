@@ -9,6 +9,7 @@ import { PeriodType } from '../../collector/enums/period-type.enum';
 import { PortMetricService } from '../../collector/services/port-metric.service';
 import { StorageEntityEntity } from '../../collector/entities/storage-entity.entity';
 import { StorageMetricEntityHierarchyDto } from '../models/dtos/storage-metric-entity-hierarchy.dto';
+import { StatisticParams } from '../controllers/params/statistic.params';
 
 @Injectable()
 export class DataCenterStatisticsService {
@@ -19,9 +20,10 @@ export class DataCenterStatisticsService {
               private systemMetricService: SystemMetricService) {
   }
 
-  async getMetricByIdDataCenter(metricGroup: MetricGroup, idDataCenter: number = null, period?: PeriodType)
+  // TODO do all these parameters as one object
+  async getMetricByIdDataCenter(metricGroup: MetricGroup, idDataCenter: number = null, period?: PeriodType, statisticParams?: StatisticParams)
     : Promise<StorageMetricEntityHierarchyDto[]> {
-    const dataCenterEntity = await this.getEntities(metricGroup, idDataCenter, period);
+    const dataCenterEntity = await this.getEntities(metricGroup, idDataCenter, period, statisticParams);
     if (dataCenterEntity !== undefined) {
       return StorageEntityMetricTransformer.transform(dataCenterEntity);
     } else {
@@ -29,8 +31,11 @@ export class DataCenterStatisticsService {
     }
   }
 
-  async getEntities(metricGroup: MetricGroup, idDataCenter: number, period: PeriodType): Promise<StorageEntityEntity[]> {
-    return await this.dataCenterService.getMetricsByGroup(metricGroup, idDataCenter, period);
+  async getEntities(metricGroup: MetricGroup,
+                    idDataCenter: number,
+                    period: PeriodType,
+                    statisticParams: StatisticParams): Promise<StorageEntityEntity[]> {
+    return await this.dataCenterService.getMetricsByGroup(metricGroup, idDataCenter, period, statisticParams);
   }
 
   // TODO iterate over array of service (with getAlerts) and return all values

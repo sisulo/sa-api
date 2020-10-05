@@ -13,10 +13,10 @@ export class ParityGroupMetricEntity {
   @Column({ name: 'peak' })
   peak: number;
 
-  @Column('timestamp', { name: 'start_time' })
+  @Column('timestamp without time zone', { name: 'start_time' })
   startTime: Date;
 
-  @Column('timestamp', { name: 'end_time' })
+  @Column('timestamp without time zone', { name: 'end_time' })
   endTime: Date;
 
   @Column({ name: 'id_cat_metric_type', type: 'integer' })

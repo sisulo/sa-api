@@ -1,6 +1,7 @@
 import { MetricType } from '../enums/metric-type.enum';
 import { LatencyRequestDto } from './latency-request.dto';
 import { OperationType } from '../enums/operation-type.enum';
+import { ParityGroupMetricRequestDto } from './parity-group-metric-request.dto';
 
 export class MetricRequestDto {
 
@@ -13,7 +14,7 @@ export class MetricRequestDto {
 
   readonly peak: number;
 
-  readonly data: LatencyRequestDto[];
+  readonly data: LatencyRequestDto[] | ParityGroupMetricRequestDto[];
 
   readonly operation: OperationType;
 

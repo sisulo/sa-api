@@ -18,6 +18,8 @@ import { OrderByVo } from '../../statistics/utils/vo/order-by.vo';
 import { StorageEntityFilterVo } from '../../statistics/services/vos/storage-entity-filter.vo';
 import { OutputType } from '../../statistics/controllers/params/statistics.query-params';
 import { SystemDetailEntity } from '../entities/system-detail.entity';
+import { ParityGroupMetricEntity } from '../entities/parity-group-metric.entity';
+import { StatisticParams } from '../../statistics/controllers/params/statistic.params';
 
 export enum MetricGroup {
   PERFORMANCE = 1,
@@ -25,6 +27,7 @@ export enum MetricGroup {
   ADAPTERS = 3,
   SLA = 4,
   HOST_GROUPS = 5,
+  PARITY_GROUPS = 6,
 }
 
 @Injectable()
@@ -61,9 +64,12 @@ export class DataCenterService {
     return [];
   }
 
-  async getMetricsByGroup(metricGroup: MetricGroup, idDataCenterParam: number, period: PeriodType): Promise<StorageEntityEntity[]> {
-    const dcDao = await this.loadMetrics(metricGroup, idDataCenterParam, period);
-    return dcDao || await this.getEmptyDatacenter(idDataCenterParam);
+  async getMetricsByGroup(metricGroup: MetricGroup,
+                          idDataCenter: number,
+                          period: PeriodType,
+                          statisticParams: StatisticParams): Promise<StorageEntityEntity[]> {
+    const dcDao = await this.loadMetrics(metricGroup, idDataCenter, period, statisticParams);
+    return dcDao || await this.getEmptyDatacenter(idDataCenter);
   }
 
   async getPerformanceMetrics(metricTypes: MetricType[], idDataCenterParam: number[]): Promise<StorageEntityEntity[]> {
@@ -249,11 +255,14 @@ export class DataCenterService {
     return await this.storageEntityRepository.findDataCenters();
   }
 
-  private loadMetrics(metricGroup: MetricGroup, idDataCenterParam: number, period: PeriodType): Promise<StorageEntityEntity[]> {
+  private loadMetrics(metricGroup: MetricGroup,
+                      idDataCenter: number,
+                      period: PeriodType,
+                      statisticParams: StatisticParams): Promise<StorageEntityEntity[]> {
     const types: MetricType[] = DataCenterService.resolveMetricTypes(metricGroup, period);
     let dataCenterIds = [];
-    if (idDataCenterParam !== null && idDataCenterParam !== undefined) {
-      dataCenterIds = [idDataCenterParam];
+    if (idDataCenter !== null && idDataCenter !== undefined) {
+      dataCenterIds = [idDataCenter];
     }
     switch (metricGroup) {
       case MetricGroup.PERFORMANCE:
@@ -266,6 +275,8 @@ export class DataCenterService {
         return this.getPoolMetrics(types, dataCenterIds);
       case MetricGroup.HOST_GROUPS:
         return this.getHostGroupMetrics(types, dataCenterIds);
+      case MetricGroup.PARITY_GROUPS:
+        return this.getParityGroupsEvents(types, dataCenterIds, statisticParams.fromDate.toString(), statisticParams.toDate.toString());
     }
   }
 
@@ -380,6 +391,10 @@ export class DataCenterService {
       MetricType.CHANGE_WEEK,
       MetricType.CHANGE_MONTH,
     ];
+    metrics[MetricGroup.PARITY_GROUPS] = [];
+    metrics[MetricGroup.PARITY_GROUPS][PeriodType.DAY] = [
+      MetricType.HDD_PERC,
+    ];
     if (metrics[metricGroup][periodType] == null) {
       throw new BadRequestException(`Wrong metric group ${metricGroup} when resolving set of metric types`);
     }
@@ -406,7 +421,7 @@ export class DataCenterService {
           'pool.parent',
           'system',
           'system.id = pool.parent AND system.idType=:systemType AND system.idCatComponentStatus = :systemStatus',
-          {systemType: StorageEntityType.SYSTEM, systemStatus: ComponentStatus.ACTIVE});
+          { systemType: StorageEntityType.SYSTEM, systemStatus: ComponentStatus.ACTIVE });
     }
     const result = await query.leftJoinAndMapMany(
       'pool.metrics',
@@ -467,5 +482,51 @@ export class DataCenterService {
       return this.getPoolsById(poolIds, filter.orderBy, output);
     }
     return [];
+  }
+
+  private getParityGroupsEvents(types: MetricType[], idDataCenterParam: number[], fromDate: string, toDate: string) {
+    const query = this.storageEntityRepository.createQueryBuilder('datacenter')
+      .innerJoinAndSelect(
+        'datacenter.children',
+        'system',
+        'system.idType=:systemType',
+        { systemType: StorageEntityType.SYSTEM })
+      .leftJoinAndMapOne(
+        'system.detail',
+        SystemDetailEntity,
+        'detail',
+        'detail.id = system.id',
+      )
+      .innerJoinAndSelect(
+        'system.children',
+        'pool',
+        'pool.idType = :poolType',
+        { poolType: StorageEntityType.POOL },
+      )
+      .leftJoinAndSelect('pool.children',
+        'parityGroup',
+        'parityGroup.idType=:parityGroupType',
+        { parityGroupType: StorageEntityType.PARITY_GROUP })
+      .leftJoinAndMapMany('parityGroup.metrics',
+        ParityGroupMetricEntity,
+        'metrics',
+        'metrics.owner = parityGroup.id AND metrics.idType IN (:...metrics)',
+        { metrics: types })
+      .leftJoinAndSelect(
+        'metrics.metricTypeEntity',
+        'typeEntity')
+      .where(
+        'parityGroup.idCatComponentStatus = :idStatus',
+        { idStatus: ComponentStatus.ACTIVE })
+      .andWhere(
+        'system.idCatComponentStatus = :idSystemStatus',
+        { idSystemStatus: ComponentStatus.ACTIVE })
+      .andWhere(
+        'metrics.startTime >= :fromTime AND metrics.endTime <= :toTime',
+        { fromTime: new Date(parseInt(fromDate, 10)), toTime: new Date(parseInt(toDate, 10)) });
+    if (idDataCenterParam.length > 0) {
+      query.andWhere('datacenter.id IN (:...idDatacenter)', { idDatacenter: idDataCenterParam });
+    }
+    return query.getMany();
   }
 }

@@ -38,6 +38,7 @@ import { MultiValueMetricCollectorService } from './services/collect/multi-value
 import { SystemDetailsService } from './services/system-details.service';
 import { SystemDetailEntity } from './entities/system-detail.entity';
 import { ParityGroupMetricEntity } from './entities/parity-group-metric.entity';
+import { PgMultiValueMetricCollectorService } from './services/collect/pg-multi-value-metric-collector.service';
 
 @Module({
   imports: [
@@ -85,6 +86,7 @@ import { ParityGroupMetricEntity } from './entities/parity-group-metric.entity';
     MetricCollectorService,
     MetricRepositoryFactory,
     MultiValueMetricCollectorService,
+    PgMultiValueMetricCollectorService,
     SystemDetailsService,
   ],
   controllers: [

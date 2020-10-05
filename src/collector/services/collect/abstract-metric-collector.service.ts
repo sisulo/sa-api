@@ -7,12 +7,14 @@ import { Repository } from 'typeorm';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import { LatencyRequestDto } from '../../dto/latency-request.dto';
 import { StorageEntityKey } from '../../utils/storage-entity-key.utils';
+import { ParityGroupMetricRequestDto } from '../../dto/parity-group-metric-request.dto';
+import { ParityGroupMetricEntity } from '../../entities/parity-group-metric.entity';
 
 export interface MetricCollectorCommand {
   repository: Repository<any>;
   requestDto: MetricRequestDto;
   storageEntity: StorageEntityEntity;
-  latencyMetricDto: LatencyRequestDto;
+  dataMetricDto: LatencyRequestDto | ParityGroupMetricRequestDto;
 }
 
 export abstract class AbstractMetricCollectorService {
@@ -20,7 +22,10 @@ export abstract class AbstractMetricCollectorService {
                      protected metricRepositoryFactory: MetricRepositoryFactory) {
   }
 
-  protected abstract getMatchCriteria(metricRequestDto: MetricRequestDto, storageEntity: StorageEntityEntity, multiValueData?: LatencyRequestDto);
+  protected abstract getMatchCriteria(
+    metricRequestDto: MetricRequestDto,
+    storageEntity: StorageEntityEntity,
+    multiValueData?: LatencyRequestDto | ParityGroupMetricRequestDto);
 
   protected abstract mapData(command: MetricCollectorCommand);
 
@@ -40,7 +45,7 @@ export abstract class AbstractMetricCollectorService {
           repository,
           requestDto: metricRequest,
           storageEntity,
-          latencyMetricDto: item,
+          dataMetricDto: item,
         };
         return await this.mapData(command);
       },
@@ -48,9 +53,9 @@ export abstract class AbstractMetricCollectorService {
     return await repository.save(entitiesToSave);
   }
 
-  protected async createMetricEntity(command: MetricCollectorCommand): Promise<AbstractMetricEntity> {
+  protected async createMetricEntity(command: MetricCollectorCommand): Promise<AbstractMetricEntity | ParityGroupMetricEntity> {
 
-    const criteria = this.getMatchCriteria(command.requestDto, command.storageEntity, command.latencyMetricDto);
+    const criteria = this.getMatchCriteria(command.requestDto, command.storageEntity, command.dataMetricDto);
 
     const metricEntity = await command.repository.findOne({ where: criteria });
 

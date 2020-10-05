@@ -15,7 +15,7 @@ import { StorageEntityService } from '../services/storage-entity.service';
 import { StorageEntityResponseDto } from '../dto/storage-entity-response.dto';
 import { StorageEntityStatusPipe } from '../dto/pipes/storage-entity-status.pipe';
 import { StorageEntityKeyUtils } from '../utils/storage-entity-key.utils';
-import { ParityGroupMetricRequestDto } from '../dto/parity-group-metric-request.dto';
+import { PgMultiValueMetricCollectorService } from '../services/collect/pg-multi-value-metric-collector.service';
 
 export interface ComponentKey {
   parentName: string;
@@ -29,6 +29,7 @@ export interface ComponentKey {
 export class MetricController {
   constructor(private singleValueCollector: MetricCollectorService,
               private multiValueCollector: MultiValueMetricCollectorService,
+              private pgMultiValueCollector: PgMultiValueMetricCollectorService,
               private storageEntityService: StorageEntityService) {
   }
 
@@ -79,16 +80,16 @@ export class MetricController {
   }
 
   @Post([
-    'systems/:systemName/pools/:subComponentName/:subComponent/:portName/utilization-events',
+    'systems/:systemName/pools/:subComponentName/:subComponent/:portName/events',
   ])
-  async inserParityGroupMetric(
+  async insertParityGroupMetric(
     @Param('systemName') systemName: string,
     @Param('subComponent') subComponentType: CollectorType,
     @Param('subComponentName') poolName: string,
     @Param('portName') portName: string,
-    @Body(new MetricRequestPipe()) dto: ParityGroupMetricRequestDto) {
+    @Body(new MetricRequestPipe()) dto: MetricRequestDto) {
     const metricEntity = await this.collectMetric(
-      this.singleValueCollector,
+      this.pgMultiValueCollector,
       systemName,
       subComponentType,
       poolName,
