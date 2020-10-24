@@ -6,7 +6,7 @@ import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import { StorageEntityEntity } from '../entities/storage-entity.entity';
 import { ExternalResponseDto } from '../dto/external-response.dto';
 import { ExternalType } from '../enums/external-type.enum';
-import { SystemDetailEntity } from '../entities/system-detail.entity';
+import { StorageEntityDetailsEntity } from '../entities/storage-entity-details.entity';
 import { StorageEntityDetailResponseDto } from '../dto/storage-entity-detail-response.dto';
 import { Owner, StorageEntityType } from '../dto/owner.dto';
 import { ComponentStatus } from '../enums/component.status';
@@ -32,7 +32,7 @@ export class StorageEntityTransformer {
     return dto;
   }
 
-  public static transformDetail(detailEntity: SystemDetailEntity) {
+  public static transformDetail(detailEntity: StorageEntityDetailsEntity) {
     const detailDto = new StorageEntityDetailResponseDto();
     detailDto.arrayModel = detailEntity.model;
     detailDto.dkc = detailEntity.dkc;
@@ -41,6 +41,13 @@ export class StorageEntityTransformer {
     detailDto.room = detailEntity.room;
     detailDto.prefixReferenceId = detailEntity.prefixReferenceId;
     detailDto.sortId = detailEntity.sortId;
+    detailDto.speed = detailEntity.speed;
+    detailDto.note = detailEntity.note;
+    detailDto.cables = detailEntity.cables;
+    detailDto.switch = detailEntity.switch;
+    detailDto.slot = detailEntity.slot;
+    detailDto.wwn = detailEntity.wwn;
+
     return detailDto;
   }
 
@@ -89,14 +96,22 @@ export class StorageEntityTransformer {
         return StorageEntityType[StorageEntityType.POOL];
       case StorageEntityType.HOST_GROUP:
         return StorageEntityType[StorageEntityType.HOST_GROUP];
-      case StorageEntityType.ADAPTER:
-        return StorageEntityType[StorageEntityType.ADAPTER];
-      case StorageEntityType.PORT:
-        return StorageEntityType[StorageEntityType.PORT];
+      case StorageEntityType.ADAPTER_GROUP:
+        return StorageEntityType[StorageEntityType.ADAPTER_GROUP];
+      case StorageEntityType.PORT_GROUP:
+        return StorageEntityType[StorageEntityType.PORT_GROUP];
       case StorageEntityType.DATACENTER:
         return StorageEntityType[StorageEntityType.DATACENTER];
       case StorageEntityType.PARITY_GROUP:
         return StorageEntityType[StorageEntityType.PARITY_GROUP];
+      case StorageEntityType.PORT:
+        return StorageEntityType[StorageEntityType.PORT];
+      case StorageEntityType.CHANNEL_BOARD:
+        return StorageEntityType[StorageEntityType.CHANNEL_BOARD];
+      case StorageEntityType.DKC:
+        return StorageEntityType[StorageEntityType.DKC];
+      case StorageEntityType.CONTROLLER:
+        return StorageEntityType[StorageEntityType.CONTROLLER];
       default:
         throw new TransformationError(`Type '${metricOwner.constructor.name}' is not possible to map to StorageEntityType`);
     }

@@ -1,21 +1,21 @@
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { SystemDetailEntity } from '../entities/system-detail.entity';
+import { StorageEntityDetailsEntity } from '../entities/storage-entity-details.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { StorageEntityDetailRequestDto } from '../dto/storage-entity-base-request.dto';
+import { StorageEntityDetailRequestDto } from '../dto/storage-entity-detail-request.dto';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 
 @Injectable()
 export class SystemDetailsService {
   constructor(
-    @InjectRepository(SystemDetailEntity)
-    private readonly systemDetailsRepository: Repository<SystemDetailEntity>) {
+    @InjectRepository(StorageEntityDetailsEntity)
+    private readonly systemDetailsRepository: Repository<StorageEntityDetailsEntity>) {
   }
 
   public async upsert(id: number, request: StorageEntityDetailRequestDto) {
     let entity = await this.systemDetailsRepository.findOne(id);
     if (entity === undefined) {
-      entity = new SystemDetailEntity();
+      entity = new StorageEntityDetailsEntity();
       entity.id = id;
     }
     entity.model = request.arrayModel;
@@ -25,6 +25,12 @@ export class SystemDetailsService {
     entity.room = request.room;
     entity.prefixReferenceId = request.prefixReferenceId;
     entity.sortId = isEmpty(request.sortId) ? null : request.sortId;
+    entity.speed = request.speed;
+    entity.note = request.note;
+    entity.cables = request.cables;
+    entity.switch = request.switch;
+    entity.slot = request.slot;
+    entity.wwn = request.wwn;
 
     return await this.systemDetailsRepository.save(entity);
   }

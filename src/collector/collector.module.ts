@@ -36,7 +36,7 @@ import { MetricCollectorService } from './services/collect/metric-collector.serv
 import { MetricRepositoryFactory } from './factory/metric-repository.factory';
 import { MultiValueMetricCollectorService } from './services/collect/multi-value-metric-collector.service';
 import { SystemDetailsService } from './services/system-details.service';
-import { SystemDetailEntity } from './entities/system-detail.entity';
+import { StorageEntityDetailsEntity } from './entities/storage-entity-details.entity';
 import { ParityGroupMetricEntity } from './entities/parity-group-metric.entity';
 import { PgMultiValueMetricCollectorService } from './services/collect/pg-multi-value-metric-collector.service';
 
@@ -59,7 +59,7 @@ import { PgMultiValueMetricCollectorService } from './services/collect/pg-multi-
         LatencyEntity,
         CatOperationEntity,
         StorageEntityEntity,
-        SystemDetailEntity,
+        StorageEntityDetailsEntity,
         ParityGroupMetricEntity,
         /**
          * Custom repositories

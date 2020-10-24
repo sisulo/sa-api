@@ -32,7 +32,7 @@ export class InitStorageEntities1564589174190 implements MigrationInterface {
 
     const cha = new StorageEntityEntity();
     cha.name = 'CHA_1';
-    cha.idType = StorageEntityType.ADAPTER;
+    cha.idType = StorageEntityType.ADAPTER_GROUP;
     cha.parent = system1;
     await manager.save(cha, { transaction: false });
   }

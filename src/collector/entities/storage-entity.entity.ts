@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from 'typeorm';
 import { ExternalEntity } from './external.entity';
 import { MetricEntityInterface } from './metric-entity.interface';
-import { SystemDetailEntity } from './system-detail.entity';
+import { StorageEntityDetailsEntity } from './storage-entity-details.entity';
 
 @Entity('storage_entities')
 @Tree('closure-table')
@@ -30,9 +30,9 @@ export class StorageEntityEntity {
   @OneToMany(() => ExternalEntity, external => external.storageEntity)
   externals: ExternalEntity[];
 
-  @OneToOne(() => SystemDetailEntity)
+  @OneToOne(() => StorageEntityDetailsEntity)
   @JoinColumn({ name: 'id' })
-  detail: SystemDetailEntity;
+  detail: StorageEntityDetailsEntity;
 
   metrics: MetricEntityInterface[];
 }

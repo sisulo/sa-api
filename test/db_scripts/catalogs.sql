@@ -89,3 +89,7 @@ INSERT INTO public.cat_storage_entity_type (id_cat_storage_entity_type, name) VA
 INSERT INTO public.cat_storage_entity_type (id_cat_storage_entity_type, name) VALUES (5, 'PORT');
 INSERT INTO public.cat_storage_entity_type (id_cat_storage_entity_type, name) VALUES (6, 'HOST_GROUP');
 INSERT INTO public.cat_storage_entity_type (id_cat_storage_entity_type, name) VALUES (7, 'PARITY_GROUP');
+INSERT INTO public.cat_storage_entity_type (id_cat_storage_entity_type, name) VALUES (8, 'PORT');
+INSERT INTO public.cat_storage_entity_type (id_cat_storage_entity_type, name) VALUES (9, 'CHANNEL_BOARD');
+INSERT INTO public.cat_storage_entity_type (id_cat_storage_entity_type, name) VALUES (10, 'DKC');
+INSERT INTO public.cat_storage_entity_type (id_cat_storage_entity_type, name) VALUES (11, 'CONTROLLER');

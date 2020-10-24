@@ -33,5 +33,28 @@ export class StorageEntityDetailResponseDto {
     { required: false },
   )
   sortId: number;
-
+  @ApiProperty(
+    { required: false },
+  )
+  speed: number;
+  @ApiProperty(
+    { required: false },
+  )
+  note: string;
+  @ApiProperty(
+    { required: false },
+  )
+  cables: string;
+  @ApiProperty(
+    { required: false },
+  )
+  switch: string;
+  @ApiProperty(
+    { required: false },
+  )
+  slot: string;
+  @ApiProperty(
+    { required: false },
+  )
+  wwn: string;
 }

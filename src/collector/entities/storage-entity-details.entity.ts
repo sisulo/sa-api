@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity('system_details')
-export class SystemDetailEntity {
+@Entity('storage_entity_details')
+export class StorageEntityDetailsEntity {
   @PrimaryColumn({ name: 'id_storage_entity', type: 'integer' })
   id: number;
   @Column({ name: 'model' })
@@ -18,4 +18,16 @@ export class SystemDetailEntity {
   prefixReferenceId: string;
   @Column({ name: 'sort_id' })
   sortId: number;
+  @Column({ name: 'speed' })
+  speed: number;
+  @Column({ name: 'note' })
+  note: string;
+  @Column({ name: 'cables' })
+  cables: string;
+  @Column({ name: 'switch' })
+  switch: string;
+  @Column({ name: 'slot' })
+  slot: string;
+  @Column({ name: 'wwn' })
+  wwn: string;
 }

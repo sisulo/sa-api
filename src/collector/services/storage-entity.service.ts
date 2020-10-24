@@ -10,8 +10,9 @@ import { ComponentStatus } from '../enums/component.status';
 import { ChangeStatusRequestDto } from '../dto/change-status-request.dto';
 import { StorageEntityKey } from '../utils/storage-entity-key.utils';
 import { SystemDetailsService } from './system-details.service';
-import { StorageEntityDetailRequestDto } from '../dto/storage-entity-base-request.dto';
+import { StorageEntityDetailRequestDto } from '../dto/storage-entity-detail-request.dto';
 import { StorageEntityNotFoundError } from './errors/storage-entity-not-found.error';
+import { DbEvalUtils } from '../utils/db-eval.utils';
 
 @Injectable()
 export class StorageEntityService {
@@ -73,8 +74,8 @@ export class StorageEntityService {
     return this.storageEntityRepository.availableSystems();
   }
 
-  public getAllSystems() {
-    return this.storageEntityRepository.getAllSystems();
+  public getAllSystems(type: StorageEntityType, systemId: number = null) {
+    return this.storageEntityRepository.getStorageEntities(type, systemId);
   }
 
   public async updateStatus(key: StorageEntityKey, requestDto: ChangeStatusRequestDto): Promise<StorageEntityEntity> {
@@ -104,8 +105,8 @@ export class StorageEntityService {
       throw new ArgumentError(ErrorCodeConst.ENTITY_NOT_FOUND, `Database entity with id \'${id}\' was not found`);
     }
 
-    entity.name = request.name;
-    entity.serialNumber = request.serialNumber;
+    entity.name = DbEvalUtils.coalesce(request.name, entity.name);
+    entity.serialNumber = DbEvalUtils.coalesce(request.serialNumber, entity.serialNumber);
     entity.detail = await this.systemDetailsService.upsert(id, request);
     return await this.storageEntityRepository.save(entity);
 

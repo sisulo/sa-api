@@ -188,7 +188,7 @@ describe('Collector', () => {
       owner: expect.objectContaining({
         id: expect.any(Number),
         name: ADAPTER_NAME,
-        type: StorageEntityType[StorageEntityType.ADAPTER],
+        type: StorageEntityType[StorageEntityType.ADAPTER_GROUP],
         status: ComponentStatus[ComponentStatus.ACTIVE],
         parent: expect.objectContaining({
           id: expect.any(Number),
@@ -214,12 +214,12 @@ describe('Collector', () => {
       owner: expect.objectContaining({
         id: expect.any(Number),
         name: PORT_NAME,
-        type: StorageEntityType[StorageEntityType.PORT],
+        type: StorageEntityType[StorageEntityType.PORT_GROUP],
         status: ComponentStatus[ComponentStatus.ACTIVE],
         parent: expect.objectContaining({
           id: expect.any(Number),
           name: ADAPTER_NAME,
-          type: StorageEntityType[StorageEntityType.ADAPTER],
+          type: StorageEntityType[StorageEntityType.ADAPTER_GROUP],
           status: ComponentStatus[ComponentStatus.ACTIVE],
           parent: expect.objectContaining({
             id: expect.any(Number),
@@ -288,13 +288,13 @@ describe('Collector', () => {
       storageEntity: expect.objectContaining({
         id: expect.any(Number),
         name: PORT_NAME,
-        type: StorageEntityType[StorageEntityType.PORT],
+        type: StorageEntityType[StorageEntityType.PORT_GROUP],
         status: ComponentStatus[ComponentStatus.INACTIVE],
         parent: expect.objectContaining({
           id: expect.any(Number),
           name: ADAPTER_NAME,
           status: ComponentStatus[ComponentStatus.ACTIVE],
-          type: StorageEntityType[StorageEntityType.ADAPTER],
+          type: StorageEntityType[StorageEntityType.ADAPTER_GROUP],
           parent: expect.objectContaining({
             id: expect.any(Number),
             name: SYSTEM_NAME,
@@ -318,7 +318,7 @@ describe('Collector', () => {
         id: expect.any(Number),
         name: ADAPTER_NAME,
         status: ComponentStatus[ComponentStatus.INACTIVE],
-        type: StorageEntityType[StorageEntityType.ADAPTER],
+        type: StorageEntityType[StorageEntityType.ADAPTER_GROUP],
         parent: expect.objectContaining({
           id: expect.any(Number),
           name: SYSTEM_NAME,

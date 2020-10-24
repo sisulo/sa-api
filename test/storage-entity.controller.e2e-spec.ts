@@ -50,7 +50,7 @@ describe('Storage Entity', () => {
 
   const channelAdapterPayload = {
     name: CHA_NAME,
-    type: StorageEntityType[StorageEntityType.ADAPTER],
+    type: StorageEntityType[StorageEntityType.ADAPTER_GROUP],
     parentId: SYSTEM_XP7_G11_58417,
   };
 
@@ -62,7 +62,7 @@ describe('Storage Entity', () => {
 
   const portPayload = {
     name: PORT_NAME,
-    type: StorageEntityType[StorageEntityType.PORT],
+    type: StorageEntityType[StorageEntityType.PORT_GROUP],
     parentId: ADAPTER_CHA_1,
   };
   // TODO make this section global for all tests
@@ -165,7 +165,7 @@ describe('Storage Entity', () => {
         storageEntity: expect.objectContaining({
           id: expect.any(Number),
           name: CHA_NAME,
-          type: StorageEntityType[StorageEntityType.ADAPTER],
+          type: StorageEntityType[StorageEntityType.ADAPTER_GROUP],
         }),
       });
 
@@ -200,7 +200,7 @@ describe('Storage Entity', () => {
         storageEntity: expect.objectContaining({
           id: expect.any(Number),
           name: PORT_NAME,
-          type: StorageEntityType[StorageEntityType.PORT],
+          type: StorageEntityType[StorageEntityType.PORT_GROUP],
         }),
       });
 

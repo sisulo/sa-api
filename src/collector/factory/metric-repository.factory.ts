@@ -42,11 +42,11 @@ export class MetricRepositoryFactory {
           return this.latencyRepository;
         }
         return this.poolRepository;
-      case StorageEntityType.ADAPTER:
+      case StorageEntityType.ADAPTER_GROUP:
         return this.adapterRepository;
       case StorageEntityType.HOST_GROUP:
         return this.hostGroupRepository;
-      case StorageEntityType.PORT:
+      case StorageEntityType.PORT_GROUP:
         return this.portRepository;
       case StorageEntityType.PARITY_GROUP:
         return this.parityGroupRepository;

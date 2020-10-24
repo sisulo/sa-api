@@ -17,7 +17,7 @@ import { SortStorageEntityByMetricUtils } from '../../statistics/utils/sort-stor
 import { OrderByVo } from '../../statistics/utils/vo/order-by.vo';
 import { StorageEntityFilterVo } from '../../statistics/services/vos/storage-entity-filter.vo';
 import { OutputType } from '../../statistics/controllers/params/statistics.query-params';
-import { SystemDetailEntity } from '../entities/system-detail.entity';
+import { StorageEntityDetailsEntity } from '../entities/storage-entity-details.entity';
 import { ParityGroupMetricEntity } from '../entities/parity-group-metric.entity';
 import { StatisticParams } from '../../statistics/controllers/params/statistic.params';
 
@@ -90,7 +90,7 @@ export class DataCenterService {
       )
       .leftJoinAndMapOne(
         'system.detail',
-        SystemDetailEntity,
+        StorageEntityDetailsEntity,
         'detail',
         'detail.id = system.id',
       )
@@ -117,7 +117,7 @@ export class DataCenterService {
         { systemType: StorageEntityType.SYSTEM })
       .leftJoinAndMapOne(
         'system.detail',
-        SystemDetailEntity,
+        StorageEntityDetailsEntity,
         'detail',
         'detail.id = system.id',
       )
@@ -159,7 +159,7 @@ export class DataCenterService {
         { systemType: StorageEntityType.SYSTEM })
       .leftJoinAndMapOne(
         'system.detail',
-        SystemDetailEntity,
+        StorageEntityDetailsEntity,
         'detail',
         'detail.id = system.id',
       )
@@ -167,12 +167,12 @@ export class DataCenterService {
         'system.children',
         'adapter',
         'adapter.idType=:adapterType',
-        { adapterType: StorageEntityType.ADAPTER })
+        { adapterType: StorageEntityType.ADAPTER_GROUP })
       .innerJoinAndSelect(
         'adapter.children',
         'port',
         'port.idType=:portType',
-        { portType: StorageEntityType.PORT })
+        { portType: StorageEntityType.PORT_GROUP })
       .leftJoinAndMapMany(
         'port.metrics',
         PortMetricReadEntity,
@@ -215,7 +215,7 @@ export class DataCenterService {
         { systemType: StorageEntityType.SYSTEM })
       .leftJoinAndMapOne(
         'system.detail',
-        SystemDetailEntity,
+        StorageEntityDetailsEntity,
         'detail',
         'detail.id = system.id',
       )
@@ -493,7 +493,7 @@ export class DataCenterService {
         { systemType: StorageEntityType.SYSTEM })
       .leftJoinAndMapOne(
         'system.detail',
-        SystemDetailEntity,
+        StorageEntityDetailsEntity,
         'detail',
         'detail.id = system.id',
       )
