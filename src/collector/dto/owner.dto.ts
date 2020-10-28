@@ -28,6 +28,8 @@ export class Owner {
   serialNumber: string;
   @ApiProperty({ type: Owner })
   parent: Owner;
+  @ApiProperty()
+  parentId: number;
   @ApiProperty({ type: Owner })
   children: Owner[] = [];
   @ApiProperty()

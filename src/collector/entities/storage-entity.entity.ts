@@ -21,6 +21,9 @@ export class StorageEntityEntity {
   @Column({ name: 'serial_number' })
   serialNumber: string;
 
+  @Column({ name: 'parentId' })
+  parentId: number;
+
   @TreeChildren()
   children: StorageEntityEntity[];
 

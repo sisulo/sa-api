@@ -69,6 +69,7 @@ export class StorageEntityTransformer {
     dto.id = metricOwner.id;
     dto.name = metricOwner.name;
     dto.type = StorageEntityTransformer.resolveOwnerType(metricOwner);
+    dto.parentId = metricOwner.parentId;
     dto.status = this.resolveStatus(metricOwner);
     if (reverse === false && metricOwner.parent !== undefined && metricOwner.parent !== null) {
       dto.parent = StorageEntityTransformer.transformFromOwner(metricOwner.parent, withDetail);

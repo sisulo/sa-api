@@ -16,7 +16,15 @@ import { DbEvalUtils } from '../utils/db-eval.utils';
 
 @Injectable()
 export class StorageEntityService {
-  private static CHECK_DUPLICITY_TYPE = [StorageEntityType.DATACENTER, StorageEntityType.SYSTEM, StorageEntityType.POOL];
+  private static CHECK_DUPLICITY_TYPE = [
+    StorageEntityType.DATACENTER,
+    StorageEntityType.SYSTEM,
+    StorageEntityType.POOL,
+    // StorageEntityType.PORT,
+    // StorageEntityType.CHANNEL_BOARD,
+    // StorageEntityType.DKC,
+    // StorageEntityType.CONTROLLER,
+  ];
 
   constructor(
     private storageEntityRepository: StorageEntityRepository,
@@ -49,14 +57,14 @@ export class StorageEntityService {
 
   private async isAlreadyExists(requestEntity: StorageEntityRequestDto, parentEntity) {
 
-    const entity = await this.storageEntityRepository.findOne({
+    const entities = await this.storageEntityRepository.find({
       where: { name: requestEntity.name },
       join: { alias: 'storageEntity', leftJoinAndSelect: { parent: 'storageEntity.parent' } },
     });
     if (StorageEntityService.CHECK_DUPLICITY_TYPE.includes(requestEntity.type)) {
-      return entity !== undefined && entity.idType === requestEntity.type;
+      return entities.some(entity => entity !== undefined && entity.idType === requestEntity.type);
     }
-    return entity !== undefined && entity.parent.id === parentEntity.id;
+    return entities.some(entity => entity !== undefined && entity.parent.id === parentEntity.id && entity.idType === requestEntity.type);
   }
 
   private createEntity(requestEntity: StorageEntityRequestDto, parent: StorageEntityEntity) {
