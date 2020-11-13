@@ -9,6 +9,8 @@ import { StorageEntityDetailRequestDto } from '../../dto/storage-entity-detail-r
 import { StorageEntityStatusPipe } from '../../dto/pipes/storage-entity-status.pipe';
 import { ChangeStatusRequestDto } from '../../dto/change-status-request.dto';
 import { StorageEntityType } from '../../dto/owner.dto';
+import { DuplicateStorageEntityDto } from '../../dto/duplicate-storage-entity.dto';
+import { DuplicateStorageEntityRequestPipe } from '../../dto/pipes/duplicate-storage-entity-request.pipe';
 
 @Controller('api/v2/storage-entities')
 export class StorageEntityController {
@@ -34,6 +36,20 @@ export class StorageEntityController {
     @Body(new StorageEntityRequestPipe()) request: StorageEntityRequestDto,
   ): Promise<StorageEntityResponseDto> {
     const entity = await this.storageEntityService.create(request);
+    return StorageEntityTransformer.transform(entity);
+  }
+
+  @Post(':id/duplicate')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiCreatedResponse({
+    description: 'Duplicate storage entity and all children up to storage type, defined as parameter',
+    type: StorageEntityResponseDto,
+  })
+  public async duplicateSystem(
+    @Param('id') id: number,
+    @Body(new DuplicateStorageEntityRequestPipe()) request: DuplicateStorageEntityDto
+  ): Promise<StorageEntityResponseDto> {
+    const entity = await this.storageEntityService.duplicate(request, id);
     return StorageEntityTransformer.transform(entity);
   }
 

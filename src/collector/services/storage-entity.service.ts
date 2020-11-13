@@ -13,6 +13,9 @@ import { SystemDetailsService } from './system-details.service';
 import { StorageEntityDetailRequestDto } from '../dto/storage-entity-detail-request.dto';
 import { StorageEntityNotFoundError } from './errors/storage-entity-not-found.error';
 import { DbEvalUtils } from '../utils/db-eval.utils';
+import { isEmpty } from '@nestjs/common/utils/shared.utils';
+import { isNotEmpty } from 'class-validator';
+import { DuplicateStorageEntityDto } from '../dto/duplicate-storage-entity.dto';
 
 @Injectable()
 export class StorageEntityService {
@@ -165,5 +168,42 @@ AND subtree.id_ancestor = ${id};
     `);
     entity.parent = parentEntity;
     await this.storageEntityRepository.save(entity);
+  }
+
+  async duplicate(requestDto: DuplicateStorageEntityDto, sourceStorageEntityId: number) {
+    const system = await this.storageEntityRepository.findOne(sourceStorageEntityId, { relations: ['children'] });
+    if (system === undefined) {
+      throw new StorageEntityNotFoundError(`Entity(id: ${sourceStorageEntityId}) not found.`);
+    }
+    const request = new StorageEntityRequestDto();
+    request.type = system.idType;
+    request.name = requestDto.name;
+    request.serialNumber = requestDto.serialNumber;
+    request.parentId = system.parentId;
+    const duplicatedSystem = await this.create(request);
+    if (system.children !== undefined && isNotEmpty(system.children)) {
+      await this.duplicateChildren(system.children, duplicatedSystem, requestDto.types);
+    }
+
+    return duplicatedSystem;
+  }
+
+  async duplicateChildren(children: StorageEntityEntity[], parent: StorageEntityEntity, typesToBeDuplicated: StorageEntityType[]) {
+    for (const child of this.filterOutByType(typesToBeDuplicated, children)) {
+      const childRequest = new StorageEntityRequestDto();
+      childRequest.type = child.idType;
+      childRequest.name = child.name;
+      childRequest.parentId = parent.id;
+      const duplicatedChild = await this.create(childRequest);
+      const childrenLoaded = (await this.storageEntityRepository.findOne(child.id, {
+        relations: ['children'],
+      })).children;
+      if (childrenLoaded !== undefined && isNotEmpty(childrenLoaded)) {
+        await this.duplicateChildren(childrenLoaded, duplicatedChild, typesToBeDuplicated);
+      }
+    }
+  }
+  filterOutByType(types: StorageEntityType[], storageEntities) {
+    return storageEntities.filter(storageEntity => types.includes(storageEntity.idType));
   }
 }
