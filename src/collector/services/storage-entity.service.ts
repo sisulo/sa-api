@@ -13,9 +13,9 @@ import { SystemDetailsService } from './system-details.service';
 import { StorageEntityDetailRequestDto } from '../dto/storage-entity-detail-request.dto';
 import { StorageEntityNotFoundError } from './errors/storage-entity-not-found.error';
 import { DbEvalUtils } from '../utils/db-eval.utils';
-import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import { isNotEmpty } from 'class-validator';
 import { DuplicateStorageEntityDto } from '../dto/duplicate-storage-entity.dto';
+import { StorageEntityDetailsEntity } from '../entities/storage-entity-details.entity';
 
 @Injectable()
 export class StorageEntityService {
@@ -67,7 +67,7 @@ export class StorageEntityService {
     if (StorageEntityService.CHECK_DUPLICITY_TYPE.includes(requestEntity.type)) {
       return entities.some(entity => entity !== undefined && entity.idType === requestEntity.type);
     }
-    return entities.some(entity => entity !== undefined && entity.parent.id === parentEntity.id && entity.idType === requestEntity.type);
+    return entities.some(entity => entity !== undefined && entity.parentId === parentEntity.id && entity.idType === requestEntity.type);
   }
 
   private createEntity(requestEntity: StorageEntityRequestDto, parent: StorageEntityEntity) {
@@ -181,6 +181,11 @@ AND subtree.id_ancestor = ${id};
     request.serialNumber = requestDto.serialNumber;
     request.parentId = system.parentId;
     const duplicatedSystem = await this.create(request);
+
+    const detail = new StorageEntityDetailRequestDto();
+    detail.prefixReferenceId = requestDto.prefixReferenceId;
+    this.systemDetailsService.upsert(duplicatedSystem.id, detail);
+
     if (system.children !== undefined && isNotEmpty(system.children)) {
       await this.duplicateChildren(system.children, duplicatedSystem, requestDto.types);
     }
@@ -203,6 +208,7 @@ AND subtree.id_ancestor = ${id};
       }
     }
   }
+
   filterOutByType(types: StorageEntityType[], storageEntities) {
     return storageEntities.filter(storageEntity => types.includes(storageEntity.idType));
   }

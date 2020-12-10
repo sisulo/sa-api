@@ -10,6 +10,9 @@ export class DuplicateStorageEntityDto {
   @ApiProperty()
   serialNumber: string;
 
+  @ApiProperty()
+  prefixReferenceId: string;
+
   @IsNotEmpty({ message: 'Types cannot be empty' })
   @ApiProperty({
     enumName: 'StorageEntityType',
