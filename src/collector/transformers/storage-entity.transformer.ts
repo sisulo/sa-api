@@ -9,7 +9,7 @@ import { ExternalType } from '../enums/external-type.enum';
 import { StorageEntityDetailsEntity } from '../entities/storage-entity-details.entity';
 import { StorageEntityDetailResponseDto } from '../dto/storage-entity-detail-response.dto';
 import { Owner, StorageEntityType } from '../dto/owner.dto';
-import { ComponentStatus } from '../enums/component.status';
+import { StorageEntityStatus } from '../enums/storage-entity-status.enum';
 
 export class StorageEntityTransformer {
 
@@ -86,7 +86,7 @@ export class StorageEntityTransformer {
   }
 
   private static resolveStatus(metricOwner) {
-    return ComponentStatus[metricOwner.idCatComponentStatus];
+    return StorageEntityStatus[metricOwner.idCatComponentStatus];
   }
 
   private static resolveOwnerType(metricOwner) {

@@ -1,6 +1,6 @@
 import { EntityRepository, SelectQueryBuilder, TreeRepository } from 'typeorm';
 import { StorageEntityEntity } from '../entities/storage-entity.entity';
-import { ComponentStatus } from '../enums/component.status';
+import { StorageEntityStatus } from '../enums/storage-entity-status.enum';
 import { StorageEntityType } from '../dto/owner.dto';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import { LatencyEntity } from '../entities/latency.entity';
@@ -9,7 +9,7 @@ import { KeyPart, StorageEntityKey } from '../utils/storage-entity-key.utils';
 
 @EntityRepository(StorageEntityEntity)
 export class StorageEntityRepository extends TreeRepository<StorageEntityEntity> {
-  private hierachyType: ((query: SelectQueryBuilder<StorageEntityEntity>, systemId: number) => void)[][] = [];
+  private hierachyType: ((query: SelectQueryBuilder<StorageEntityEntity>, type: StorageEntityType, systemId: number, status: StorageEntityStatus[]) => void)[][] = [];
 
   constructor() {
     super();
@@ -24,7 +24,7 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
       this.getAllDkcs,
       this.getAllControllers,
       this.getAllChannelBoards,
-      this.getAllPorts
+      this.getAllPorts,
     ];
 
   }
@@ -50,7 +50,7 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
     let storageEntity = await this.findOneByName(searchKey.name, searchKey.type, parentToSearch);
     if (storageEntity === undefined && createIfNotExists === true) {
       storageEntity = this.create(
-        { name: searchKey.name, idType: searchKey.type, idCatComponentStatus: ComponentStatus.ACTIVE, parent: parentEntity },
+        { name: searchKey.name, idType: searchKey.type, idCatComponentStatus: StorageEntityStatus.ACTIVE, parent: parentEntity },
       );
       await this.save(storageEntity);
     } else if (storageEntity === undefined && createIfNotExists === false) {
@@ -84,7 +84,7 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
       .innerJoinAndSelect('datacenter.children', 'system')
       .innerJoinAndSelect('system.detail', 'detail')
       .andWhere('datacenter.idType = :idType', { idType: StorageEntityType.DATACENTER })
-      .andWhere('system.idCatComponentStatus = :status', { status: ComponentStatus.ACTIVE })
+      .andWhere('system.idCatComponentStatus = :status', { status: StorageEntityStatus.ACTIVE })
       .getMany();
   }
 
@@ -93,50 +93,60 @@ export class StorageEntityRepository extends TreeRepository<StorageEntityEntity>
       .innerJoinAndSelect('storageEntity.children', 'pools')
       .innerJoin(LatencyEntity, 'metric', 'pools.id = metric.owner')
       .andWhere('storageEntity.idType = :type', { type: StorageEntityType.SYSTEM })
-      .andWhere('storageEntity.idCatComponentStatus = :status', { status: ComponentStatus.ACTIVE })
+      .andWhere('storageEntity.idCatComponentStatus = :status', { status: StorageEntityStatus.ACTIVE })
       .getMany();
   }
 
-  public async getStorageEntities(type: StorageEntityType, systemId: number): Promise<StorageEntityEntity[]> {
+  public async getStorageEntities(type: StorageEntityType, systemId: number, status: StorageEntityStatus[]): Promise<StorageEntityEntity[]> {
     const query = this.createQueryBuilder('datacenter')
       .andWhere('datacenter.idType = :dcType', { dcType: StorageEntityType.DATACENTER })
-      .andWhere('datacenter.idCatComponentStatus = :dcStatus', { dcStatus: ComponentStatus.ACTIVE });
+      .andWhere('datacenter.idCatComponentStatus = :dcStatus', { dcStatus: StorageEntityStatus.ACTIVE });
     this.hierachyType[type].forEach(decorate => {
-      decorate(query, systemId);
+      decorate(query, type, systemId, status);
     });
     return await query.getMany();
   }
 
-  private getAllSystems(query: SelectQueryBuilder<StorageEntityEntity>, systemId: number): void {
+  private getAllSystems(query: SelectQueryBuilder<StorageEntityEntity>, type: StorageEntityType, systemId: number, status: StorageEntityStatus[]): void {
     query.leftJoinAndSelect('datacenter.children', 'system', 'system.idType = :systemType', { systemType: StorageEntityType.SYSTEM })
-      .leftJoinAndSelect('system.detail', 'detail')
-      .andWhere('COALESCE(system.idCatComponentStatus, CAST(1 as smallint)) = :systemStatus', { systemStatus: ComponentStatus.ACTIVE });
+      .leftJoinAndSelect('system.detail', 'detail');
+    if (type === StorageEntityType.SYSTEM) {
+      query.andWhere('COALESCE(system.idCatComponentStatus, CAST(1 as smallint)) IN (:...systemStatus)', { systemStatus: status });
+    }
     if (systemId !== null) {
       query.andWhere('system.id = :id', { id: systemId });
     }
   }
 
-  private getAllDkcs(query: SelectQueryBuilder<StorageEntityEntity>): void {
+  private getAllDkcs(query: SelectQueryBuilder<StorageEntityEntity>, type: StorageEntityType, systemId: number, status: StorageEntityStatus[]): void {
     query.leftJoinAndSelect('system.children', 'dkc', 'dkc.idType = :dkcType', { dkcType: StorageEntityType.DKC })
-      .leftJoinAndSelect('dkc.detail', 'dkcDetail')
-      .andWhere('dkc.idCatComponentStatus = :dkcStatus', { dkcStatus: ComponentStatus.ACTIVE });
+      .leftJoinAndSelect('dkc.detail', 'dkcDetail');
+    if (type === StorageEntityType.DKC) {
+      query.andWhere('dkc.idCatComponentStatus IN (:...dkcStatus)', { dkcStatus: status });
+    }
   }
 
-  public getAllControllers(query: SelectQueryBuilder<StorageEntityEntity>): void {
+  public getAllControllers(query: SelectQueryBuilder<StorageEntityEntity>, type: StorageEntityType, systemId: number, status: StorageEntityStatus[]): void {
     query.leftJoinAndSelect('dkc.children', 'controller', 'controller.idType = :controllerType', { controllerType: StorageEntityType.CONTROLLER })
-      .leftJoinAndSelect('controller.detail', 'controllerDetail')
-      .andWhere('controller.idCatComponentStatus = :controllerStatus', { controllerStatus: ComponentStatus.ACTIVE });
+      .leftJoinAndSelect('controller.detail', 'controllerDetail');
+    if (type === StorageEntityType.CONTROLLER) {
+      query.andWhere('controller.idCatComponentStatus IN (:...controllerStatus)', { controllerStatus: status });
+    }
   }
 
-  public getAllChannelBoards(query: SelectQueryBuilder<StorageEntityEntity>): void {
+  public getAllChannelBoards(query: SelectQueryBuilder<StorageEntityEntity>, type: StorageEntityType, systemId: number, status: StorageEntityStatus[]): void {
     query.leftJoinAndSelect('controller.children', 'channelBoard', 'channelBoard.idType = :channelBoardType', { channelBoardType: StorageEntityType.CHANNEL_BOARD })
-      .leftJoinAndSelect('channelBoard.detail', 'channelBoardDetail')
-      .andWhere('channelBoard.idCatComponentStatus = :channelBoardStatus', { channelBoardStatus: ComponentStatus.ACTIVE });
+      .leftJoinAndSelect('channelBoard.detail', 'channelBoardDetail');
+    if (type === StorageEntityType.CHANNEL_BOARD) {
+      query.andWhere('channelBoard.idCatComponentStatus IN (:...channelBoardStatus)', { channelBoardStatus: status });
+    }
   }
 
-  public getAllPorts(query: SelectQueryBuilder<StorageEntityEntity>): void {
+  public getAllPorts(query: SelectQueryBuilder<StorageEntityEntity>, type: StorageEntityType, systemId: number, status: StorageEntityStatus[]): void {
     query.leftJoinAndSelect('channelBoard.children', 'port', 'port.idType = :portType', { portType: StorageEntityType.PORT })
-      .leftJoinAndSelect('port.detail', 'portDetail')
-      .andWhere('port.idCatComponentStatus = :portStatus', { portStatus: ComponentStatus.ACTIVE });
+      .leftJoinAndSelect('port.detail', 'portDetail');
+    if (type === StorageEntityType.PORT) {
+      query.andWhere('port.idCatComponentStatus IN (:...portStatus)', { portStatus: status });
+    }
   }
 }

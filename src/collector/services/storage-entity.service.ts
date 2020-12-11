@@ -6,7 +6,7 @@ import { ErrorCodeConst } from '../../errors/error-code.enum';
 import { StorageEntityAlreadyExistsError } from './errors/storage-entity-already-exists.error';
 import { StorageEntityRepository } from '../repositories/storage-entity.repository';
 import { StorageEntityEntity } from '../entities/storage-entity.entity';
-import { ComponentStatus } from '../enums/component.status';
+import { StorageEntityStatus } from '../enums/storage-entity-status.enum';
 import { ChangeStatusRequestDto } from '../dto/change-status-request.dto';
 import { StorageEntityKey } from '../utils/storage-entity-key.utils';
 import { SystemDetailsService } from './system-details.service';
@@ -15,7 +15,6 @@ import { StorageEntityNotFoundError } from './errors/storage-entity-not-found.er
 import { DbEvalUtils } from '../utils/db-eval.utils';
 import { isNotEmpty } from 'class-validator';
 import { DuplicateStorageEntityDto } from '../dto/duplicate-storage-entity.dto';
-import { StorageEntityDetailsEntity } from '../entities/storage-entity-details.entity';
 
 @Injectable()
 export class StorageEntityService {
@@ -75,7 +74,7 @@ export class StorageEntityService {
     entity.name = requestEntity.name;
     entity.parent = parent;
     entity.idType = requestEntity.type;
-    entity.idCatComponentStatus = ComponentStatus.ACTIVE;
+    entity.idCatComponentStatus = StorageEntityStatus.ACTIVE;
     entity.serialNumber = requestEntity.serialNumber;
 
     return entity;
@@ -85,8 +84,8 @@ export class StorageEntityService {
     return this.storageEntityRepository.availableSystems();
   }
 
-  public getAllSystems(type: StorageEntityType, systemId: number = null) {
-    return this.storageEntityRepository.getStorageEntities(type, systemId);
+  public getAllSystems(type: StorageEntityType, systemId: number = null, status: StorageEntityStatus[] = [StorageEntityStatus.ACTIVE]) {
+    return this.storageEntityRepository.getStorageEntities(type, systemId, status);
   }
 
   public async updateStatus(key: StorageEntityKey, requestDto: ChangeStatusRequestDto): Promise<StorageEntityEntity> {
@@ -124,27 +123,36 @@ export class StorageEntityService {
   }
 
   async delete(id: number) {
-    const entity = await this.storageEntityRepository.findOne(id);
-    if (entity === undefined || entity.idCatComponentStatus === ComponentStatus.INACTIVE) {
-      throw new StorageEntityNotFoundError(`Entity(id: ${id}) not found or is INACTIVE.`);
+    const entity = await this.storageEntityRepository.findOne(id, { relations: ['children'] });
+    if (entity === undefined) {
+      throw new StorageEntityNotFoundError(`Entity(id: ${id}) not found`);
     }
-    entity.idCatComponentStatus = ComponentStatus.INACTIVE;
-    await this.storageEntityRepository.save(entity);
+    if (isNotEmpty(entity.children)) {
+      for (const child of entity.children) {
+        await this.delete(child.id);
+      }
+    }
+    await this.deleteData(entity);
     await this.storageEntityRepository.query(
       'DELETE FROM storage_entities_closure ' +
       'WHERE id_descendant IN (SELECT id_descendant ' +
       '                     FROM storage_entities_closure ' +
       '                     WHERE id_ancestor = ' + id + ');',
     );
+    await this.storageEntityRepository.createQueryBuilder()
+      .delete()
+      .from(StorageEntityEntity)
+      .where('id = :id', { id: entity.id })
+      .execute();
   }
 
   async move(id: number, parentId: number) {
     const entity = await this.storageEntityRepository.findOne(id);
-    if (entity === undefined || entity.idCatComponentStatus === ComponentStatus.INACTIVE) {
+    if (entity === undefined || entity.idCatComponentStatus === StorageEntityStatus.INACTIVE) {
       throw new StorageEntityNotFoundError(`Entity(id: ${id}) not found or is INACTIVE.`);
     }
     const parentEntity = await this.storageEntityRepository.findOne(parentId);
-    if (parentEntity === undefined || parentEntity.idCatComponentStatus === ComponentStatus.INACTIVE) {
+    if (parentEntity === undefined || parentEntity.idCatComponentStatus === StorageEntityStatus.INACTIVE) {
       throw new StorageEntityNotFoundError(`Entity(id: ${parentId}) not found or is INACTIVE.`);
     }
     this.storageEntityRepository.query(`
@@ -211,5 +219,46 @@ AND subtree.id_ancestor = ${id};
 
   filterOutByType(types: StorageEntityType[], storageEntities) {
     return storageEntities.filter(storageEntity => types.includes(storageEntity.idType));
+  }
+
+  private async deleteData(entity: StorageEntityEntity) {
+    await this.storageEntityRepository.query(`
+      DELETE FROM block_size_latency
+      WHERE id_storage_entity=${entity.id}
+    `);
+
+    await this.storageEntityRepository.query(`
+      DELETE FROM externals
+      WHERE id_storage_entity=${entity.id}
+    `);
+    await this.storageEntityRepository.query(`
+      DELETE FROM host_group_metrics
+      WHERE id_storage_entity=${entity.id}
+    `);
+    await this.storageEntityRepository.query(`
+      DELETE FROM parity_group_metrics
+      WHERE id_storage_entity=${entity.id}
+    `);
+    await this.storageEntityRepository.query(`
+      DELETE FROM cha_metrics
+      WHERE id_storage_entity=${entity.id}
+    `);
+    await this.storageEntityRepository.query(`
+      DELETE FROM pool_metrics
+      WHERE id_storage_entity=${entity.id}
+    `);
+    await this.storageEntityRepository.query(`
+      DELETE FROM port_metrics
+      WHERE id_storage_entity=${entity.id}
+    `);
+    await this.storageEntityRepository.query(`
+      DELETE FROM system_metrics
+      WHERE id_storage_entity=${entity.id}
+    `);
+
+    await this.storageEntityRepository.query(`
+      DELETE FROM storage_entity_details
+      WHERE id_storage_entity=${entity.id}
+    `);
   }
 }

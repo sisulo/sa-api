@@ -11,6 +11,8 @@ import { ChangeStatusRequestDto } from '../../dto/change-status-request.dto';
 import { StorageEntityType } from '../../dto/owner.dto';
 import { DuplicateStorageEntityDto } from '../../dto/duplicate-storage-entity.dto';
 import { DuplicateStorageEntityRequestPipe } from '../../dto/pipes/duplicate-storage-entity-request.pipe';
+import { StorageEntityStatus } from '../../enums/storage-entity-status.enum';
+import { StorageEntityTypePipe } from '../../dto/pipes/storage-entity-type.pipe';
 
 @Controller('api/v2/storage-entities')
 export class StorageEntityController {
@@ -20,9 +22,10 @@ export class StorageEntityController {
   }
 
   @Get()
-  public async getAll(@Query('type') type: StorageEntityType = StorageEntityType.SYSTEM,
-                      @Query('systemId') systemId: number = null): Promise<StorageEntityResponseDto[]> {
-    const entities = await this.storageEntityService.getAllSystems(type, systemId);
+  public async getAll(@Query('type', StorageEntityTypePipe) type: StorageEntityType = StorageEntityType.SYSTEM,
+                      @Query('systemId') systemId: number = null,
+                      @Query('status', StorageEntityStatusPipe) statuses: StorageEntityStatus[]): Promise<StorageEntityResponseDto[]> {
+    const entities = await this.storageEntityService.getAllSystems(type, systemId, statuses);
     return StorageEntityTransformer.transformAll(entities, true, true);
   }
 

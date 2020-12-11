@@ -1,7 +1,7 @@
 import * as request from 'supertest';
 import { MetricType } from '../src/collector/enums/metric-type.enum';
 import { StorageEntityType } from '../src/collector/dto/owner.dto';
-import { ComponentStatus } from '../src/collector/enums/component.status';
+import { StorageEntityStatus } from '../src/collector/enums/storage-entity-status.enum';
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
@@ -51,7 +51,7 @@ describe('Collector', () => {
     date: DATE,
   };
   const changeStatusPayload = {
-    status: ComponentStatus[ComponentStatus.INACTIVE],
+    status: StorageEntityStatus[StorageEntityStatus.INACTIVE],
   };
 
   beforeAll(async () => {
@@ -77,12 +77,12 @@ describe('Collector', () => {
         id: expect.any(Number),
         name: POOL_NAME,
         type: StorageEntityType[StorageEntityType.POOL],
-        status: ComponentStatus[ComponentStatus.ACTIVE],
+        status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
         parent: expect.objectContaining({
           id: expect.any(Number),
           name: SYSTEM_NAME,
           type: StorageEntityType[StorageEntityType.SYSTEM],
-          status: ComponentStatus[ComponentStatus.ACTIVE],
+          status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
         }),
       }),
     });
@@ -104,12 +104,12 @@ describe('Collector', () => {
         id: expect.any(Number),
         name: POOL_NAME,
         type: StorageEntityType[StorageEntityType.POOL],
-        status: ComponentStatus[ComponentStatus.ACTIVE],
+        status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
         parent: expect.objectContaining({
           id: expect.any(Number),
           name: SYSTEM_NAME,
           type: StorageEntityType[StorageEntityType.SYSTEM],
-          status: ComponentStatus[ComponentStatus.ACTIVE],
+          status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
         }),
       }),
     });
@@ -140,12 +140,12 @@ describe('Collector', () => {
         owner: expect.objectContaining({
           id: expect.any(Number),
           name: HOST_GROUP_NAME,
-          status: ComponentStatus[ComponentStatus.ACTIVE],
+          status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
           type: StorageEntityType[StorageEntityType.HOST_GROUP],
           parent: expect.objectContaining({
             id: expect.any(Number),
             name: SYSTEM_NAME,
-            status: ComponentStatus[ComponentStatus.ACTIVE],
+            status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
             type: StorageEntityType[StorageEntityType.SYSTEM],
           }),
         }),
@@ -169,7 +169,7 @@ describe('Collector', () => {
         id: expect.any(Number),
         name: SYSTEM_NAME,
         type: StorageEntityType[StorageEntityType.SYSTEM],
-        status: ComponentStatus[ComponentStatus.ACTIVE],
+        status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
       }),
     });
     return request(app.getHttpServer())
@@ -189,12 +189,12 @@ describe('Collector', () => {
         id: expect.any(Number),
         name: ADAPTER_NAME,
         type: StorageEntityType[StorageEntityType.ADAPTER_GROUP],
-        status: ComponentStatus[ComponentStatus.ACTIVE],
+        status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
         parent: expect.objectContaining({
           id: expect.any(Number),
           name: SYSTEM_NAME,
           type: StorageEntityType[StorageEntityType.SYSTEM],
-          status: ComponentStatus[ComponentStatus.ACTIVE],
+          status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
         }),
       }),
     });
@@ -215,17 +215,17 @@ describe('Collector', () => {
         id: expect.any(Number),
         name: PORT_NAME,
         type: StorageEntityType[StorageEntityType.PORT_GROUP],
-        status: ComponentStatus[ComponentStatus.ACTIVE],
+        status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
         parent: expect.objectContaining({
           id: expect.any(Number),
           name: ADAPTER_NAME,
           type: StorageEntityType[StorageEntityType.ADAPTER_GROUP],
-          status: ComponentStatus[ComponentStatus.ACTIVE],
+          status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
           parent: expect.objectContaining({
             id: expect.any(Number),
             name: SYSTEM_NAME,
             type: StorageEntityType[StorageEntityType.SYSTEM],
-            status: ComponentStatus[ComponentStatus.ACTIVE],
+            status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
           }),
         }),
       }),
@@ -242,13 +242,13 @@ describe('Collector', () => {
       storageEntity: expect.objectContaining({
         id: expect.any(Number),
         name: POOL_NAME,
-        status: ComponentStatus[ComponentStatus.INACTIVE],
+        status: StorageEntityStatus[StorageEntityStatus.INACTIVE],
         type: StorageEntityType[StorageEntityType.POOL],
         parent: expect.objectContaining({
           id: expect.any(Number),
           name: SYSTEM_NAME,
           type: StorageEntityType[StorageEntityType.SYSTEM],
-          status: ComponentStatus[ComponentStatus.ACTIVE],
+          status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
         }),
       }),
       externals: [],
@@ -265,13 +265,13 @@ describe('Collector', () => {
       storageEntity: expect.objectContaining({
         id: expect.any(Number),
         name: HOST_GROUP_NAME,
-        status: ComponentStatus[ComponentStatus.INACTIVE],
+        status: StorageEntityStatus[StorageEntityStatus.INACTIVE],
         type: StorageEntityType[StorageEntityType.HOST_GROUP],
         parent: expect.objectContaining({
           id: expect.any(Number),
           name: SYSTEM_NAME,
           type: StorageEntityType[StorageEntityType.SYSTEM],
-          status: ComponentStatus[ComponentStatus.ACTIVE],
+          status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
         }),
       }),
       externals: [],
@@ -289,17 +289,17 @@ describe('Collector', () => {
         id: expect.any(Number),
         name: PORT_NAME,
         type: StorageEntityType[StorageEntityType.PORT_GROUP],
-        status: ComponentStatus[ComponentStatus.INACTIVE],
+        status: StorageEntityStatus[StorageEntityStatus.INACTIVE],
         parent: expect.objectContaining({
           id: expect.any(Number),
           name: ADAPTER_NAME,
-          status: ComponentStatus[ComponentStatus.ACTIVE],
+          status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
           type: StorageEntityType[StorageEntityType.ADAPTER_GROUP],
           parent: expect.objectContaining({
             id: expect.any(Number),
             name: SYSTEM_NAME,
             type: StorageEntityType[StorageEntityType.SYSTEM],
-            status: ComponentStatus[ComponentStatus.ACTIVE],
+            status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
           }),
         }),
       }),
@@ -317,13 +317,13 @@ describe('Collector', () => {
       storageEntity: expect.objectContaining({
         id: expect.any(Number),
         name: ADAPTER_NAME,
-        status: ComponentStatus[ComponentStatus.INACTIVE],
+        status: StorageEntityStatus[StorageEntityStatus.INACTIVE],
         type: StorageEntityType[StorageEntityType.ADAPTER_GROUP],
         parent: expect.objectContaining({
           id: expect.any(Number),
           name: SYSTEM_NAME,
           type: StorageEntityType[StorageEntityType.SYSTEM],
-          status: ComponentStatus[ComponentStatus.ACTIVE],
+          status: StorageEntityStatus[StorageEntityStatus.ACTIVE],
         }),
       }),
       externals: [],
@@ -346,7 +346,7 @@ describe('Collector', () => {
     const expected = {
       storageEntity: expect.objectContaining({
           name: SYSTEM_NAME_2,
-          status: ComponentStatus[ComponentStatus.INACTIVE],
+          status: StorageEntityStatus[StorageEntityStatus.INACTIVE],
           type: StorageEntityType[StorageEntityType.SYSTEM],
         },
       ),

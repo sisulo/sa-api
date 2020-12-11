@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { MetricType } from '../enums/metric-type.enum';
 import { PeriodType } from '../enums/period-type.enum';
 import { Region } from '../../statistics/models/dtos/region.enum';
-import { ComponentStatus } from '../enums/component.status';
+import { StorageEntityStatus } from '../enums/storage-entity-status.enum';
 import { StorageEntityRepository } from '../repositories/storage-entity.repository';
 import { StorageEntityEntity } from '../entities/storage-entity.entity';
 import { PoolMetricReadEntity } from '../entities/pool-metric-read.entity';
@@ -99,7 +99,7 @@ export class DataCenterService {
         'typeEntity')
       .andWhere(
         'system.idCatComponentStatus = :idSystemStatus',
-        { idSystemStatus: ComponentStatus.ACTIVE },
+        { idSystemStatus: StorageEntityStatus.ACTIVE },
       );
     if (idDataCenterParam.length > 0) {
       query.andWhere('datacenter.id IN (:...idDatacenter)', { idDatacenter: idDataCenterParam });
@@ -136,10 +136,10 @@ export class DataCenterService {
         'typeEntity')
       .where(
         'pool.idCatComponentStatus = :idStatus',
-        { idStatus: ComponentStatus.ACTIVE })
+        { idStatus: StorageEntityStatus.ACTIVE })
       .andWhere(
         'system.idCatComponentStatus = :idSystemStatus',
-        { idSystemStatus: ComponentStatus.ACTIVE })
+        { idSystemStatus: StorageEntityStatus.ACTIVE })
       .andWhere(
         'datacenter.idType = :dataCenterType',
         { dataCenterType: StorageEntityType.DATACENTER });
@@ -193,12 +193,12 @@ export class DataCenterService {
         'adapterTypeEntity')
       .where(
         'adapter.idCatComponentStatus = :idStatus',
-        { idStatus: ComponentStatus.ACTIVE })
+        { idStatus: StorageEntityStatus.ACTIVE })
       .andWhere(
         'system.idCatComponentStatus = :idSystemStatus',
-        { idSystemStatus: ComponentStatus.ACTIVE })
+        { idSystemStatus: StorageEntityStatus.ACTIVE })
       .andWhere('port.idCatComponentStatus = :idPortStatus',
-        { idPortStatus: ComponentStatus.ACTIVE });
+        { idPortStatus: StorageEntityStatus.ACTIVE });
     if (idDataCenterParam.length > 0) {
       query.where('datacenter.id IN (:...idDatacenter)', { idDatacenter: idDataCenterParam });
     }
@@ -236,10 +236,10 @@ export class DataCenterService {
         'external')
       .where(
         'hostGroup.idCatComponentStatus = :idStatus',
-        { idStatus: ComponentStatus.ACTIVE })
+        { idStatus: StorageEntityStatus.ACTIVE })
       .andWhere(
         'system.idCatComponentStatus = :idSystemStatus',
-        { idSystemStatus: ComponentStatus.ACTIVE });
+        { idSystemStatus: StorageEntityStatus.ACTIVE });
     if (idDataCenterParam.length > 0) {
       query.andWhere('datacenter.id IN (:...idDatacenter)', { idDatacenter: idDataCenterParam });
     }
@@ -421,7 +421,7 @@ export class DataCenterService {
           'pool.parent',
           'system',
           'system.id = pool.parent AND system.idType=:systemType AND system.idCatComponentStatus = :systemStatus',
-          { systemType: StorageEntityType.SYSTEM, systemStatus: ComponentStatus.ACTIVE });
+          { systemType: StorageEntityType.SYSTEM, systemStatus: StorageEntityStatus.ACTIVE });
     }
     const result = await query.leftJoinAndMapMany(
       'pool.metrics',
@@ -436,7 +436,7 @@ export class DataCenterService {
         'typeEntity')
       .andWhere(
         'pool.id IN (:...ids) AND pool.idCatComponentStatus = :poolStatus',
-        { ids: poolIds, poolStatus: ComponentStatus.ACTIVE })
+        { ids: poolIds, poolStatus: StorageEntityStatus.ACTIVE })
       .getMany();
     let sortedResult: StorageEntityEntity[];
     if (!isEmpty(orderBy)) {
@@ -517,10 +517,10 @@ export class DataCenterService {
         'typeEntity')
       .where(
         'parityGroup.idCatComponentStatus = :idStatus',
-        { idStatus: ComponentStatus.ACTIVE })
+        { idStatus: StorageEntityStatus.ACTIVE })
       .andWhere(
         'system.idCatComponentStatus = :idSystemStatus',
-        { idSystemStatus: ComponentStatus.ACTIVE })
+        { idSystemStatus: StorageEntityStatus.ACTIVE })
       .andWhere(
         'metrics.startTime >= :fromTime AND metrics.endTime <= :toTime',
         { fromTime: new Date(parseInt(fromDate, 10)), toTime: new Date(parseInt(toDate, 10)) });

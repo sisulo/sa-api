@@ -5,7 +5,7 @@ import { StorageEntityEntity } from '../../collector/entities/storage-entity.ent
 import { StorageEntityMetricDto, StorageMetricEntityHierarchyDto } from '../models/dtos/storage-metric-entity-hierarchy.dto';
 import { StorageEntityType } from '../../collector/dto/owner.dto';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
-import { ComponentStatus } from '../../collector/enums/component.status';
+import { StorageEntityStatus } from '../../collector/enums/storage-entity-status.enum';
 import { MetricEntityInterface } from '../../collector/entities/metric-entity.interface';
 import { SystemMetricReadEntity } from '../../collector/entities/system-metric-read.entity';
 import { StorageEntityTransformer } from '../../collector/transformers/storage-entity.transformer';
@@ -53,9 +53,9 @@ export class StorageEntityMetricTransformer {
     dto.id = storageEntity.id;
     dto.name = storageEntity.name;
     dto.type = StorageEntityType[storageEntity.idType];
-    dto.status = ComponentStatus[storageEntity.idCatComponentStatus];
+    dto.status = StorageEntityStatus[storageEntity.idCatComponentStatus];
     dto.referenceId = storageEntity.serialNumber;
-    if (storageEntity.detail !== undefined) {
+    if (storageEntity.detail !== undefined && storageEntity.detail !== null) {
       dto.detail = StorageEntityTransformer.transformDetail(storageEntity.detail);
     }
     return dto;

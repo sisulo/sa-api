@@ -1,5 +1,5 @@
-import { ComponentStatus } from '../enums/component.status';
+import { StorageEntityStatus } from '../enums/storage-entity-status.enum';
 
 export class ChangeStatusRequestDto {
-  readonly status: ComponentStatus;
+  readonly status: StorageEntityStatus;
 }

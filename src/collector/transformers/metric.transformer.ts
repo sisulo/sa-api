@@ -8,7 +8,7 @@ import { ChaMetricEntity } from '../entities/cha-metric.entity';
 import { PortMetricEntity } from '../entities/port-metric.entity';
 import { HostGroupMetricEntity } from '../entities/host-group-metric.entity';
 import { LatencyEntity } from '../entities/latency.entity';
-import { ComponentStatus } from '../enums/component.status';
+import { StorageEntityStatus } from '../enums/storage-entity-status.enum';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import { StorageEntityTransformer } from './storage-entity.transformer';
 import { ParityGroupMetricEntity } from '../entities/parity-group-metric.entity';
