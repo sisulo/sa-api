@@ -15,6 +15,7 @@ import { StorageEntityNotFoundError } from './errors/storage-entity-not-found.er
 import { DbEvalUtils } from '../utils/db-eval.utils';
 import { isNotEmpty } from 'class-validator';
 import { DuplicateStorageEntityDto } from '../dto/duplicate-storage-entity.dto';
+import { UpdateResult } from 'typeorm';
 
 @Injectable()
 export class StorageEntityService {
@@ -105,7 +106,8 @@ export class StorageEntityService {
       storageEntity.children = await Promise.all(storageEntity.children.map(async child => await this.updateStatusRecursively(child, requestDto)));
     }
     storageEntity.idCatComponentStatus = requestDto.status;
-    return await this.storageEntityRepository.save(storageEntity);
+    await this.storageEntityRepository.update(storageEntity.id, {idCatComponentStatus: requestDto.status});
+    return storageEntity;
   }
 
   async update(id: number, request: StorageEntityDetailRequestDto) {
