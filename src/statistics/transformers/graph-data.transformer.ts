@@ -13,11 +13,15 @@ export class GraphDataTransformer {
         const serieDto = new GraphSerie();
         serieDto.type = TypeMappingUtils.resolveMetricType(serie.type);
         serieDto.data = serie.data.map(item => {
-          return { x: item.date, y: parseFloat(item.value.toFixed(2)) };
+          return { x: item.date, y: parseFloat(this.formatNumber(item.value)) };
         });
         return serieDto;
       },
     );
     return resultDto;
+  }
+
+  static formatNumber(value) {
+    return value != null ? value.toFixed(2) : 0;
   }
 }
